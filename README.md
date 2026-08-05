@@ -532,12 +532,13 @@ Validation will report:
 - fixed output decoder;
 - automated logical regression tests;
 - reproducible dependency metadata;
-- project documentation and citation metadata.
+- project documentation and citation metadata;
+- reproducible 1,000-sample Monte Carlo validation; and
+- deterministic 41-point decoder-threshold sweep.
 
 **Next milestone**
 
-- Monte Carlo robustness validation under component, supply, threshold, and
-  temperature variation.
+- deterministic supply-voltage, resistance, and capacitance sweeps.
 
 The current SPICE implementation is intentionally small and auditable. It
 provides the reference execution pipeline from which compiled-network
@@ -559,19 +560,26 @@ experiments will be developed.
 - machine-readable reference data;
 - reproducible four-condition validation.
 
-### Version 0.2 — Monte Carlo validation
+### Version 0.2 — Engineering robustness validation
 
-**Status: next milestone**
+**Status: in progress**
 
-- resistor-tolerance distributions;
-- capacitor-tolerance distributions;
-- supply-voltage variation;
-- decoder-threshold variation;
-- temperature sweeps;
-- repeated-run statistics;
-- CSV reports;
-- graphical reports;
-- reproducible random seeds.
+Completed:
+
+- reproducible 1,000-sample Monte Carlo validation;
+- 4,000 successful boundary simulations;
+- deterministic 41-point decoder-threshold sweep;
+- detailed and summary CSV output;
+- decoder success-rate figure;
+- decoder-margin figure.
+
+Remaining:
+
+- deterministic supply-voltage sweep;
+- deterministic resistance sweep;
+- deterministic capacitance sweep;
+- temperature sweep;
+- consolidated validation report.
 
 ### Version 0.3 — Compiled network model
 

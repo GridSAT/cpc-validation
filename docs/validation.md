@@ -235,6 +235,58 @@ Only the physical realization evolves.
 
 ---
 
+# Verified Decoder-Threshold Sweep
+
+A deterministic decoder-threshold sweep was completed on 5 August 2026
+for the behavioral-source RC validation baseline.
+
+The decoder threshold was varied from 0.5 V through 4.5 V in increments
+of 0.1 V. All four admitted boundary conditions were simulated at every
+threshold value.
+
+The fixed physical parameters were:
+
+- supply voltage: 5.0 V;
+- output resistance: 10.0 kOhm; and
+- output capacitance: 1.0 uF.
+
+The result was:
+
+| Quantity | Result |
+|---|---:|
+| Threshold points | 41 |
+| Boundary simulations | 164 |
+| Passed | 164 |
+| Failed | 0 |
+| Overall success rate | 100.000000% |
+| Fully passing tested interval | 0.5 V to 4.5 V |
+| Global minimum signed margin | 0.499950 V |
+| Global average signed margin | 2.499975 V |
+| Global maximum signed margin | 4.500000 V |
+
+The exact command was:
+
+    python run_threshold_sweep.py
+
+The detailed result file contained 165 rows: one header and 164
+boundary-simulation records. The threshold-level summary contained
+42 rows: one header and 41 threshold records.
+
+The generated figures are:
+
+- `figures/threshold_success_rate.png`;
+- `figures/threshold_margin.png`.
+
+The success-rate figure shows complete decoding agreement throughout the
+tested interval. The margin figure shows the expected symmetric reduction
+of the minimum decoding margin toward either end of the interval.
+
+This sweep characterizes the decoder operating envelope of the current
+behavioral-source RC baseline. It does not establish the corresponding
+operating envelope of a future constraint-compiled passive network.
+
+---
+
 # Scientific Principle
 
 CPC Validation is designed around a simple principle:
