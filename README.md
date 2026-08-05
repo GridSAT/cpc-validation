@@ -141,18 +141,8 @@ or interface conditions $b\in\mathcal{B}_X$.
 
 A physical realization is validated by requiring
 
-$$
-\Pr_{p\sim\mathrm{Prep}_X(b)}
-\left[
-\mathrm{Decode}_X
-\left(
-M_X\left(U_{X,\tau_X}(p),b\right)
-\right)
-=
-\mathrm{Eval}_X(b)
-\right]
-\geq 1-\varepsilon_X.
-$$
+    Pr[Decode_X(M_X(U_X,tau_X(p), b)) = Eval_X(b) | p ~ Prep_X(b)]
+        >= 1 - epsilon_X
 
 The compiler and physical program may depend on the instance and the admitted
 boundary condition. The independently computed continuation values remain
