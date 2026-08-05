@@ -5,3 +5,6 @@ __pycache__/
 
 # Generated simulation outputs
 results/
+
+# Generated validation reports
+reports/

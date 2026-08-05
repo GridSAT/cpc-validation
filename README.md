@@ -387,6 +387,56 @@ The command:
 
 ---
 
+## Consolidated validation
+
+Run the reduced development profile:
+
+```bash
+python validate.py --quick
+```
+
+Run the complete reproducibility profile:
+
+```bash
+python validate.py --full
+```
+
+Both commands generate:
+
+- `reports/validation_report.md`
+- `reports/validation_summary.csv`
+- profile-specific CSV files under `results/`
+- profile-specific figures under `results/`
+
+The full profile executes:
+
+1. the complete automated test suite;
+2. independent reference continuation generation;
+3. nominal four-condition SPICE validation;
+4. transient waveform and RC timing validation;
+5. the reproducible 1,000-sample Monte Carlo study;
+6. the decoder-threshold sweep;
+7. the supply-voltage sweep;
+8. the resistance and RC timing sweep; and
+9. the capacitance and RC timing sweep.
+
+The verified full-profile validation (5 August 2026) completed with:
+
+| Quantity | Result |
+|---|---:|
+| Validation stages | 9 |
+| Stages passed | 9 |
+| Stages failed | 0 |
+| Automated tests | 72 passed |
+| Monte Carlo parameter samples | 1,000 |
+| Monte Carlo boundary simulations | 4,000 |
+| Overall validation | PASS |
+
+Generated reports are reproducible build artifacts and are intentionally
+excluded from normal Git history.
+
+---
+
 ## Tests
 
 Run all tests:
