@@ -142,20 +142,16 @@ or interface conditions $b\in\mathcal{B}_X$.
 A physical realization is validated by requiring
 
 $$
-\Pr\!\left[
-\mathrm{Decode}_X\!\left(
-M_X\!\left(
-U_{X,\tau_X}(p),
-b
-\right)
+\Pr_{p\sim\mathrm{Prep}_X(b)}
+\left[
+\mathrm{Decode}_X
+\left(
+M_X\left(U_{X,\tau_X}(p),b\right)
 \right)
 =
 \mathrm{Eval}_X(b)
-\;\middle|\;
-p\sim\mathrm{Prep}_X(b)
 \right]
-\geq
-1-\varepsilon_X.
+\geq 1-\varepsilon_X.
 $$
 
 The compiler and physical program may depend on the instance and the admitted
