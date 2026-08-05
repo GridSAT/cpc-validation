@@ -71,6 +71,7 @@ Expected SPICE result:
 - [Generic parity compiler](#generic-parity-compiler)
 - [External JSON benchmarks](#external-json-benchmarks)
 - [Reproducible benchmark generation](#reproducible-benchmark-generation)
+- [Compiler scaling study](#compiler-scaling-study)
 - [Tests](#tests)
 - [Repository structure](#repository-structure)
 - [Validation principles](#validation-principles)
@@ -630,6 +631,65 @@ Its regression tests are in:
 
 - `tests/test_benchmark_generator.py`
 
+## Compiler scaling study
+
+The current exhaustive parity backend can be characterized across generated
+benchmark families with:
+
+```bash
+python run_scaling_study.py \
+    --families chain,cycle,star,random \
+    --variables 4:8:2 \
+    --seed 20260806
+```
+
+The study generates each benchmark deterministically, independently evaluates
+every admitted boundary assignment, compiles the corresponding ngspice
+netlists, executes the simulations, applies the fixed decoder, and aggregates
+one result row per benchmark.
+
+The verified smoke profile contains:
+
+| Quantity | Result |
+|---|---:|
+| Families | 4 |
+| Variable counts | 4, 6, 8 |
+| Benchmarks | 12 |
+| Boundary simulations | 48 |
+| Passed | 48 |
+| Failed | 0 |
+| Largest candidate count | 64 |
+| Overall result | PASS |
+
+The study records:
+
+- variable and constraint counts;
+- internal-variable count;
+- candidate count;
+- behavioral-source count;
+- generated-netlist size;
+- compilation time;
+- ngspice simulation time;
+- output-voltage range; and
+- complete validation success.
+
+Generated figures:
+
+- `figures/scaling_candidates.png`;
+- `figures/scaling_sources.png`;
+- `figures/scaling_netlist_size.png`;
+- `figures/scaling_compile_time.png`; and
+- `figures/scaling_simulation_time.png`.
+
+The current backend enumerates all internal assignments. The scaling results
+therefore characterize an explicit exhaustive backend and do not constitute a
+claim of polynomial scaling.
+
+See [`docs/scaling.md`](docs/scaling.md) for the full methodology,
+measurements, interpretation, and limitations.
+
+---
+
 ## Tests
 
 Run all tests:
@@ -881,18 +941,35 @@ Completed:
 - complete-boundary validation;
 - permanent chain and cycle benchmarks;
 - deterministic chain, cycle, star, and random generators;
-- generated corpus validation; and
-- compiler resource accounting.
+- generated corpus validation;
+- compiler resource accounting;
+- formal compiler scaling study;
+- per-benchmark scaling CSV aggregation;
+- candidate-growth figure;
+- behavioral-source growth figure;
+- netlist-size figure;
+- compilation-time figure;
+- simulation-time figure;
+- reduced scaling regression in consolidated validation; and
+- scaling methodology documentation.
+
+Current verified scaling milestone:
+
+- four benchmark families;
+- variable counts 4, 6, and 8;
+- 12 generated scaling benchmarks;
+- 48 boundary simulations;
+- 48 passed;
+- 0 failed; and
+- candidate counts from 4 through 64.
 
 Remaining:
 
-- formal compiler scaling study;
-- scaling CSV aggregation;
-- candidate-growth figures;
-- netlist-size figures;
-- compilation-time figures;
-- simulation-time figures; and
-- final v0.3 documentation and release validation.
+- size-10 characterization across all supported families;
+- repeated timing trials and statistical intervals;
+- final v0.3 release validation;
+- release notes; and
+- v0.3.0 tag preparation.
 
 ### Version 0.4 — Compiler scaling and statistics
 
