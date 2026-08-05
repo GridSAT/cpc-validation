@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="240"
+     xmlns="http://www.w3.org/2000/svg">
+
+<style>
+text{
+font-family:Arial,Helvetica,sans-serif;
+font-size:18px;
+fill:#222;
+}
+.title{
+font-size:28px;
+font-weight:bold;
+}
+.box{
+fill:#eef5ff;
+stroke:#2d5aa3;
+stroke-width:2;
+rx:8;
+ry:8;
+}
+.arrow{
+stroke:#555;
+stroke-width:3;
+marker-end:url(#arrow);
+fill:none;
+}
+</style>
+
+<defs>
+<marker id="arrow"
+markerWidth="10"
+markerHeight="10"
+refX="8"
+refY="3"
+orient="auto">
+<path d="M0,0 L8,3 L0,6 Z" fill="#555"/>
+</marker>
+</defs>
+
+<text x="600" y="35" text-anchor="middle" class="title">
+CPC Validation Pipeline
+</text>
+
+<rect class="box" x="20" y="90" width="150" height="60"/>
+<text x="95" y="125" text-anchor="middle">
+Constraint
+</text>
+
+<rect class="box" x="210" y="90" width="170" height="60"/>
+<text x="295" y="125" text-anchor="middle">
+Reference
+</text>
+
+<rect class="box" x="430" y="90" width="170" height="60"/>
+<text x="515" y="125" text-anchor="middle">
+SPICE
+</text>
+
+<rect class="box" x="650" y="90" width="170" height="60"/>
+<text x="735" y="125" text-anchor="middle">
+Measurement
+</text>
+
+<rect class="box" x="870" y="90" width="170" height="60"/>
+<text x="955" y="125" text-anchor="middle">
+Decoder
+</text>
+
+<rect class="box" x="1070" y="90" width="110" height="60"/>
+<text x="1125" y="125" text-anchor="middle">
+PASS
+</text>
+
+<line class="arrow" x1="170" y1="120" x2="210" y2="120"/>
+<line class="arrow" x1="380" y1="120" x2="430" y2="120"/>
+<line class="arrow" x1="600" y1="120" x2="650" y2="120"/>
+<line class="arrow" x1="820" y1="120" x2="870" y2="120"/>
+<line class="arrow" x1="1040" y1="120" x2="1070" y2="120"/>
+
+</svg>
