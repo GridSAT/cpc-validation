@@ -3,6 +3,8 @@ from __future__ import annotations
 import re
 import subprocess
 from dataclasses import dataclass
+
+DECODE_THRESHOLD_V = 2.5
 from pathlib import Path
 
 
@@ -13,6 +15,16 @@ class SpiceResponse:
     expected: int
     output_voltage: float
     decoded: int
+
+    @property
+    def final_voltage(self) -> float:
+        """Backward-compatible alias for the final simulated output voltage."""
+        return self.output_voltage
+
+    @property
+    def decoded_value(self) -> int:
+        """Backward-compatible alias for the decoded continuation value."""
+        return self.decoded
     netlist_path: Path
     log_path: Path
 
@@ -40,7 +52,7 @@ def simulate_response(
     supply_voltage: float = 5.0,
     resistance_kohm: float = 10.0,
     capacitance_uf: float = 1.0,
-    threshold_voltage: float = 2.5,
+    threshold_voltage: float = DECODE_THRESHOLD_V,
     end_time_ms: float = 50.0,
 ) -> SpiceResponse:
     """
