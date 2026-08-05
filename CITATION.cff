@@ -1,0 +1,52 @@
+cff-version: 1.2.0
+
+title: "CPC Validation"
+message: >
+  If you use this software in academic work, please cite it using the
+  metadata below.
+
+type: software
+
+authors:
+  - family-names: Daghbouche
+    given-names: Karim
+    affiliation: GridSAT Stiftung
+
+  - name: GridSAT Stiftung
+
+repository-code: https://github.com/GridSAT/cpc-validation
+
+url: https://github.com/GridSAT/cpc-validation
+
+license: MIT
+
+version: 0.1.0
+
+date-released: 2026-08-05
+
+abstract: >
+  CPC Validation is the reference validation framework for
+  C-Parity Computing (CPC). The software independently computes
+  continuation functions, generates physical circuit models,
+  validates them using ngspice transient simulation, decodes
+  the resulting physical responses, and compares them against
+  mathematically computed reference continuations. The current
+  release establishes the reproducible software-to-SPICE
+  validation pipeline that serves as the engineering foundation
+  for future compiled passive networks, Monte Carlo robustness
+  analysis, hardware demonstrators, and coherent carrier systems.
+
+keywords:
+  - C-Parity Computing
+  - CPC
+  - Physical Computing
+  - Analog Computing
+  - Constraint Satisfaction
+  - SAT
+  - SPICE
+  - ngspice
+  - Circuit Simulation
+  - Validation
+  - Monte Carlo
+  - Semiconductor Physics
+  - Research Software
