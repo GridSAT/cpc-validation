@@ -341,6 +341,72 @@ envelope of a future constraint-compiled passive network.
 
 ---
 
+# Verified Resistance and RC-Timing Sweep
+
+A deterministic resistance sweep was completed on 5 August 2026 for the
+behavioral-source RC validation baseline.
+
+The output resistance was varied from 5.0 kOhm through 20.0 kOhm in
+increments of 1.0 kOhm. All four admitted boundary conditions were
+simulated at every resistance value.
+
+The fixed parameters were:
+
+- supply voltage: 5.0 V;
+- decoder threshold: 2.5 V;
+- output capacitance: 1.0 uF;
+- transient sampling interval: 0.1 ms;
+- transient simulation window: 150 ms; and
+- settling criterion: final 1% voltage band.
+
+The result was:
+
+| Quantity | Result |
+|---|---:|
+| Resistance points | 16 |
+| Boundary simulations | 64 |
+| Passed | 64 |
+| Failed | 0 |
+| Overall success rate | 100.000000% |
+| Measured 10--90% rise-time range | 11.000 ms to 43.900 ms |
+| Measured 1% settling-time range | 23.096 ms to 92.196 ms |
+| Maximum rise-time relative error | 0.126529% |
+| Maximum settling-time relative error | 0.304654% |
+| Minimum signed decoding margin | 2.497135 V |
+
+The theoretical first-order RC timing relations used for comparison were:
+
+    t_rise = 2.197224577 R C
+
+and
+
+    t_settle = -ln(0.01) R C.
+
+The exact command was:
+
+    python run_resistance_sweep.py
+
+The detailed result file contained 65 rows: one header and 64
+boundary-simulation records. The resistance-level summary contained
+17 rows: one header and 16 resistance records.
+
+The generated figures are:
+
+- `figures/resistance_timing.png`;
+- `figures/resistance_timing_error.png`;
+- `figures/resistance_success_rate.png`.
+
+The measured rise and settling times scale linearly with resistance and
+remain in close agreement with first-order RC theory throughout the tested
+interval. All expected-high responses settled inside the 150 ms simulation
+window.
+
+This sweep validates transient extraction and RC timing analysis for the
+current behavioral-source interface. It does not establish timing behavior
+for a future constraint-compiled passive carrier network.
+
+---
+
 # Scientific Principle
 
 CPC Validation is designed around a simple principle:
