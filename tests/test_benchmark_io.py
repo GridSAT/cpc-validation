@@ -205,36 +205,78 @@ def test_invalid_constraint_shape_is_rejected(
         load_parity_benchmark(path)
 
 
-def test_discover_benchmark_directory() -> None:
+def test_discover_benchmark_directory(
+    tmp_path: Path,
+) -> None:
     from validate_benchmarks import discover_benchmark_paths
+
+    benchmark_directory = tmp_path / "benchmarks"
+    nested_directory = benchmark_directory / "nested"
+
+    nested_directory.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    first = benchmark_directory / "alpha.json"
+    second = nested_directory / "beta.json"
+
+    first.write_text(
+        "{}",
+        encoding="utf-8",
+    )
+
+    second.write_text(
+        "{}",
+        encoding="utf-8",
+    )
 
     paths = discover_benchmark_paths(
         [
-            Path("benchmarks"),
+            benchmark_directory,
         ]
     )
 
     assert paths == [
-        Path("benchmarks/default_xor.json"),
-        Path("benchmarks/parity_chain_5.json"),
-        Path("benchmarks/parity_cycle_6.json"),
+        first,
+        second,
     ]
 
 
-def test_discovery_deduplicates_explicit_and_directory_paths() -> None:
+def test_discovery_deduplicates_explicit_and_directory_paths(
+    tmp_path: Path,
+) -> None:
     from validate_benchmarks import discover_benchmark_paths
+
+    benchmark_directory = tmp_path / "benchmarks"
+    benchmark_directory.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    first = benchmark_directory / "alpha.json"
+    second = benchmark_directory / "beta.json"
+
+    first.write_text(
+        "{}",
+        encoding="utf-8",
+    )
+
+    second.write_text(
+        "{}",
+        encoding="utf-8",
+    )
 
     paths = discover_benchmark_paths(
         [
-            Path("benchmarks"),
-            Path("benchmarks/default_xor.json"),
+            benchmark_directory,
+            first,
         ]
     )
 
     assert paths == [
-        Path("benchmarks/default_xor.json"),
-        Path("benchmarks/parity_chain_5.json"),
-        Path("benchmarks/parity_cycle_6.json"),
+        first,
+        second,
     ]
 
 
