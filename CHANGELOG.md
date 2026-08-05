@@ -7,6 +7,34 @@ The format follows **Keep a Changelog** and this project follows
 
 ---
 
+## [0.2.0] - 2026-08-05
+
+### Added
+
+- reproducible 1,000-sample Monte Carlo validation;
+- deterministic decoder-threshold validation;
+- deterministic supply-voltage validation;
+- transient waveform extraction;
+- deterministic resistance and capacitance timing validation;
+- first-order RC theory comparisons;
+- deterministic imposed temperature-drift validation;
+- quick and full consolidated validation profiles;
+- generated Markdown validation report; and
+- generated machine-readable validation summary.
+
+### Validation
+
+- ten of ten full-profile validation stages passed;
+- all 4,000 Monte Carlo boundary simulations passed;
+- all 136 temperature-conditioned boundary simulations passed;
+- all deterministic parameter-sweep simulations passed; and
+- measured transient timing remained consistent with first-order RC theory.
+
+### Scope
+
+The temperature study uses explicitly imposed linear component-drift
+coefficients. It is not a calibrated physical-device temperature model.
+
 ## [0.1.0] - 2026-08-05
 
 ### Added

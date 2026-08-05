@@ -473,6 +473,85 @@ for a future constraint-compiled passive carrier network.
 
 ---
 
+# Verified Imposed Temperature-Drift Sweep
+
+A deterministic imposed temperature-drift sweep was completed on
+5 August 2026 for the constraint-compiled existential-response circuit
+and its RC output interface.
+
+The temperature parameter was varied from -40 degrees C through
+125 degrees C in increments of 5 degrees C. All four admitted boundary
+conditions were simulated at every temperature point.
+
+Because the present circuit uses ideal SPICE components, temperature
+dependence was introduced explicitly through a linear parameter-drift
+model rather than through an uncalibrated simulator temperature setting.
+
+The imposed component relations were:
+
+    R(T) = R0 [1 + alpha_R (T - T0)]
+
+and
+
+    C(T) = C0 [1 + alpha_C (T - T0)].
+
+The model parameters were:
+
+- nominal temperature: 25 degrees C;
+- nominal resistance: 10.0 kOhm;
+- nominal capacitance: 1.0 uF;
+- resistor coefficient: +100 ppm per degree C;
+- capacitor coefficient: -200 ppm per degree C;
+- supply voltage: 5.0 V;
+- decoder threshold: 2.5 V;
+- transient sampling interval: 0.1 ms;
+- transient simulation window: 80 ms; and
+- settling criterion: final 1% voltage band.
+
+The verified result was:
+
+| Quantity | Result |
+|---|---:|
+| Temperature points | 34 |
+| Boundary simulations | 136 |
+| Passed | 136 |
+| Failed | 0 |
+| Overall success rate | 100.000000% |
+| Effective resistance range | 9.935000 kOhm to 10.100000 kOhm |
+| Effective capacitance range | 0.980000 uF to 1.013000 uF |
+| Effective RC time-constant range | 9.898000 ms to 10.064155 ms |
+| Measured 10--90% rise-time range | 21.700 ms to 22.100 ms |
+| Measured 1% settling-time range | 45.596 ms to 46.396 ms |
+| Maximum rise-time relative error | 0.233075% |
+| Maximum settling-time relative error | 0.232314% |
+| Minimum signed decoding margin | 2.498186 V |
+
+The exact command was:
+
+    python run_temperature_sweep.py
+
+The detailed result file contained 137 rows: one header and 136
+boundary-simulation records. The temperature-level summary contained
+35 rows: one header and 34 temperature records.
+
+The generated figures are:
+
+- `figures/temperature_component_drift.png`;
+- `figures/temperature_timing.png`;
+- `figures/temperature_margin.png`; and
+- `figures/temperature_success_rate.png`.
+
+All admitted boundary conditions decoded correctly over the complete
+tested temperature interval. Measured transient timing remained within
+approximately 0.24% of first-order RC theory.
+
+This result is a deterministic parameter-sensitivity study under the
+declared linear component-drift coefficients. It is not a calibrated
+temperature model for a selected resistor, capacitor, semiconductor
+process, PCB, or physical carrier substrate.
+
+---
+
 # Scientific Principle
 
 CPC Validation is designed around a simple principle:

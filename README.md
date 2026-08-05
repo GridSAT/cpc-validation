@@ -417,19 +417,22 @@ The full profile executes:
 5. the reproducible 1,000-sample Monte Carlo study;
 6. the decoder-threshold sweep;
 7. the supply-voltage sweep;
-8. the resistance and RC timing sweep; and
-9. the capacitance and RC timing sweep.
+8. the resistance and RC timing sweep;
+9. the capacitance and RC timing sweep; and
+10. the imposed temperature-drift sweep.
 
 The verified full-profile validation (5 August 2026) completed with:
 
 | Quantity | Result |
 |---|---:|
-| Validation stages | 9 |
-| Stages passed | 9 |
+| Validation stages | 10 |
+| Stages passed | 10 |
 | Stages failed | 0 |
-| Automated tests | 72 passed |
+| Automated tests | 85 passed |
 | Monte Carlo parameter samples | 1,000 |
 | Monte Carlo boundary simulations | 4,000 |
+| Temperature points | 34 |
+| Temperature-conditioned boundary simulations | 136 |
 | Overall validation | PASS |
 
 Generated reports are reproducible build artifacts and are intentionally
@@ -589,9 +592,12 @@ Validation will report:
 - deterministic 16-point resistance and RC-timing sweep; and
 - deterministic 15-point capacitance and RC-timing sweep.
 
-**Next milestone**
+**Engineering robustness milestone**
 
-- temperature sweep and consolidated validation report.
+- Version 0.2 validation scope completed;
+- ten-stage consolidated full-profile validation: PASS;
+- imposed temperature-drift study: PASS; and
+- reproducible Markdown and CSV report generation.
 
 The current SPICE implementation is intentionally small and auditable. It
 provides the reference execution pipeline from which compiled-network
@@ -615,7 +621,7 @@ experiments will be developed.
 
 ### Version 0.2 — Engineering robustness validation
 
-**Status: in progress**
+**Status: completed**
 
 Completed:
 
@@ -633,10 +639,14 @@ Completed:
 - deterministic 15-point capacitance sweep;
 - RC theory comparison and timing-error figures.
 
-Remaining:
+Final validation artifacts:
 
-- temperature sweep;
-- consolidated validation report.
+- deterministic 34-point imposed temperature-drift sweep;
+- 136 successful temperature-conditioned boundary simulations;
+- ten-stage consolidated validation runner;
+- quick and full validation profiles;
+- generated Markdown validation report; and
+- generated machine-readable validation summary.
 
 ### Version 0.3 — Compiled network model
 

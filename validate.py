@@ -86,12 +86,14 @@ def build_steps(
         supply_step = "0.5"
         resistance_step = "5.0"
         capacitance_step = "0.25"
+        temperature_step = "25.0"
     elif profile == "full":
         monte_carlo_samples = 1000
         threshold_step = "0.1"
         supply_step = "0.1"
         resistance_step = "1.0"
         capacitance_step = "0.125"
+        temperature_step = "5.0"
     else:
         raise ValueError(f"Unknown validation profile: {profile}")
 
@@ -307,6 +309,50 @@ def build_steps(
                 "against first-order RC theory."
             ),
         ),
+        ValidationStep(
+            name="Imposed temperature-drift sweep",
+            command=(
+                sys.executable,
+                "run_temperature_sweep.py",
+                "--step",
+                temperature_step,
+                "--detail-output",
+                str(
+                    RESULT_DIRECTORY
+                    / f"validation_temperature_{profile}.csv"
+                ),
+                "--summary-output",
+                str(
+                    RESULT_DIRECTORY
+                    / f"validation_temperature_summary_{profile}.csv"
+                ),
+                "--component-figure",
+                str(
+                    RESULT_DIRECTORY
+                    / f"validation_temperature_components_{profile}.png"
+                ),
+                "--timing-figure",
+                str(
+                    RESULT_DIRECTORY
+                    / f"validation_temperature_timing_{profile}.png"
+                ),
+                "--margin-figure",
+                str(
+                    RESULT_DIRECTORY
+                    / f"validation_temperature_margin_{profile}.png"
+                ),
+                "--success-figure",
+                str(
+                    RESULT_DIRECTORY
+                    / f"validation_temperature_success_{profile}.png"
+                ),
+            ),
+            description=(
+                "Verify decoding and RC timing under an explicitly imposed "
+                "linear resistor and capacitor temperature-drift model."
+            ),
+        ),
+
     ]
 
 
@@ -521,9 +567,9 @@ def write_markdown_report(
             (
                 "The report does not establish the behavior of a future "
                 "passive carrier network, a coherent physical carrier, or "
-                "real hardware. Temperature validation is intentionally "
-                "excluded because the present ideal component models do not "
-                "define physical temperature coefficients."
+                "real hardware. The temperature stage uses explicitly "
+                "imposed linear component-drift coefficients; it is a "
+                "parameter-sensitivity study, not a calibrated device model."
             ),
             "",
             "## Detailed step output",
