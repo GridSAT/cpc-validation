@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "name": "parity-cycle-6",
+  "description": "Six-variable parity cycle with boundary variables x0 and x5 and continuation relation x0 XOR x5 = 1.",
+  "boundary_variables": [0, 5],
+  "constraints": [
+    {
+      "variables": [0, 1, 2],
+      "parity": 0
+    },
+    {
+      "variables": [1, 2, 3],
+      "parity": 1
+    },
+    {
+      "variables": [2, 3, 4],
+      "parity": 0
+    },
+    {
+      "variables": [3, 4, 5],
+      "parity": 1
+    },
+    {
+      "variables": [4, 5, 0],
+      "parity": 0
+    },
+    {
+      "variables": [0, 5],
+      "parity": 1
+    }
+  ]
+}

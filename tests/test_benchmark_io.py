@@ -217,6 +217,7 @@ def test_discover_benchmark_directory() -> None:
     assert paths == [
         Path("benchmarks/default_xor.json"),
         Path("benchmarks/parity_chain_5.json"),
+        Path("benchmarks/parity_cycle_6.json"),
     ]
 
 
@@ -233,6 +234,7 @@ def test_discovery_deduplicates_explicit_and_directory_paths() -> None:
     assert paths == [
         Path("benchmarks/default_xor.json"),
         Path("benchmarks/parity_chain_5.json"),
+        Path("benchmarks/parity_cycle_6.json"),
     ]
 
 
@@ -279,3 +281,34 @@ def test_discovery_rejects_empty_directory(
                 tmp_path,
             ]
         )
+
+
+def test_load_parity_cycle_benchmark() -> None:
+    benchmark = load_parity_benchmark(
+        Path("benchmarks/parity_cycle_6.json")
+    )
+
+    assert benchmark.name == "parity-cycle-6"
+
+    assert benchmark.instance.variables == (
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+    )
+
+    assert benchmark.instance.boundary_variables == (
+        0,
+        5,
+    )
+
+    assert benchmark.instance.internal_variables == (
+        1,
+        2,
+        3,
+        4,
+    )
+
+    assert len(benchmark.instance.constraints) == 6

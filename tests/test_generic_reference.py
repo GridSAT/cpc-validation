@@ -45,6 +45,7 @@ def test_default_xor_reference_table() -> None:
                 result.continuation_value
                 == expected_value
             )
+
             assert (
                 result.completion_count
                 == expected_count
@@ -170,3 +171,40 @@ def test_reference_boundary_values_must_match_instance() -> None:
                 3: 2,
             },
         )
+
+
+def test_parity_cycle_reference_table() -> None:
+    benchmark = load_parity_benchmark(
+        "benchmarks/parity_cycle_6.json"
+    )
+
+    expected = {
+        (0, 0): (0, 0),
+        (0, 1): (1, 1),
+        (1, 0): (1, 1),
+        (1, 1): (0, 0),
+    }
+
+    for x0 in (0, 1):
+        for x5 in (0, 1):
+            result = evaluate_parity_instance(
+                benchmark.instance,
+                {
+                    0: x0,
+                    5: x5,
+                },
+            )
+
+            expected_value, expected_count = expected[
+                (x0, x5)
+            ]
+
+            assert (
+                result.continuation_value
+                == expected_value
+            )
+
+            assert (
+                result.completion_count
+                == expected_count
+            )
