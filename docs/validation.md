@@ -287,6 +287,60 @@ operating envelope of a future constraint-compiled passive network.
 
 ---
 
+# Verified Supply-Voltage Sweep
+
+A deterministic supply-voltage sweep was completed on 5 August 2026
+for the behavioral-source RC validation baseline.
+
+The supply voltage was varied from 4.0 V through 5.5 V in increments
+of 0.1 V. All four admitted boundary conditions were simulated at
+every supply value.
+
+The fixed parameters were:
+
+- decoder threshold: 2.5 V;
+- output resistance: 10.0 kOhm; and
+- output capacitance: 1.0 uF.
+
+The result was:
+
+| Quantity | Result |
+|---|---:|
+| Supply-voltage points | 16 |
+| Boundary simulations | 64 |
+| Passed | 64 |
+| Failed | 0 |
+| Overall success rate | 100.000000% |
+| Fully passing tested interval | 4.0 V to 5.5 V |
+| Global minimum signed margin | 1.499960 V |
+| Expected-1 output range | 3.999960 V to 5.499945 V |
+| Expected-0 output range | 0.000000 V to 0.000000 V |
+
+The exact command was:
+
+    python run_supply_sweep.py
+
+The detailed result file contained 65 rows: one header and 64
+boundary-simulation records. The supply-level summary contained
+17 rows: one header and 16 supply records.
+
+The generated figures are:
+
+- `figures/supply_success_rate.png`;
+- `figures/supply_voltage_response.png`;
+- `figures/supply_margin.png`.
+
+The expected-1 output tracked the supply voltage throughout the tested
+interval, while the expected-0 output remained at approximately zero.
+With the decoder threshold fixed at 2.5 V, the smallest measured signed
+margin occurred at the minimum tested supply voltage of 4.0 V.
+
+This sweep characterizes supply-voltage dependence of the current
+behavioral-source RC baseline. It does not establish the supply-voltage
+envelope of a future constraint-compiled passive network.
+
+---
+
 # Scientific Principle
 
 CPC Validation is designed around a simple principle:
