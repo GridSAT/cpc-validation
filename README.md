@@ -130,7 +130,7 @@ pipeline:
 For an admitted instance $X$, let
 
 $$
-\operatorname{Eval}_X:
+\mathrm{Eval}_X:
 \mathcal{B}_X
 \longrightarrow
 \mathcal{E}_X
@@ -143,16 +143,16 @@ A physical realization is validated by requiring
 
 $$
 \Pr\!\left[
-\operatorname{Decode}_X\!\left(
+\mathrm{Decode}_X\!\left(
 M_X\!\left(
 U_{X,\tau_X}(p),
 b
 \right)
 \right)
 =
-\operatorname{Eval}_X(b)
+\mathrm{Eval}_X(b)
 \;\middle|\;
-p\sim\operatorname{Prep}_X(b)
+p\sim\mathrm{Prep}_X(b)
 \right]
 \geq
 1-\varepsilon_X.
@@ -222,7 +222,7 @@ $$
 The continuation function is therefore
 
 $$
-\operatorname{Eval}(x_0,x_3)=x_0\oplus x_3.
+\mathrm{Eval}(x_0,x_3)=x_0\oplus x_3.
 $$
 
 A boundary assignment receives continuation value $1$ exactly when the
@@ -232,7 +232,7 @@ residual system has at least one completion of its internal variables.
 
 ## Reference continuation table
 
-| $x_0$ | $x_3$ | Continuation value | Internal completions |
+| `x0` | `x3` | Continuation value | Internal completions |
 |---:|---:|---:|---:|
 | 0 | 0 | 0 | 0 |
 | 0 | 1 | 1 | 2 |
