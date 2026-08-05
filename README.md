@@ -127,21 +127,21 @@ pipeline:
             v
     continuation value
 
-For an admitted instance \(X\), let
+For an admitted instance $X$, let
 
-\[
+$$
 \operatorname{Eval}_X:
 \mathcal{B}_X
 \longrightarrow
 \mathcal{E}_X
-\]
+$$
 
 be an independently defined continuation function over the admitted boundary
-or interface conditions \(b\in\mathcal{B}_X\).
+or interface conditions $b\in\mathcal{B}_X$.
 
 A physical realization is validated by requiring
 
-\[
+$$
 \Pr\!\left[
 \operatorname{Decode}_X\!\left(
 M_X\!\left(
@@ -156,7 +156,7 @@ p\sim\operatorname{Prep}_X(b)
 \right]
 \geq
 1-\varepsilon_X.
-\]
+$$
 
 The compiler and physical program may depend on the instance and the admitted
 boundary condition. The independently computed continuation values remain
@@ -202,37 +202,37 @@ The detailed validation methodology is documented in
 
 The initial benchmark is the XOR constraint system
 
-\[
+$$
 x_0\oplus x_1\oplus x_2=0,
-\]
+$$
 
-\[
+$$
 x_1\oplus x_2\oplus x_3=1.
-\]
+$$
 
-The boundary variables are \(x_0\) and \(x_3\). The internal variables are
-\(x_1\) and \(x_2\).
+The boundary variables are $x_0$ and $x_3$. The internal variables are
+$x_1$ and $x_2$.
 
-Eliminating the shared quantity \(x_1\oplus x_2\) gives
+Eliminating the shared quantity $x_1\oplus x_2$ gives
 
-\[
+$$
 x_0\oplus x_3=1.
-\]
+$$
 
 The continuation function is therefore
 
-\[
+$$
 \operatorname{Eval}(x_0,x_3)=x_0\oplus x_3.
-\]
+$$
 
-A boundary assignment receives continuation value \(1\) exactly when the
+A boundary assignment receives continuation value $1$ exactly when the
 residual system has at least one completion of its internal variables.
 
 ---
 
 ## Reference continuation table
 
-| \(x_0\) | \(x_3\) | Continuation value | Internal completions |
+| $x_0$ | $x_3$ | Continuation value | Internal completions |
 |---:|---:|---:|---:|
 | 0 | 0 | 0 | 0 |
 | 0 | 1 | 1 | 2 |
