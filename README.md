@@ -68,6 +68,9 @@ Expected SPICE result:
 - [Current scope](#current-scope)
 - [Installation](#installation)
 - [Running the project](#running-the-project)
+- [Generic parity compiler](#generic-parity-compiler)
+- [External JSON benchmarks](#external-json-benchmarks)
+- [Reproducible benchmark generation](#reproducible-benchmark-generation)
 - [Tests](#tests)
 - [Repository structure](#repository-structure)
 - [Validation principles](#validation-principles)
@@ -490,6 +493,143 @@ validation. It does not claim scalable passive-network realization.
 
 ---
 
+## Generic parity compiler
+
+The `v0.3-dev` branch introduces a generic compiler for Boolean parity
+constraint systems.
+
+A parity constraint is represented as data:
+
+```python
+ParityConstraint(
+    variables=(0, 1, 2),
+    parity=0,
+)
+```
+
+A complete instance declares:
+
+- one or more parity constraints;
+- the admitted boundary variables; and
+- physical-interface parameters such as supply voltage, resistance,
+  capacitance, and transient duration.
+
+Every variable appearing in a constraint but not declared as a boundary
+variable is treated as an internal variable.
+
+The compilation path is:
+
+```text
+parity instance
+        |
+        v
+internal-assignment enumeration
+        |
+        v
+candidate-validity sources
+        |
+        v
+existential aggregation
+        |
+        v
+restricted RC interface
+        |
+        v
+ngspice netlist
+```
+
+The generic compiler is implemented in:
+
+- `src/compiler.py`
+
+Inspect the built-in reference instance:
+
+```bash
+python run_compiler.py
+```
+
+The simulator delegates netlist generation to this generic compiler. The
+compiler is therefore the single source of truth for parity-to-SPICE
+translation.
+
+The current backend is intentionally explicit and auditable. It enumerates all
+internal assignments and uses behavioral sources for candidate validity and
+existential aggregation. For `k` internal variables, it generates `2^k`
+candidate assignments.
+
+This establishes a generic constraint-compilation interface. It does not claim
+polynomial scaling or a passive physical realization.
+
+## Reproducible benchmark generation
+
+The development branch includes a deterministic benchmark generator:
+
+```bash
+python generate_parity_benchmarks.py \
+    --family chain \
+    --variables 4:10:2 \
+    --output-directory benchmarks/generated/chain
+```
+
+Supported families are:
+
+- `chain`;
+- `cycle`;
+- `star`; and
+- `random`.
+
+The `--variables` argument accepts either one size or an inclusive range:
+
+```text
+8
+4:10:2
+```
+
+A reproducible random family can be generated with:
+
+```bash
+python generate_parity_benchmarks.py \
+    --family random \
+    --variables 4:8:2 \
+    --constraints 4 \
+    --arity 3 \
+    --seed 20260806 \
+    --output-directory benchmarks/generated/random
+```
+
+Generated random benchmarks guarantee that every declared variable occurs in
+the constraint system. This keeps requested variable counts, compiled variable
+counts, internal-variable counts, and candidate counts aligned.
+
+The generated corpus is a reproducible build artifact and is excluded from Git.
+It can be regenerated and validated with:
+
+```bash
+python validate_benchmarks.py benchmarks/generated/
+```
+
+The verified development corpus currently contains:
+
+| Quantity | Result |
+|---|---:|
+| Generated benchmark families | 4 |
+| Generated benchmarks | 13 |
+| Boundary simulations | 52 |
+| Passed | 52 |
+| Failed | 0 |
+| Largest variable count | 10 |
+| Largest internal-variable count | 8 |
+| Largest candidate count | 256 |
+| Overall result | PASS |
+
+The generator is implemented in:
+
+- `generate_parity_benchmarks.py`
+
+Its regression tests are in:
+
+- `tests/test_benchmark_generator.py`
+
 ## Tests
 
 Run all tests:
@@ -513,44 +653,78 @@ The test program will be extended to cover:
 
 ## Repository structure
 
-    cpc-validation/
-    ├── README.md
-    ├── LICENSE
-    ├── CITATION.cff
-    ├── CHANGELOG.md
-    ├── CONTRIBUTING.md
-    ├── .gitignore
-    ├── pytest.ini
-    ├── requirements.txt
-    ├── requirements-lock.txt
-    ├── run_spice.py
-    │
-    ├── baselines/
-    │   ├── continuation_table.csv
-    │   └── xor_reference.json
-    │
-    ├── docs/
-    │   ├── architecture.md
-    │   ├── validation.md
-    │   └── roadmap.md
-    │
-    ├── figures/
-    │   ├── pipeline.svg
-    │   └── rc-demo.svg
-    │
-    ├── src/
-    │   ├── __init__.py
-    │   ├── reference.py
-    │   └── spice_model.py
-    │
-    └── tests/
-        ├── test_reference.py
-        └── test_spice.py
+```text
+cpc-validation/
+├── README.md
+├── LICENSE
+├── CITATION.cff
+├── CHANGELOG.md
+├── CONTRIBUTING.md
+├── .gitignore
+├── pytest.ini
+├── requirements.txt
+├── requirements-lock.txt
+│
+├── run_spice.py
+├── run_compiler.py
+├── run_benchmark.py
+├── validate_benchmarks.py
+├── generate_parity_benchmarks.py
+├── run_monte_carlo.py
+├── run_threshold_sweep.py
+├── run_supply_sweep.py
+├── run_resistance_sweep.py
+├── run_capacitance_sweep.py
+├── run_temperature_sweep.py
+├── run_transient_smoke.py
+├── validate.py
+│
+├── baselines/
+│   ├── continuation_table.csv
+│   └── xor_reference.json
+│
+├── benchmarks/
+│   ├── default_xor.json
+│   ├── parity_chain_5.json
+│   ├── parity_cycle_6.json
+│   └── generated/                 # reproducible, ignored corpus
+│
+├── docs/
+│   ├── architecture.md
+│   ├── benchmarks.md
+│   ├── compiler.md
+│   ├── generator.md
+│   ├── validation.md
+│   └── roadmap.md
+│
+├── figures/
+│   ├── pipeline.svg
+│   ├── rc-demo.svg
+│   └── validation figures
+│
+├── src/
+│   ├── __init__.py
+│   ├── benchmark_io.py
+│   ├── compiler.py
+│   ├── generic_reference.py
+│   ├── reference.py
+│   ├── spice_model.py
+│   └── transient_analysis.py
+│
+└── tests/
+    ├── test_benchmark_generator.py
+    ├── test_benchmark_io.py
+    ├── test_compiler.py
+    ├── test_generic_reference.py
+    ├── test_monte_carlo.py
+    ├── test_reference.py
+    ├── test_spice_model.py
+    └── parameter-sweep tests
+```
 
-Files shown above may be introduced progressively as the validation framework
-develops.
-
----
+Generated netlists, reports, result CSV files, validation figures written under
+`results/`, and generated benchmark corpora are intentionally excluded from
+normal Git history.
 
 ## Validation principles
 
@@ -623,131 +797,158 @@ Validation will report:
 
 ## Project status
 
-**Version:** 0.2.0
+**Released baseline:** v0.2.0
 
-**Status:** Research prototype
+**Development branch:** `v0.3-dev`
 
-**Completed**
+**Status:** Generic parity compiler and benchmark framework under active
+development
 
-- independent continuation evaluator;
-- complete four-condition XOR reference table;
-- ngspice transient validation;
-- fixed output decoder;
-- automated logical regression tests;
-- reproducible dependency metadata;
-- project documentation and citation metadata;
-- reproducible 1,000-sample Monte Carlo validation;
-- deterministic 41-point decoder-threshold sweep;
-- deterministic 16-point supply-voltage sweep;
-- deterministic 16-point resistance and RC-timing sweep; and
-- deterministic 15-point capacitance and RC-timing sweep.
+### Released v0.2.0 research prototype
 
-**Engineering robustness milestone**
+The immutable v0.2.0 release provides:
 
-- Version 0.2 validation scope completed;
-- ten-stage consolidated full-profile validation: PASS;
-- imposed temperature-drift study: PASS; and
-- reproducible Markdown and CSV report generation.
+- the independently evaluated XOR continuation benchmark;
+- nominal ngspice validation;
+- transient waveform extraction;
+- Monte Carlo robustness validation;
+- decoder-threshold validation;
+- supply-voltage validation;
+- resistance and capacitance timing validation;
+- imposed temperature-drift validation; and
+- ten-stage consolidated quick and full validation profiles.
 
-The current SPICE implementation is intentionally small and auditable. It
-provides the reference execution pipeline from which compiled-network
-experiments will be developed.
+### Current v0.3 development milestone
 
----
+Completed on `v0.3-dev`:
+
+- generic parity-constraint representation;
+- generic parity-to-ngspice compiler;
+- single-source compiler delegation from the simulator;
+- arbitrary-length XOR-expression generation;
+- compilation statistics;
+- external JSON benchmark schema;
+- benchmark loader and boundary parser;
+- generic independent continuation evaluator;
+- complete-boundary benchmark validation;
+- recursive benchmark discovery;
+- permanent chain and cycle benchmark families;
+- deterministic benchmark generation;
+- generated chain, cycle, star, and random families;
+- full declared-variable coverage for generated random systems;
+- generated corpus validation; and
+- compiler and benchmark regression tests.
+
+The current backend remains exhaustive in the number of internal variables and
+uses behavioral sources. The present work establishes correctness,
+reproducibility, generality of instance representation, and measurable compiler
+output. It does not establish scalable passive-network realization.
 
 ## Roadmap
 
 ### Version 0.1 — Reference validation baseline
 
-**Status: completed**
+**Status:** completed
 
-- exact continuation evaluator;
-- XOR boundary benchmark;
-- generated ngspice netlists;
-- transient output decoding;
-- automated tests;
-- machine-readable reference data;
-- reproducible four-condition validation.
+- independently evaluated XOR continuation function;
+- generated ngspice model;
+- fixed decoder; and
+- complete four-condition validation.
 
 ### Version 0.2 — Engineering robustness validation
 
-**Status: completed**
+**Status:** completed and released
+
+- Monte Carlo robustness validation;
+- deterministic threshold and supply sweeps;
+- resistance and capacitance timing studies;
+- imposed temperature-drift study;
+- transient waveform extraction;
+- RC-theory comparison; and
+- consolidated quick and full validation reports.
+
+### Version 0.3 — Generic parity compiler and benchmark framework
+
+**Status:** in progress
 
 Completed:
 
-- reproducible 1,000-sample Monte Carlo validation;
-- 4,000 successful boundary simulations;
-- deterministic 41-point decoder-threshold sweep;
-- deterministic 16-point supply-voltage sweep;
-- detailed and summary CSV output;
-- decoder success-rate and margin figures;
-- supply-response and supply-margin figures;
-- transient waveform extraction;
-- measured 10--90% rise-time analysis;
-- measured 1% settling-time analysis;
-- deterministic 16-point resistance sweep;
-- deterministic 15-point capacitance sweep;
-- RC theory comparison and timing-error figures.
+- generic parity constraint representation;
+- generic parity-to-SPICE compiler;
+- external JSON benchmark schema;
+- independent generic reference evaluator;
+- recursive benchmark discovery;
+- complete-boundary validation;
+- permanent chain and cycle benchmarks;
+- deterministic chain, cycle, star, and random generators;
+- generated corpus validation; and
+- compiler resource accounting.
 
-Final validation artifacts:
+Remaining:
 
-- deterministic 34-point imposed temperature-drift sweep;
-- 136 successful temperature-conditioned boundary simulations;
-- ten-stage consolidated validation runner;
-- quick and full validation profiles;
-- generated Markdown validation report; and
-- generated machine-readable validation summary.
+- formal compiler scaling study;
+- scaling CSV aggregation;
+- candidate-growth figures;
+- netlist-size figures;
+- compilation-time figures;
+- simulation-time figures; and
+- final v0.3 documentation and release validation.
 
-### Version 0.3 — Compiled network model
+### Version 0.4 — Compiler scaling and statistics
 
-**Status: planned**
+**Status:** planned
 
-- replace direct behavioral response realization;
-- generate network topology from constraint data;
-- generate component settings from fixed compilation rules;
-- enforce the anti-embedding contract;
-- validate multiple parity instances;
-- audit generated netlists for answer independence.
+- systematic topology-family scaling studies;
+- compiler-output growth characterization;
+- simulation-cost characterization;
+- publication-quality scaling figures;
+- documented limits of the exhaustive backend; and
+- consolidated scaling report.
 
-### Version 0.4 — Response-class validation
+### Version 0.5 — CNF and DIMACS front end
 
-**Status: planned**
+**Status:** planned
+
+- DIMACS parser;
+- CNF instance representation;
+- independent CNF continuation evaluator;
+- CNF-to-physical-backend compilation;
+- small canonical SAT benchmarks; and
+- complete boundary-validation workflow.
+
+### Version 0.6 — General Boolean constraints
+
+**Status:** planned
+
+- mixed AND, OR, NOT, and XOR constraints;
+- typed intermediate representation;
+- backend-independent logical modules; and
+- additional physical backends.
+
+### Version 0.7 — Response-class and physical-backend validation
+
+**Status:** planned
 
 - multiple initial states;
-- different transient histories;
-- power-up sequence variation;
-- parameter perturbation classes;
-- repeated reset experiments;
+- transient-history variation;
+- reset experiments;
 - response-equivalence statistics;
+- passive or transistor-level backend experiments; and
 - failure-mode classification.
-
-### Version 0.5 — Hardware demonstrator
-
-**Status: planned**
-
-- component selection;
-- PCB or programmable analog implementation;
-- measurement protocol;
-- calibration protocol;
-- physical reset procedure;
-- comparison with SPICE predictions;
-- hardware-to-reference validation.
 
 ### Version 1.0 — CPC validation research release
 
-**Status: planned**
+**Status:** planned
 
 - complete reproducibility package;
 - archived simulation data;
-- archived hardware data;
+- compiler and backend documentation;
 - release DOI;
 - CPC white-paper integration;
-- documented experimental results;
+- documented experimental results; and
 - external reproduction instructions.
 
 See [`docs/roadmap.md`](docs/roadmap.md) for the detailed development plan.
-
----
 
 ## Related CPC research
 

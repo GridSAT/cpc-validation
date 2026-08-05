@@ -7,6 +7,47 @@ The format follows **Keep a Changelog** and this project follows
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- generic parity-constraint representation;
+- generic parity-to-ngspice compiler;
+- arbitrary-length XOR-expression generation;
+- compiler statistics and inspection runner;
+- simulator delegation to the generic compiler;
+- external JSON parity-benchmark schema;
+- benchmark loader and boundary parser;
+- independent generic continuation evaluator;
+- recursive benchmark discovery;
+- complete-boundary benchmark validation;
+- permanent chain and cycle benchmarks;
+- deterministic chain, cycle, star, and random benchmark generators;
+- generated random-system boundary participation;
+- full declared-variable coverage for random systems;
+- generated benchmark corpus validation;
+- benchmark compilation, netlist-size, and simulation-time accounting;
+- compiler documentation;
+- benchmark-format documentation; and
+- generator documentation.
+
+### Validation
+
+- generic compiler output agrees with the simulator compilation path;
+- permanent benchmark suite validates all admitted boundary assignments;
+- generated corpus validates 52 of 52 boundary simulations;
+- generated corpus spans candidate counts from 4 through 256; and
+- compiler, benchmark, generator, and legacy engineering regression tests pass.
+
+### Scope
+
+The current parity backend enumerates every internal assignment and therefore
+generates `2^k` candidates for `k` internal variables.
+
+The current work establishes a generic, reproducible, answer-independent
+compilation and validation framework. It does not claim efficient scaling or a
+passive physical implementation.
+
 ## [0.2.0] - 2026-08-05
 
 ### Added
