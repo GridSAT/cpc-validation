@@ -8,3 +8,6 @@ results/
 
 # Generated validation reports
 reports/
+
+# Generated compiler netlists
+netlists/compiler/
