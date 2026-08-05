@@ -379,6 +379,62 @@ def build_steps(
             ),
         ),
 
+        ValidationStep(
+            name="Compiler scaling regression",
+            command=(
+                sys.executable,
+                "run_scaling_study.py",
+                "--families",
+                "chain,cycle,star,random",
+                "--variables",
+                "4:6:2",
+                "--seed",
+                "20260806",
+                "--working-directory",
+                str(
+                    RESULT_DIRECTORY
+                    / f"scaling_work_{profile}"
+                ),
+                "--summary-output",
+                str(
+                    RESULT_DIRECTORY
+                    / f"scaling_summary_{profile}.csv"
+                ),
+                "--candidate-figure",
+                str(
+                    RESULT_DIRECTORY
+                    / f"scaling_candidates_{profile}.png"
+                ),
+                "--source-figure",
+                str(
+                    RESULT_DIRECTORY
+                    / f"scaling_sources_{profile}.png"
+                ),
+                "--netlist-figure",
+                str(
+                    RESULT_DIRECTORY
+                    / f"scaling_netlist_size_{profile}.png"
+                ),
+                "--compilation-figure",
+                str(
+                    RESULT_DIRECTORY
+                    / f"scaling_compile_time_{profile}.png"
+                ),
+                "--simulation-figure",
+                str(
+                    RESULT_DIRECTORY
+                    / f"scaling_simulation_time_{profile}.png"
+                ),
+            ),
+            description=(
+                "Generate four parity benchmark families at two sizes, "
+                "compile and simulate every admitted boundary assignment, "
+                "validate against the independent reference evaluator, and "
+                "record candidate, source, netlist, compilation, and "
+                "simulation growth."
+            ),
+        ),
+
     ]
 
 

@@ -33,6 +33,16 @@ The format follows **Keep a Changelog** and this project follows
 
 ### Validation
 
+- compiler scaling runner with deterministic benchmark generation;
+- per-benchmark scaling CSV aggregation;
+- candidate-count and behavioral-source growth figures;
+- generated-netlist-size figure;
+- compilation-time figure;
+- ngspice simulation-time figure;
+- verified 12-benchmark smoke study;
+- 48 of 48 scaling boundary simulations passed; and
+- reduced scaling regression integrated into consolidated validation.
+
 - generic compiler output agrees with the simulator compilation path;
 - permanent benchmark suite validates all admitted boundary assignments;
 - generated corpus validates 52 of 52 boundary simulations;
