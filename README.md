@@ -440,6 +440,56 @@ excluded from normal Git history.
 
 ---
 
+## External JSON benchmarks
+
+The `v0.3-dev` branch supports externally defined parity-constraint
+benchmarks.
+
+Compile and simulate one admitted boundary assignment:
+
+```bash
+python run_benchmark.py \
+    benchmarks/default_xor.json \
+    --boundary 'x0=0,x3=1'
+```
+
+Validate every boundary assignment for every JSON benchmark discovered under
+the benchmark directory:
+
+```bash
+python validate_benchmarks.py benchmarks/
+```
+
+Explicit benchmark files may also be supplied:
+
+```bash
+python validate_benchmarks.py \
+    benchmarks/default_xor.json \
+    benchmarks/parity_chain_5.json
+```
+
+For each admitted boundary assignment, the validator records:
+
+- the independently computed continuation value;
+- the internal-completion count;
+- the decoded SPICE response;
+- the output voltage;
+- the constraint and variable counts;
+- the candidate count;
+- the generated-netlist size;
+- the compilation time; and
+- the simulation time.
+
+The benchmark schema and anti-embedding contract are documented in
+[`docs/benchmarks.md`](docs/benchmarks.md).
+
+The current compiler enumerates all internal assignments and uses behavioral
+sources for candidate validity and existential aggregation. This milestone
+establishes generic instance loading, compilation, simulation, and independent
+validation. It does not claim scalable passive-network realization.
+
+---
+
 ## Tests
 
 Run all tests:

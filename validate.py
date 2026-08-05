@@ -353,6 +353,32 @@ def build_steps(
             ),
         ),
 
+        ValidationStep(
+            name="Generic JSON benchmark validation",
+            command=(
+                sys.executable,
+                "validate_benchmarks.py",
+                "benchmarks/default_xor.json",
+                "benchmarks/parity_chain_5.json",
+                "--working-directory",
+                str(
+                    RESULT_DIRECTORY
+                    / f"benchmark_netlists_{profile}"
+                ),
+                "--output",
+                str(
+                    RESULT_DIRECTORY
+                    / f"benchmark_validation_{profile}.csv"
+                ),
+            ),
+            description=(
+                "Load external JSON parity benchmarks, independently "
+                "enumerate their continuation values, compile each admitted "
+                "boundary assignment, simulate the generated netlists, and "
+                "compare the decoded outputs with the independent reference."
+            ),
+        ),
+
     ]
 
 
@@ -569,7 +595,9 @@ def write_markdown_report(
                 "passive carrier network, a coherent physical carrier, or "
                 "real hardware. The temperature stage uses explicitly "
                 "imposed linear component-drift coefficients; it is a "
-                "parameter-sensitivity study, not a calibrated device model."
+                "parameter-sensitivity study, not a calibrated device model. "
+                "The generic benchmark stage validates external parity-instance "
+                "descriptions against an independent enumerative reference."
             ),
             "",
             "## Detailed step output",

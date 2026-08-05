@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "name": "default-xor",
+  "description": "Two parity constraints with boundary variables x0 and x3.",
+  "boundary_variables": [0, 3],
+  "constraints": [
+    {
+      "variables": [0, 1, 2],
+      "parity": 0
+    },
+    {
+      "variables": [1, 2, 3],
+      "parity": 1
+    }
+  ]
+}
