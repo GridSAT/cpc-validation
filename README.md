@@ -573,7 +573,7 @@ Validation will report:
 
 ## Project status
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 
 **Status:** Research prototype
 
