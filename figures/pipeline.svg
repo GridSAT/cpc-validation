@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="1200" height="240"
+<svg width="1200" height="170" viewBox="0 45 1200 170"
      xmlns="http://www.w3.org/2000/svg">
 
 <style>
@@ -7,10 +7,6 @@ text{
 font-family:Arial,Helvetica,sans-serif;
 font-size:18px;
 fill:#222;
-}
-.title{
-font-size:28px;
-font-weight:bold;
 }
 .box{
 fill:#eef5ff;
@@ -38,9 +34,7 @@ orient="auto">
 </marker>
 </defs>
 
-<text x="600" y="35" text-anchor="middle" class="title">
-CPC Validation Pipeline
-</text>
+
 
 <rect class="box" x="20" y="90" width="150" height="60"/>
 <text x="95" y="125" text-anchor="middle">
