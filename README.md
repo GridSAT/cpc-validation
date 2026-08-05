@@ -535,12 +535,13 @@ Validation will report:
 - project documentation and citation metadata;
 - reproducible 1,000-sample Monte Carlo validation;
 - deterministic 41-point decoder-threshold sweep;
-- deterministic 16-point supply-voltage sweep; and
-- deterministic 16-point resistance and RC-timing sweep.
+- deterministic 16-point supply-voltage sweep;
+- deterministic 16-point resistance and RC-timing sweep; and
+- deterministic 15-point capacitance and RC-timing sweep.
 
 **Next milestone**
 
-- deterministic capacitance and temperature sweeps.
+- temperature sweep and consolidated validation report.
 
 The current SPICE implementation is intentionally small and auditable. It
 provides the reference execution pipeline from which compiled-network
@@ -579,11 +580,11 @@ Completed:
 - measured 10--90% rise-time analysis;
 - measured 1% settling-time analysis;
 - deterministic 16-point resistance sweep;
+- deterministic 15-point capacitance sweep;
 - RC theory comparison and timing-error figures.
 
 Remaining:
 
-- deterministic capacitance sweep;
 - temperature sweep;
 - consolidated validation report.
 
