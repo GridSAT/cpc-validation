@@ -1,0 +1,6 @@
+numpy
+scipy
+pandas
+matplotlib
+PySpice==1.5
+pytest
