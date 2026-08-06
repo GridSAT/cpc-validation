@@ -7,6 +7,11 @@ from src.ccir import (
     CCIRPayload,
     CCIRProgram,
 )
+from src.ccir_clause import (
+    CCIRClausePayload,
+    CCIRLiteral,
+    CLAUSE_CONSTRAINT_FAMILY,
+)
 from src.ccir_parity import (
     CCIRParityPayload,
     PARITY_CONSTRAINT_FAMILY,
@@ -225,5 +230,128 @@ def test_extra_assignment_variables_are_ignored() -> None:
         {
             0: 1,
             9: 0,
+        },
+    )
+
+
+def clause_constraint(
+    literals: tuple[CCIRLiteral, ...],
+) -> CCIRConstraint:
+    return CCIRConstraint(
+        family=CLAUSE_CONSTRAINT_FAMILY,
+        payload=CCIRClausePayload(
+            literals=literals,
+        ),
+    )
+
+
+def test_satisfied_clause_constraint() -> None:
+    program = CCIRProgram(
+        name="clause-satisfied",
+        variable_count=2,
+        boundary_variables=(),
+        constraints=(
+            clause_constraint(
+                (
+                    CCIRLiteral(0),
+                    CCIRLiteral(
+                        1,
+                        negated=True,
+                    ),
+                )
+            ),
+        ),
+    )
+
+    assert evaluate_ccir_program(
+        program,
+        {
+            0: 0,
+            1: 0,
+        },
+    )
+
+
+def test_unsatisfied_clause_constraint() -> None:
+    program = CCIRProgram(
+        name="clause-unsatisfied",
+        variable_count=2,
+        boundary_variables=(),
+        constraints=(
+            clause_constraint(
+                (
+                    CCIRLiteral(0),
+                    CCIRLiteral(
+                        1,
+                        negated=True,
+                    ),
+                )
+            ),
+        ),
+    )
+
+    assert not evaluate_ccir_program(
+        program,
+        {
+            0: 0,
+            1: 1,
+        },
+    )
+
+
+def test_empty_clause_is_false() -> None:
+    program = CCIRProgram(
+        name="empty-clause",
+        variable_count=0,
+        boundary_variables=(),
+        constraints=(
+            clause_constraint(()),
+        ),
+    )
+
+    assert not evaluate_ccir_program(
+        program,
+        {},
+    )
+
+
+def test_empty_program_is_true() -> None:
+    program = CCIRProgram(
+        name="empty-program",
+        variable_count=0,
+        boundary_variables=(),
+        constraints=(),
+    )
+
+    assert evaluate_ccir_program(
+        program,
+        {},
+    )
+
+
+def test_mixed_parity_and_clause_constraints() -> None:
+    program = CCIRProgram(
+        name="mixed",
+        variable_count=2,
+        boundary_variables=(),
+        constraints=(
+            parity_constraint(
+                (0, 1),
+                1,
+            ),
+            clause_constraint(
+                (
+                    CCIRLiteral(0),
+                    CCIRLiteral(1),
+                )
+            ),
+        ),
+    )
+
+    assert evaluate_ccir_program(
+        program,
+        {
+            0: 0,
+            1: 1,
         },
     )

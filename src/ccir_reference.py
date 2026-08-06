@@ -3,6 +3,10 @@ from __future__ import annotations
 from typing import Mapping
 
 from src.ccir import CCIRProgram
+from src.ccir_clause import (
+    CCIRClausePayload,
+    CLAUSE_CONSTRAINT_FAMILY,
+)
 from src.ccir_parity import (
     CCIRParityPayload,
     PARITY_CONSTRAINT_FAMILY,
@@ -25,29 +29,54 @@ def evaluate_ccir_program(
     )
 
     for constraint in program.constraints:
-        if constraint.family != PARITY_CONSTRAINT_FAMILY:
-            raise NotImplementedError(
-                "unsupported CCIR constraint family: "
-                f"{constraint.family}"
-            )
-
         payload = constraint.payload
 
-        if not isinstance(
-            payload,
-            CCIRParityPayload,
-        ):
-            raise ValueError(
-                "parity-family constraint has invalid payload type"
+        if constraint.family == PARITY_CONSTRAINT_FAMILY:
+            if not isinstance(
+                payload,
+                CCIRParityPayload,
+            ):
+                raise ValueError(
+                    "parity-family constraint has invalid payload type"
+                )
+
+            value = 0
+
+            for variable in payload.variables:
+                value ^= assignment[variable]
+
+            if value != payload.parity:
+                return False
+
+            continue
+
+        if constraint.family == CLAUSE_CONSTRAINT_FAMILY:
+            if not isinstance(
+                payload,
+                CCIRClausePayload,
+            ):
+                raise ValueError(
+                    "clause-family constraint has invalid payload type"
+                )
+
+            satisfied = any(
+                (
+                    not bool(assignment[literal.variable])
+                    if literal.negated
+                    else bool(assignment[literal.variable])
+                )
+                for literal in payload.literals
             )
 
-        value = 0
+            if not satisfied:
+                return False
 
-        for variable in payload.variables:
-            value ^= assignment[variable]
+            continue
 
-        if value != payload.parity:
-            return False
+        raise NotImplementedError(
+            "unsupported CCIR constraint family: "
+            f"{constraint.family}"
+        )
 
     return True
 
