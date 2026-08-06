@@ -5,7 +5,6 @@ from typing import Mapping
 
 from src.rc_emitter import (
     constraint_validity_expression,
-    emit_parity_rc_netlist,
     enumerate_internal_assignments,
     xor2_expression,
     xor_expression,
@@ -165,14 +164,19 @@ def compile_parity_instance(
     end_time_ms: float = 50.0,
 ) -> CompiledParityNetwork:
     """
-    Compile a parity instance into an ngspice netlist.
+    Compile through the canonical IR and RC backend pipeline.
 
-    This public compatibility function delegates netlist emission to the
-    extracted RC emitter while preserving the v0.3 API and byte output.
+    This compatibility entry point preserves the established return type and
+    byte-compatible netlist while delegating through:
 
-    It does not use an independently computed continuation value.
+        ParityInstance -> IRProgram -> RC backend -> RC emitter
+
+    Imports are local to avoid circular module initialization.
     """
-    netlist, raw_statistics = emit_parity_rc_netlist(
+    from src.backends.rc import compile_ir_to_rc
+    from src.ir_compiler import compile_parity_instance_to_ir
+
+    program = compile_parity_instance_to_ir(
         instance,
         boundary_values,
         supply_voltage=supply_voltage,
@@ -181,31 +185,9 @@ def compile_parity_instance(
         end_time_ms=end_time_ms,
     )
 
-    statistics = CompilationStatistics(
-        constraint_count=(
-            raw_statistics["constraint_count"]
-        ),
-        variable_count=(
-            raw_statistics["variable_count"]
-        ),
-        boundary_variable_count=(
-            raw_statistics["boundary_variable_count"]
-        ),
-        internal_variable_count=(
-            raw_statistics["internal_variable_count"]
-        ),
-        candidate_count=(
-            raw_statistics["candidate_count"]
-        ),
-        candidate_source_count=(
-            raw_statistics["candidate_source_count"]
-        ),
-        behavioral_source_count=(
-            raw_statistics["behavioral_source_count"]
-        ),
-    )
+    backend_result = compile_ir_to_rc(program)
 
     return CompiledParityNetwork(
-        netlist=netlist,
-        statistics=statistics,
+        netlist=backend_result.netlist,
+        statistics=backend_result.statistics,
     )

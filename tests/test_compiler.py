@@ -326,3 +326,37 @@ def test_generic_compiler_and_simulator_agree(
     assert "CPC generic parity-constraint compiler" in (
         response.netlist_path.read_text(encoding="utf-8")
     )
+
+
+def test_public_compiler_delegates_to_ir_compiler(
+    monkeypatch,
+) -> None:
+    import src.compiler
+    import src.ir_compiler
+
+    called = {"count": 0}
+
+    original = (
+        src.ir_compiler.compile_parity_instance_to_ir
+    )
+
+    def wrapper(*args, **kwargs):
+        called["count"] += 1
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(
+        src.ir_compiler,
+        "compile_parity_instance_to_ir",
+        wrapper,
+    )
+
+    compiled = src.compiler.compile_parity_instance(
+        src.compiler.DEFAULT_XOR_INSTANCE,
+        {
+            0: 0,
+            3: 1,
+        },
+    )
+
+    assert compiled.statistics.candidate_count == 4
+    assert called["count"] == 1
