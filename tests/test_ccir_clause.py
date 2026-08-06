@@ -73,14 +73,15 @@ def test_payload_is_immutable() -> None:
         payload.literals = ()  # type: ignore[misc]
 
 
-def test_empty_clause_rejected() -> None:
-    with pytest.raises(
-        ValueError,
-        match="at least one literal",
-    ):
-        CCIRClausePayload(
-            literals=(),
-        )
+def test_empty_clause_is_valid() -> None:
+    payload = CCIRClausePayload(
+        literals=(),
+    )
+
+    assert payload.literals == ()
+    assert payload.to_dict() == {
+        "literals": [],
+    }
 
 
 def test_duplicate_variable_rejected() -> None:

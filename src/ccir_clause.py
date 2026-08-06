@@ -45,16 +45,13 @@ class CCIRLiteral:
 class CCIRClausePayload(CCIRPayload):
     """
     Typed CCIR payload representing one Boolean clause.
+
+    An empty clause is valid and represents falsity.
     """
 
     literals: tuple[CCIRLiteral, ...]
 
     def __post_init__(self) -> None:
-        if not self.literals:
-            raise ValueError(
-                "CCIR clause must contain at least one literal"
-            )
-
         variables = tuple(
             literal.variable
             for literal in self.literals
