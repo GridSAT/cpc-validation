@@ -1250,12 +1250,18 @@ Validation will report:
 
 The current `v0.4-dev` branch passes:
 
-- 321 automated Python tests; and
+- 359 automated Python tests; and
 - the complete four-condition parity SPICE continuation-table validation.
+
+The following source-to-CCIR translations are independently verified over
+complete Boolean assignments:
+
+- `ParityInstance` to CCIR; and
+- `CNFInstance` to CCIR.
 
 These current-development checks supplement, but do not replace, the dated
 full-profile, Monte Carlo, generated-corpus, and scaling milestones reported
-below.
+above.
 
 ## Project status
 
@@ -1268,30 +1274,36 @@ below.
 - RFC-0001 — CPC Architecture
 - RFC-0002 — Generic Constraint IR and CNF Front End
 
-**Current v0.5 implementation milestone:**
+**Current completed milestone:** RFC-0002 CCIR front end
 
-Completed:
+Implemented and verified:
 
-- CNF source model;
-- complete CNF boundary cases;
+- CNF source model and complete CNF boundary cases;
 - strict DIMACS parser;
 - independent complete-assignment CNF reference semantics;
 - immutable CCIR program and constraint containers;
 - typed CCIR payload contract;
-- CCIR parity constraint family; and
-- CCIR clause constraint family.
-
-Remaining:
-
+- CCIR parity and clause constraint families;
 - parity-source lowering to CCIR;
 - CNF-source lowering to CCIR;
-- CCIR serialization after the lowering shape is stable;
-- RC-backend migration to CCIR;
-- complete CNF-to-SPICE validation; and
+- independent CCIR parity and clause evaluation;
+- parity-to-CCIR assignment-semantic equivalence; and
+- CNF-to-CCIR assignment-semantic equivalence.
+
+**Current regression status:** 359 automated Python tests passing.
+
+**Milestone tag:** `ccir-front-end-v1`
+
+Remaining execution-layer work:
+
+- backend execution contract;
+- CCIR-driven RC compilation;
+- continuation-level CNF validation;
+- complete DIMACS-to-SPICE workflow; and
 - retirement of the legacy parity-oriented IR.
 
 The established parity compiler, benchmark, scaling, and SPICE-validation
-pipelines remain operational during the incremental CCIR migration.
+pipelines remain operational during the incremental backend migration.
 
 ## v0.4 Compiler Architecture
 
@@ -1353,25 +1365,31 @@ Completed:
 
 ### Version 0.5 — Core Constraint IR and CNF front end
 
-Status: in progress.
+Status: front end completed and tagged as `ccir-front-end-v1`.
 
 Completed:
 
 - accepted RFC-0002;
-- CNF source model and DIMACS parser;
+- CNF source model and strict DIMACS parser;
+- complete CNF boundary-case representation;
 - independent CNF reference semantics;
 - CCIR containers and typed payload contract;
-- parity constraint payload; and
-- clause constraint payload.
-
-Remaining:
-
+- parity and clause constraint payloads;
+- empty-clause preservation;
 - parity-to-CCIR lowering;
 - CNF-to-CCIR lowering;
-- semantic-equivalence validation;
-- RC-backend migration;
-- CNF benchmark and SPICE workflow; and
+- CCIR parity and clause reference evaluation;
+- exhaustive parity assignment-semantic equivalence tests; and
+- exhaustive CNF assignment-semantic equivalence tests.
+
+Deferred to the execution-layer phase:
+
+- backend execution contract;
+- CCIR-to-RC compilation;
+- continuation-level CNF workflow;
+- complete DIMACS-to-SPICE validation; and
 - legacy-IR retirement.
+
 
 ### Version 0.6 — General Boolean constraints
 
@@ -1494,31 +1512,47 @@ The CPC architecture is governed by the accepted RFCs in
 - RFC-0001 — CPC Architecture — Accepted
 - RFC-0002 — Generic Constraint IR and CNF Front End — Accepted
 
-RFC-0001 defines the canonical compilation pipeline and separation between
-front ends, intermediate representation, backends, and emitters.
+RFC-0001 defines the canonical compilation pipeline and the separation
+between front ends, intermediate representations, backends, and emitters.
 
-RFC-0002 defines CCIR as the canonical backend-independent representation for
-typed constraint families. The current implementation includes parity and
-clause payloads. Source lowering and backend migration remain in progress.
+RFC-0002 defines the Core Constraint Intermediate Representation (CCIR)
+as the canonical backend-independent representation for typed constraint
+families.
 
-Architectural changes should normally be introduced through new or superseding
-RFCs rather than by silently modifying accepted specifications.
+Both supported source models now lower into CCIR:
+
+```text
+ParityInstance -> parity lowering --+
+                                    +-> CCIRProgram
+CNFInstance    -> CNF lowering -----+
+```
+
+For both parity and CNF, exhaustive complete-assignment tests independently
+verify that source semantics agree with the semantics of the lowered CCIR
+program.
+
+Architectural changes should normally be introduced through new or
+superseding RFCs rather than by silently modifying accepted specifications.
 
 ## Core Constraint IR
 
-CPC v0.5 introduces the Core Constraint Intermediate Representation (CCIR).
-
-Implemented:
+The completed RFC-0002 front end provides:
 
 - immutable `CCIRProgram` and `CCIRConstraint` containers;
 - a typed `CCIRPayload` contract;
-- the parity constraint family; and
-- the clause constraint family.
+- parity and clause constraint families;
+- empty-clause representation;
+- parity and CNF source lowering;
+- parity and clause reference evaluation; and
+- independently verified assignment-semantic preservation.
 
-Not yet implemented:
+The milestone is tagged `ccir-front-end-v1`.
 
-- parity-source lowering;
-- CNF-source lowering;
-- CCIR-driven RC compilation; and
-- complete DIMACS-to-SPICE validation.
+The next phase connects CCIR to execution backends.
 
+Outstanding work:
+
+- CCIR-driven RC compilation;
+- continuation-level CNF validation;
+- complete DIMACS-to-SPICE validation; and
+- retirement of the legacy parity-oriented IR.
