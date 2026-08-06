@@ -745,7 +745,8 @@ cpc-validation/
 │   │   ├── RFC-0001-CPC-Architecture.md
 │   │   └── RFC-0002-Generic-Constraint-IR-and-CNF-Front-End.md
 │   ├── releases/
-│   │   └── v0.3.0.md
+│   │   ├── v0.3.0.md
+│   │   └── v0.5.0-frontend.1.md
 │   ├── architecture.md
 │   ├── benchmarks.md
 │   ├── compiler.md
@@ -1265,7 +1266,10 @@ above.
 
 ## Project status
 
-**Released baseline:** v0.2.0 research prototype
+**Released stable baseline:** v0.2.0 research prototype
+
+**Latest pre-release:** `v0.5.0-frontend.1`
+(RFC-0002 Front-End Milestone 1)
 
 **Current development branch:** `v0.4-dev`
 
@@ -1293,6 +1297,8 @@ Implemented and verified:
 **Current regression status:** 359 automated Python tests passing.
 
 **Milestone tag:** `ccir-front-end-v1`
+
+**GitHub pre-release:** `v0.5.0-frontend.1`
 
 Remaining execution-layer work:
 
