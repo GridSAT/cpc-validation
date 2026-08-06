@@ -1154,3 +1154,18 @@ The governing architectural specification is:
 Architectural changes should normally be introduced through new RFCs
 rather than by modifying accepted specifications.
 
+## Core Constraint IR
+
+CPC v0.5 introduces the Core Constraint Intermediate Representation
+(CCIR), the canonical backend-independent representation defined by
+RFC-0002.
+
+The current CCIR implementation provides:
+
+- immutable `CCIRProgram` and `CCIRConstraint` containers;
+- typed constraint-family payloads;
+- a parity constraint family; and
+- a clause constraint family.
+
+Source-language lowering and backend migration remain separate
+implementation milestones.

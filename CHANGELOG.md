@@ -9,6 +9,14 @@ The format follows **Keep a Changelog** and this project follows
 
 ## [Unreleased]
 
+### CCIR
+
+- accepted RFC-0002 for generic constraint IR and the CNF front end;
+- added immutable CCIR program and constraint containers;
+- added the typed CCIR payload contract;
+- added the CCIR parity constraint family; and
+- added the CCIR clause constraint family.
+
 ### Changed
 
 - RC backend now invokes the extracted RC emitter directly.
