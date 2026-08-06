@@ -446,8 +446,7 @@ excluded from normal Git history.
 
 ## External JSON benchmarks
 
-The `v0.3-dev` branch supports externally defined parity-constraint
-benchmarks.
+The current development branch supports externally defined parity-constraint benchmarks.
 
 Compile and simulate one admitted boundary assignment:
 
@@ -496,7 +495,7 @@ validation. It does not claim scalable passive-network realization.
 
 ## Generic parity compiler
 
-The `v0.3-dev` branch introduces a generic compiler for Boolean parity
+The v0.3 milestone introduced a generic compiler for Boolean parity
 constraint systems.
 
 A parity constraint is represented as data:
@@ -715,76 +714,468 @@ The test program will be extended to cover:
 
 ```text
 cpc-validation/
-├── README.md
-├── LICENSE
-├── CITATION.cff
-├── CHANGELOG.md
-├── CONTRIBUTING.md
-├── .gitignore
-├── pytest.ini
-├── requirements.txt
-├── requirements-lock.txt
-│
-├── run_spice.py
-├── run_compiler.py
-├── run_benchmark.py
-├── validate_benchmarks.py
-├── generate_parity_benchmarks.py
-├── run_monte_carlo.py
-├── run_threshold_sweep.py
-├── run_supply_sweep.py
-├── run_resistance_sweep.py
-├── run_capacitance_sweep.py
-├── run_temperature_sweep.py
-├── run_transient_smoke.py
-├── validate.py
-│
 ├── baselines/
-│   ├── continuation_table.csv
-│   └── xor_reference.json
-│
+│   ├── run_spice_behavioral.py
+│   └── spice_model_behavioral.py
 ├── benchmarks/
+│   ├── generated/
+│   │   ├── chain/
+│   │   │   ├── generated-chain-10.json
+│   │   │   ├── generated-chain-4.json
+│   │   │   ├── generated-chain-6.json
+│   │   │   └── generated-chain-8.json
+│   │   ├── cycle/
+│   │   │   ├── generated-cycle-4.json
+│   │   │   ├── generated-cycle-6.json
+│   │   │   └── generated-cycle-8.json
+│   │   ├── random/
+│   │   │   ├── generated-random-4-4-seed-20260806.json
+│   │   │   ├── generated-random-6-4-seed-20260806.json
+│   │   │   └── generated-random-8-4-seed-20260806.json
+│   │   └── star/
+│   │       ├── generated-star-4.json
+│   │       ├── generated-star-6.json
+│   │       └── generated-star-8.json
 │   ├── default_xor.json
 │   ├── parity_chain_5.json
-│   ├── parity_cycle_6.json
-│   └── generated/                 # reproducible, ignored corpus
-│
+│   └── parity_cycle_6.json
 ├── docs/
+│   ├── design/
+│   │   ├── README.md
+│   │   ├── RFC-0001-CPC-Architecture.md
+│   │   └── RFC-0002-Generic-Constraint-IR-and-CNF-Front-End.md
+│   ├── releases/
+│   │   └── v0.3.0.md
 │   ├── architecture.md
 │   ├── benchmarks.md
 │   ├── compiler.md
 │   ├── generator.md
-│   ├── validation.md
-│   └── roadmap.md
-│
+│   ├── roadmap.md
+│   ├── scaling.md
+│   └── validation.md
 ├── figures/
+│   ├── capacitance_success_rate.png
+│   ├── capacitance_timing.png
+│   ├── capacitance_timing_error.png
 │   ├── pipeline.svg
 │   ├── rc-demo.svg
-│   └── validation figures
-│
+│   ├── resistance_success_rate.png
+│   ├── resistance_timing.png
+│   ├── resistance_timing_error.png
+│   ├── scaling_candidates.png
+│   ├── scaling_compile_time.png
+│   ├── scaling_netlist_size.png
+│   ├── scaling_simulation_time.png
+│   ├── scaling_sources.png
+│   ├── supply_margin.png
+│   ├── supply_success_rate.png
+│   ├── supply_voltage_response.png
+│   ├── temperature_component_drift.png
+│   ├── temperature_margin.png
+│   ├── temperature_success_rate.png
+│   ├── temperature_timing.png
+│   ├── threshold_margin.png
+│   └── threshold_success_rate.png
+├── netlists/
+│   ├── benchmark-validation/
+│   │   ├── default-xor/
+│   │   │   ├── x0-0_x3-0.cir
+│   │   │   ├── x0-0_x3-0.out
+│   │   │   ├── x0-0_x3-1.cir
+│   │   │   ├── x0-0_x3-1.out
+│   │   │   ├── x0-1_x3-0.cir
+│   │   │   ├── x0-1_x3-0.out
+│   │   │   ├── x0-1_x3-1.cir
+│   │   │   └── x0-1_x3-1.out
+│   │   ├── generated-chain-10/
+│   │   │   ├── x0-0_x9-0.cir
+│   │   │   ├── x0-0_x9-0.out
+│   │   │   ├── x0-0_x9-1.cir
+│   │   │   ├── x0-0_x9-1.out
+│   │   │   ├── x0-1_x9-0.cir
+│   │   │   ├── x0-1_x9-0.out
+│   │   │   ├── x0-1_x9-1.cir
+│   │   │   └── x0-1_x9-1.out
+│   │   ├── generated-chain-4/
+│   │   │   ├── x0-0_x3-0.cir
+│   │   │   ├── x0-0_x3-0.out
+│   │   │   ├── x0-0_x3-1.cir
+│   │   │   ├── x0-0_x3-1.out
+│   │   │   ├── x0-1_x3-0.cir
+│   │   │   ├── x0-1_x3-0.out
+│   │   │   ├── x0-1_x3-1.cir
+│   │   │   └── x0-1_x3-1.out
+│   │   ├── generated-chain-6/
+│   │   │   ├── x0-0_x5-0.cir
+│   │   │   ├── x0-0_x5-0.out
+│   │   │   ├── x0-0_x5-1.cir
+│   │   │   ├── x0-0_x5-1.out
+│   │   │   ├── x0-1_x5-0.cir
+│   │   │   ├── x0-1_x5-0.out
+│   │   │   ├── x0-1_x5-1.cir
+│   │   │   └── x0-1_x5-1.out
+│   │   ├── generated-chain-8/
+│   │   │   ├── x0-0_x7-0.cir
+│   │   │   ├── x0-0_x7-0.out
+│   │   │   ├── x0-0_x7-1.cir
+│   │   │   ├── x0-0_x7-1.out
+│   │   │   ├── x0-1_x7-0.cir
+│   │   │   ├── x0-1_x7-0.out
+│   │   │   ├── x0-1_x7-1.cir
+│   │   │   └── x0-1_x7-1.out
+│   │   ├── generated-cycle-4/
+│   │   │   ├── x0-0_x3-0.cir
+│   │   │   ├── x0-0_x3-0.out
+│   │   │   ├── x0-0_x3-1.cir
+│   │   │   ├── x0-0_x3-1.out
+│   │   │   ├── x0-1_x3-0.cir
+│   │   │   ├── x0-1_x3-0.out
+│   │   │   ├── x0-1_x3-1.cir
+│   │   │   └── x0-1_x3-1.out
+│   │   ├── generated-cycle-6/
+│   │   │   ├── x0-0_x5-0.cir
+│   │   │   ├── x0-0_x5-0.out
+│   │   │   ├── x0-0_x5-1.cir
+│   │   │   ├── x0-0_x5-1.out
+│   │   │   ├── x0-1_x5-0.cir
+│   │   │   ├── x0-1_x5-0.out
+│   │   │   ├── x0-1_x5-1.cir
+│   │   │   └── x0-1_x5-1.out
+│   │   ├── generated-cycle-8/
+│   │   │   ├── x0-0_x7-0.cir
+│   │   │   ├── x0-0_x7-0.out
+│   │   │   ├── x0-0_x7-1.cir
+│   │   │   ├── x0-0_x7-1.out
+│   │   │   ├── x0-1_x7-0.cir
+│   │   │   ├── x0-1_x7-0.out
+│   │   │   ├── x0-1_x7-1.cir
+│   │   │   └── x0-1_x7-1.out
+│   │   ├── generated-random-4-4-seed-20260806/
+│   │   │   ├── x0-0_x3-0.cir
+│   │   │   ├── x0-0_x3-0.out
+│   │   │   ├── x0-0_x3-1.cir
+│   │   │   ├── x0-0_x3-1.out
+│   │   │   ├── x0-1_x3-0.cir
+│   │   │   ├── x0-1_x3-0.out
+│   │   │   ├── x0-1_x3-1.cir
+│   │   │   └── x0-1_x3-1.out
+│   │   ├── generated-random-6-4-seed-20260806/
+│   │   │   ├── x0-0_x5-0.cir
+│   │   │   ├── x0-0_x5-0.out
+│   │   │   ├── x0-0_x5-1.cir
+│   │   │   ├── x0-0_x5-1.out
+│   │   │   ├── x0-1_x5-0.cir
+│   │   │   ├── x0-1_x5-0.out
+│   │   │   ├── x0-1_x5-1.cir
+│   │   │   └── x0-1_x5-1.out
+│   │   ├── generated-random-8-4-seed-20260806/
+│   │   │   ├── x0-0_x7-0.cir
+│   │   │   ├── x0-0_x7-0.out
+│   │   │   ├── x0-0_x7-1.cir
+│   │   │   ├── x0-0_x7-1.out
+│   │   │   ├── x0-1_x7-0.cir
+│   │   │   ├── x0-1_x7-0.out
+│   │   │   ├── x0-1_x7-1.cir
+│   │   │   └── x0-1_x7-1.out
+│   │   ├── generated-star-4/
+│   │   │   ├── x0-0_x3-0.cir
+│   │   │   ├── x0-0_x3-0.out
+│   │   │   ├── x0-0_x3-1.cir
+│   │   │   ├── x0-0_x3-1.out
+│   │   │   ├── x0-1_x3-0.cir
+│   │   │   ├── x0-1_x3-0.out
+│   │   │   ├── x0-1_x3-1.cir
+│   │   │   └── x0-1_x3-1.out
+│   │   ├── generated-star-6/
+│   │   │   ├── x0-0_x5-0.cir
+│   │   │   ├── x0-0_x5-0.out
+│   │   │   ├── x0-0_x5-1.cir
+│   │   │   ├── x0-0_x5-1.out
+│   │   │   ├── x0-1_x5-0.cir
+│   │   │   ├── x0-1_x5-0.out
+│   │   │   ├── x0-1_x5-1.cir
+│   │   │   └── x0-1_x5-1.out
+│   │   ├── generated-star-8/
+│   │   │   ├── x0-0_x7-0.cir
+│   │   │   ├── x0-0_x7-0.out
+│   │   │   ├── x0-0_x7-1.cir
+│   │   │   ├── x0-0_x7-1.out
+│   │   │   ├── x0-1_x7-0.cir
+│   │   │   ├── x0-1_x7-0.out
+│   │   │   ├── x0-1_x7-1.cir
+│   │   │   └── x0-1_x7-1.out
+│   │   ├── parity-chain-5/
+│   │   │   ├── x0-0_x4-0.cir
+│   │   │   ├── x0-0_x4-0.out
+│   │   │   ├── x0-0_x4-1.cir
+│   │   │   ├── x0-0_x4-1.out
+│   │   │   ├── x0-1_x4-0.cir
+│   │   │   ├── x0-1_x4-0.out
+│   │   │   ├── x0-1_x4-1.cir
+│   │   │   └── x0-1_x4-1.out
+│   │   └── parity-cycle-6/
+│   │       ├── x0-0_x5-0.cir
+│   │       ├── x0-0_x5-0.out
+│   │       ├── x0-0_x5-1.cir
+│   │       ├── x0-0_x5-1.out
+│   │       ├── x0-1_x5-0.cir
+│   │       ├── x0-1_x5-0.out
+│   │       ├── x0-1_x5-1.cir
+│   │       └── x0-1_x5-1.out
+│   ├── compiler/
+│   │   ├── default_xor_0_0.cir
+│   │   ├── default_xor_0_1.cir
+│   │   ├── default_xor_1_0.cir
+│   │   └── default_xor_1_1.cir
+│   ├── default_xor_json_0_1.cir
+│   ├── default_xor_json_0_1.out
+│   ├── parity_chain_5_0_1.cir
+│   └── parity_chain_5_0_1.out
+├── reports/
+│   ├── validation_report.md
+│   └── validation_summary.csv
+├── results/
+│   ├── benchmark_netlists_full/
+│   │   ├── default-xor/
+│   │   │   ├── x0-0_x3-0.cir
+│   │   │   ├── x0-0_x3-0.out
+│   │   │   ├── x0-0_x3-1.cir
+│   │   │   ├── x0-0_x3-1.out
+│   │   │   ├── x0-1_x3-0.cir
+│   │   │   ├── x0-1_x3-0.out
+│   │   │   ├── x0-1_x3-1.cir
+│   │   │   └── x0-1_x3-1.out
+│   │   └── parity-chain-5/
+│   │       ├── x0-0_x4-0.cir
+│   │       ├── x0-0_x4-0.out
+│   │       ├── x0-0_x4-1.cir
+│   │       ├── x0-0_x4-1.out
+│   │       ├── x0-1_x4-0.cir
+│   │       ├── x0-1_x4-0.out
+│   │       ├── x0-1_x4-1.cir
+│   │       └── x0-1_x4-1.out
+│   ├── benchmark_netlists_quick/
+│   │   ├── default-xor/
+│   │   │   ├── x0-0_x3-0.cir
+│   │   │   ├── x0-0_x3-0.out
+│   │   │   ├── x0-0_x3-1.cir
+│   │   │   ├── x0-0_x3-1.out
+│   │   │   ├── x0-1_x3-0.cir
+│   │   │   ├── x0-1_x3-0.out
+│   │   │   ├── x0-1_x3-1.cir
+│   │   │   └── x0-1_x3-1.out
+│   │   └── parity-chain-5/
+│   │       ├── x0-0_x4-0.cir
+│   │       ├── x0-0_x4-0.out
+│   │       ├── x0-0_x4-1.cir
+│   │       ├── x0-0_x4-1.out
+│   │       ├── x0-1_x4-0.cir
+│   │       ├── x0-1_x4-0.out
+│   │       ├── x0-1_x4-1.cir
+│   │       └── x0-1_x4-1.out
+│   ├── scaling_size10_repeated/
+│   │   ├── trial_1/
+│   │   │   ├── candidates.png
+│   │   │   ├── compile_time.png
+│   │   │   ├── netlist_size.png
+│   │   │   ├── simulation_time.png
+│   │   │   ├── sources.png
+│   │   │   └── summary.csv
+│   │   ├── trial_2/
+│   │   │   ├── candidates.png
+│   │   │   ├── compile_time.png
+│   │   │   ├── netlist_size.png
+│   │   │   ├── simulation_time.png
+│   │   │   ├── sources.png
+│   │   │   └── summary.csv
+│   │   ├── trial_3/
+│   │   │   ├── candidates.png
+│   │   │   ├── compile_time.png
+│   │   │   ├── netlist_size.png
+│   │   │   ├── simulation_time.png
+│   │   │   ├── sources.png
+│   │   │   └── summary.csv
+│   │   ├── trial_4/
+│   │   │   ├── candidates.png
+│   │   │   ├── compile_time.png
+│   │   │   ├── netlist_size.png
+│   │   │   ├── simulation_time.png
+│   │   │   ├── sources.png
+│   │   │   └── summary.csv
+│   │   ├── trial_5/
+│   │   │   ├── candidates.png
+│   │   │   ├── compile_time.png
+│   │   │   ├── netlist_size.png
+│   │   │   ├── simulation_time.png
+│   │   │   ├── sources.png
+│   │   │   └── summary.csv
+│   │   └── repeated_summary.csv
+│   ├── benchmark_validation.csv
+│   ├── benchmark_validation_full.csv
+│   ├── benchmark_validation_quick.csv
+│   ├── capacitance_sweep.csv
+│   ├── capacitance_sweep_summary.csv
+│   ├── default_xor_ir_0_1.json
+│   ├── emitter_extraction_validation.csv
+│   ├── generated_benchmark_validation.csv
+│   ├── monte_carlo_1000.csv
+│   ├── monte_carlo_smoke.csv
+│   ├── parity_cycle_6_validation.csv
+│   ├── permanent_benchmark_validation.csv
+│   ├── resistance_sweep.csv
+│   ├── resistance_sweep_summary.csv
+│   ├── scaling_candidates_full.png
+│   ├── scaling_candidates_quick.png
+│   ├── scaling_compile_time_full.png
+│   ├── scaling_compile_time_quick.png
+│   ├── scaling_netlist_size_full.png
+│   ├── scaling_netlist_size_quick.png
+│   ├── scaling_simulation_time_full.png
+│   ├── scaling_simulation_time_quick.png
+│   ├── scaling_size10_candidates.png
+│   ├── scaling_size10_compile_time.png
+│   ├── scaling_size10_netlist_size.png
+│   ├── scaling_size10_simulation_time.png
+│   ├── scaling_size10_sources.png
+│   ├── scaling_size10_summary.csv
+│   ├── scaling_smoke_summary.csv
+│   ├── scaling_sources_full.png
+│   ├── scaling_sources_quick.png
+│   ├── scaling_summary_full.csv
+│   ├── scaling_summary_quick.csv
+│   ├── supply_sweep.csv
+│   ├── supply_sweep_summary.csv
+│   ├── temperature_sweep.csv
+│   ├── temperature_sweep_summary.csv
+│   ├── threshold_sweep.csv
+│   ├── threshold_sweep_summary.csv
+│   ├── validation_capacitance_error_full.png
+│   ├── validation_capacitance_error_quick.png
+│   ├── validation_capacitance_full.csv
+│   ├── validation_capacitance_quick.csv
+│   ├── validation_capacitance_success_full.png
+│   ├── validation_capacitance_success_quick.png
+│   ├── validation_capacitance_summary_full.csv
+│   ├── validation_capacitance_summary_quick.csv
+│   ├── validation_capacitance_timing_full.png
+│   ├── validation_capacitance_timing_quick.png
+│   ├── validation_monte_carlo_full.csv
+│   ├── validation_monte_carlo_quick.csv
+│   ├── validation_resistance_error_full.png
+│   ├── validation_resistance_error_quick.png
+│   ├── validation_resistance_full.csv
+│   ├── validation_resistance_quick.csv
+│   ├── validation_resistance_success_full.png
+│   ├── validation_resistance_success_quick.png
+│   ├── validation_resistance_summary_full.csv
+│   ├── validation_resistance_summary_quick.csv
+│   ├── validation_resistance_timing_full.png
+│   ├── validation_resistance_timing_quick.png
+│   ├── validation_supply_full.csv
+│   ├── validation_supply_margin_full.png
+│   ├── validation_supply_margin_quick.png
+│   ├── validation_supply_quick.csv
+│   ├── validation_supply_response_full.png
+│   ├── validation_supply_response_quick.png
+│   ├── validation_supply_success_full.png
+│   ├── validation_supply_success_quick.png
+│   ├── validation_supply_summary_full.csv
+│   ├── validation_supply_summary_quick.csv
+│   ├── validation_temperature_components_full.png
+│   ├── validation_temperature_components_quick.png
+│   ├── validation_temperature_full.csv
+│   ├── validation_temperature_margin_full.png
+│   ├── validation_temperature_margin_quick.png
+│   ├── validation_temperature_quick.csv
+│   ├── validation_temperature_success_full.png
+│   ├── validation_temperature_success_quick.png
+│   ├── validation_temperature_summary_full.csv
+│   ├── validation_temperature_summary_quick.csv
+│   ├── validation_temperature_timing_full.png
+│   ├── validation_temperature_timing_quick.png
+│   ├── validation_threshold_full.csv
+│   ├── validation_threshold_margin_full.png
+│   ├── validation_threshold_margin_quick.png
+│   ├── validation_threshold_quick.csv
+│   ├── validation_threshold_success_full.png
+│   ├── validation_threshold_success_quick.png
+│   ├── validation_threshold_summary_full.csv
+│   └── validation_threshold_summary_quick.csv
 ├── src/
+│   ├── backends/
+│   │   ├── __init__.py
+│   │   └── rc.py
 │   ├── __init__.py
 │   ├── benchmark_io.py
+│   ├── ccir.py
+│   ├── ccir_clause.py
+│   ├── ccir_parity.py
+│   ├── cnf.py
+│   ├── cnf_semantics.py
 │   ├── compiler.py
+│   ├── dimacs.py
 │   ├── generic_reference.py
+│   ├── ir.py
+│   ├── ir_compiler.py
+│   ├── rc_emitter.py
 │   ├── reference.py
 │   ├── spice_model.py
 │   └── transient_analysis.py
-│
-└── tests/
-    ├── test_benchmark_generator.py
-    ├── test_benchmark_io.py
-    ├── test_compiler.py
-    ├── test_generic_reference.py
-    ├── test_monte_carlo.py
-    ├── test_reference.py
-    ├── test_spice_model.py
-    └── parameter-sweep tests
+├── tests/
+│   ├── test_benchmark_generator.py
+│   ├── test_benchmark_io.py
+│   ├── test_capacitance_sweep.py
+│   ├── test_ccir.py
+│   ├── test_ccir_clause.py
+│   ├── test_ccir_parity.py
+│   ├── test_cnf.py
+│   ├── test_cnf_semantics.py
+│   ├── test_compiler.py
+│   ├── test_dimacs.py
+│   ├── test_generic_reference.py
+│   ├── test_ir.py
+│   ├── test_ir_compiler.py
+│   ├── test_monte_carlo.py
+│   ├── test_rc_backend.py
+│   ├── test_reference.py
+│   ├── test_resistance_sweep.py
+│   ├── test_scaling_study.py
+│   ├── test_spice_model.py
+│   ├── test_supply_sweep.py
+│   ├── test_temperature_sweep.py
+│   ├── test_threshold_sweep.py
+│   └── test_transient_analysis.py
+├── .gitignore
+├── CHANGELOG.md
+├── CITATION.cff
+├── CONTRIBUTING.md
+├── generate_parity_benchmarks.py
+├── LICENSE
+├── pytest.ini
+├── README.md
+├── requirements-lock.txt
+├── requirements.txt
+├── run_benchmark.py
+├── run_capacitance_sweep.py
+├── run_compiler.py
+├── run_ir.py
+├── run_monte_carlo.py
+├── run_resistance_sweep.py
+├── run_scaling_study.py
+├── run_spice.py
+├── run_supply_sweep.py
+├── run_temperature_sweep.py
+├── run_threshold_sweep.py
+├── run_transient_smoke.py
+├── validate.py
+└── validate_benchmarks.py
 ```
 
-Generated netlists, reports, result CSV files, validation figures written under
-`results/`, and generated benchmark corpora are intentionally excluded from
-normal Git history.
+
+Generated reports, SPICE netlists, benchmark corpora, validation tables,
+figures, and other reproducible artifacts are generated during validation and
+are intentionally excluded from normal Git history.
+
 
 ## Validation principles
 
@@ -855,54 +1246,52 @@ Validation will report:
 
 ---
 
+### Current development validation
+
+The current `v0.4-dev` branch passes:
+
+- 321 automated Python tests; and
+- the complete four-condition parity SPICE continuation-table validation.
+
+These current-development checks supplement, but do not replace, the dated
+full-profile, Monte Carlo, generated-corpus, and scaling milestones reported
+below.
+
 ## Project status
 
-**Released baseline:** v0.2.0
+**Released baseline:** v0.2.0 research prototype
 
-**Development branch:** `v0.3-dev`
+**Current development branch:** `v0.4-dev`
 
-**Status:** Generic parity compiler and benchmark framework under active
-development
+**Accepted architecture:**
 
-### Released v0.2.0 research prototype
+- RFC-0001 — CPC Architecture
+- RFC-0002 — Generic Constraint IR and CNF Front End
 
-The immutable v0.2.0 release provides:
+**Current v0.5 implementation milestone:**
 
-- the independently evaluated XOR continuation benchmark;
-- nominal ngspice validation;
-- transient waveform extraction;
-- Monte Carlo robustness validation;
-- decoder-threshold validation;
-- supply-voltage validation;
-- resistance and capacitance timing validation;
-- imposed temperature-drift validation; and
-- ten-stage consolidated quick and full validation profiles.
+Completed:
 
-### Current v0.3 development milestone
+- CNF source model;
+- complete CNF boundary cases;
+- strict DIMACS parser;
+- independent complete-assignment CNF reference semantics;
+- immutable CCIR program and constraint containers;
+- typed CCIR payload contract;
+- CCIR parity constraint family; and
+- CCIR clause constraint family.
 
-Completed on `v0.3-dev`:
+Remaining:
 
-- generic parity-constraint representation;
-- generic parity-to-ngspice compiler;
-- single-source compiler delegation from the simulator;
-- arbitrary-length XOR-expression generation;
-- compilation statistics;
-- external JSON benchmark schema;
-- benchmark loader and boundary parser;
-- generic independent continuation evaluator;
-- complete-boundary benchmark validation;
-- recursive benchmark discovery;
-- permanent chain and cycle benchmark families;
-- deterministic benchmark generation;
-- generated chain, cycle, star, and random families;
-- full declared-variable coverage for generated random systems;
-- generated corpus validation; and
-- compiler and benchmark regression tests.
+- parity-source lowering to CCIR;
+- CNF-source lowering to CCIR;
+- CCIR serialization after the lowering shape is stable;
+- RC-backend migration to CCIR;
+- complete CNF-to-SPICE validation; and
+- retirement of the legacy parity-oriented IR.
 
-The current backend remains exhaustive in the number of internal variables and
-uses behavioral sources. The present work establishes correctness,
-reproducibility, generality of instance representation, and measurable compiler
-output. It does not establish scalable passive-network realization.
+The established parity compiler, benchmark, scaling, and SPICE-validation
+pipelines remain operational during the incremental CCIR migration.
 
 ## v0.4 Compiler Architecture
 
@@ -940,124 +1329,79 @@ backend boundary while maintaining byte-compatible RC/netlist output.
 
 ### Version 0.1 — Reference validation baseline
 
-**Status:** completed
-
-- independently evaluated XOR continuation function;
-- generated ngspice model;
-- fixed decoder; and
-- complete four-condition validation.
+Status: completed.
 
 ### Version 0.2 — Engineering robustness validation
 
-**Status:** completed and released
-
-- Monte Carlo robustness validation;
-- deterministic threshold and supply sweeps;
-- resistance and capacitance timing studies;
-- imposed temperature-drift study;
-- transient waveform extraction;
-- RC-theory comparison; and
-- consolidated quick and full validation reports.
+Status: completed and released.
 
 ### Version 0.3 — Generic parity compiler and benchmark framework
 
-**Status:** in progress
+Status: completed.
+
+### Version 0.4 — Backend-independent compiler architecture
+
+Status: completed.
 
 Completed:
 
-- generic parity constraint representation;
-- generic parity-to-SPICE compiler;
-- external JSON benchmark schema;
-- independent generic reference evaluator;
-- recursive benchmark discovery;
-- complete-boundary validation;
-- permanent chain and cycle benchmarks;
-- deterministic chain, cycle, star, and random generators;
-- generated corpus validation;
-- compiler resource accounting;
-- formal compiler scaling study;
-- per-benchmark scaling CSV aggregation;
-- candidate-growth figure;
-- behavioral-source growth figure;
-- netlist-size figure;
-- compilation-time figure;
-- simulation-time figure;
-- reduced scaling regression in consolidated validation; and
-- scaling methodology documentation.
+- backend-independent parity IR;
+- canonical public compiler pipeline;
+- RC backend and extracted emitter;
+- architectural regression tests; and
+- accepted RFC-0001 architecture specification.
 
-Current verified scaling milestone:
+### Version 0.5 — Core Constraint IR and CNF front end
 
-- four benchmark families;
-- variable counts 4, 6, and 8;
-- 12 generated scaling benchmarks;
-- 48 boundary simulations;
-- 48 passed;
-- 0 failed; and
-- candidate counts from 4 through 64.
+Status: in progress.
+
+Completed:
+
+- accepted RFC-0002;
+- CNF source model and DIMACS parser;
+- independent CNF reference semantics;
+- CCIR containers and typed payload contract;
+- parity constraint payload; and
+- clause constraint payload.
 
 Remaining:
 
-- size-10 characterization across all supported families;
-- repeated timing trials and statistical intervals;
-- final v0.3 release validation;
-- release notes; and
-- v0.3.0 tag preparation.
-
-### Version 0.4 — Compiler scaling and statistics
-
-**Status:** planned
-
-- systematic topology-family scaling studies;
-- compiler-output growth characterization;
-- simulation-cost characterization;
-- publication-quality scaling figures;
-- documented limits of the exhaustive backend; and
-- consolidated scaling report.
-
-### Version 0.5 — CNF and DIMACS front end
-
-**Status:** planned
-
-- DIMACS parser;
-- CNF instance representation;
-- independent CNF continuation evaluator;
-- CNF-to-physical-backend compilation;
-- small canonical SAT benchmarks; and
-- complete boundary-validation workflow.
+- parity-to-CCIR lowering;
+- CNF-to-CCIR lowering;
+- semantic-equivalence validation;
+- RC-backend migration;
+- CNF benchmark and SPICE workflow; and
+- legacy-IR retirement.
 
 ### Version 0.6 — General Boolean constraints
 
-**Status:** planned
+Planned:
 
-- mixed AND, OR, NOT, and XOR constraints;
-- typed intermediate representation;
-- backend-independent logical modules; and
-- additional physical backends.
+- additional typed constraint families;
+- analysis and optimization passes;
+- mixed Boolean constraint workflows; and
+- additional logical front ends.
 
-### Version 0.7 — Response-class and physical-backend validation
+### Version 0.7 — Physical-backend extensions
 
-**Status:** planned
+Planned:
 
-- multiple initial states;
-- transient-history variation;
-- reset experiments;
-- response-equivalence statistics;
-- passive or transistor-level backend experiments; and
-- failure-mode classification.
+- additional physical backends;
+- passive or transistor-level experiments;
+- response-class invariance studies; and
+- expanded failure-mode validation.
 
 ### Version 1.0 — CPC validation research release
 
-**Status:** planned
+Planned:
 
 - complete reproducibility package;
-- archived simulation data;
-- compiler and backend documentation;
-- release DOI;
-- CPC white-paper integration;
-- documented experimental results; and
+- stable public documentation;
+- archived validation data;
+- release DOI; and
 - external reproduction instructions.
 
-See [`docs/roadmap.md`](docs/roadmap.md) for the detailed development plan.
+See [`docs/roadmap.md`](docs/roadmap.md) for the detailed plan.
 
 ## Related CPC research
 
@@ -1144,28 +1488,37 @@ https://gridsat.eth.link
 
 ## Architecture
 
-The CPC architecture is defined by the accepted Request for Comments (RFC)
-documents in `docs/design/`.
+The CPC architecture is governed by the accepted RFCs in
+[`docs/design/`](docs/design/):
 
-The governing architectural specification is:
+- RFC-0001 — CPC Architecture — Accepted
+- RFC-0002 — Generic Constraint IR and CNF Front End — Accepted
 
-- RFC-0001 — CPC Architecture
+RFC-0001 defines the canonical compilation pipeline and separation between
+front ends, intermediate representation, backends, and emitters.
 
-Architectural changes should normally be introduced through new RFCs
-rather than by modifying accepted specifications.
+RFC-0002 defines CCIR as the canonical backend-independent representation for
+typed constraint families. The current implementation includes parity and
+clause payloads. Source lowering and backend migration remain in progress.
+
+Architectural changes should normally be introduced through new or superseding
+RFCs rather than by silently modifying accepted specifications.
 
 ## Core Constraint IR
 
-CPC v0.5 introduces the Core Constraint Intermediate Representation
-(CCIR), the canonical backend-independent representation defined by
-RFC-0002.
+CPC v0.5 introduces the Core Constraint Intermediate Representation (CCIR).
 
-The current CCIR implementation provides:
+Implemented:
 
 - immutable `CCIRProgram` and `CCIRConstraint` containers;
-- typed constraint-family payloads;
-- a parity constraint family; and
-- a clause constraint family.
+- a typed `CCIRPayload` contract;
+- the parity constraint family; and
+- the clause constraint family.
 
-Source-language lowering and backend migration remain separate
-implementation milestones.
+Not yet implemented:
+
+- parity-source lowering;
+- CNF-source lowering;
+- CCIR-driven RC compilation; and
+- complete DIMACS-to-SPICE validation.
+
