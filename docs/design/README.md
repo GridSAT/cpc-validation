@@ -39,4 +39,4 @@ RFCs are required for changes to:
 
 Routine bug fixes, documentation corrections, and implementation-preserving
 refactors do not require a new RFC.
-- RFC-0002 — Generic Constraint IR and CNF Front End — Draft
+- RFC-0002 — Generic Constraint IR and CNF Front End — Accepted
