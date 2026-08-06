@@ -1140,3 +1140,17 @@ https://github.com/GridSAT/cpc-validation
 **CPC research program**
 
 https://gridsat.eth.link
+
+
+## Architecture
+
+The CPC architecture is defined by the accepted Request for Comments (RFC)
+documents in `docs/design/`.
+
+The governing architectural specification is:
+
+- RFC-0001 — CPC Architecture
+
+Architectural changes should normally be introduced through new RFCs
+rather than by modifying accepted specifications.
+
