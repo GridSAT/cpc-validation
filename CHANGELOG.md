@@ -9,6 +9,14 @@ The format follows **Keep a Changelog** and this project follows
 
 ## [Unreleased]
 
+### Changed
+
+- RC backend now invokes the extracted RC emitter directly.
+- Removed the RC backend dependency on `compile_parity_instance()`.
+- Added a regression proving the backend does not call the public compiler entry point.
+- Removed the obsolete `src/spice_model_accidental_tests.py`.
+
+
 ### Added
 
 - generic parity-constraint representation;

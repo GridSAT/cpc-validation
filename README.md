@@ -904,6 +904,38 @@ uses behavioral sources. The present work establishes correctness,
 reproducibility, generality of instance representation, and measurable compiler
 output. It does not establish scalable passive-network realization.
 
+## v0.4 Compiler Architecture
+
+The v0.4 development line separates logical compilation from physical
+netlist emission.
+
+```text
+ParityInstance
+      |
+      v
+compile_parity_instance_to_ir()
+      |
+      v
+IRProgram
+      |
+      v
+compile_ir_to_rc()
+      |
+      v
+emit_parity_rc_netlist()
+      |
+      v
+RC/ngspice netlist
+```
+
+`src/ir_compiler.py` constructs the backend-independent intermediate
+representation. `src/backends/rc.py` consumes that representation and
+invokes the extracted RC emitter directly.
+
+The RC backend no longer calls the legacy public
+`compile_parity_instance()` entry point. This preserves a distinct
+backend boundary while maintaining byte-compatible RC/netlist output.
+
 ## Roadmap
 
 ### Version 0.1 — Reference validation baseline

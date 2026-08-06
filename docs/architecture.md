@@ -190,3 +190,21 @@ Consequently the validation framework compares physical responses against
 an independently computed mathematical ground truth rather than comparing
 one physical implementation against another.
 
+## Intermediate Representation and RC Backend
+
+The v0.4 compiler path is:
+
+```text
+ParityInstance
+  -> compile_parity_instance_to_ir()
+  -> IRProgram
+  -> compile_ir_to_rc()
+  -> emit_parity_rc_netlist()
+  -> RC/ngspice netlist
+```
+
+`src/ir_compiler.py` constructs the backend-independent IR.
+`src/backends/rc.py` consumes the IR and calls the RC emitter.
+`src/rc_emitter.py` generates the netlist text.
+
+The RC backend no longer calls `compile_parity_instance()`.

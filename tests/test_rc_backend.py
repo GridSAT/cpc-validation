@@ -253,3 +253,35 @@ def test_backend_output_contains_no_reference_answer_comment() -> None:
 
     for term in forbidden_terms:
         assert term not in result.netlist
+
+
+def test_rc_backend_does_not_call_public_compiler_entrypoint(
+    monkeypatch,
+) -> None:
+    import src.compiler
+    from src.backends.rc import compile_ir_to_rc
+    from src.ir_compiler import compile_parity_instance_to_ir
+
+    def fail_if_called(*args, **kwargs):
+        raise AssertionError(
+            "compile_parity_instance must not be called by the RC backend"
+        )
+
+    monkeypatch.setattr(
+        src.compiler,
+        "compile_parity_instance",
+        fail_if_called,
+    )
+
+    program = compile_parity_instance_to_ir(
+        DEFAULT_XOR_INSTANCE,
+        {
+            0: 0,
+            3: 1,
+        },
+    )
+
+    result = compile_ir_to_rc(program)
+
+    assert result.netlist
+    assert result.statistics.candidate_count == 4

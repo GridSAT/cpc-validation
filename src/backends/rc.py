@@ -3,13 +3,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from src.compiler import (
-    CompiledParityNetwork,
     CompilationStatistics,
     ParityConstraint,
     ParityInstance,
-    compile_parity_instance,
 )
 from src.ir import IRProgram
+from src.rc_emitter import emit_parity_rc_netlist
 
 
 @dataclass(frozen=True)
@@ -39,9 +38,8 @@ def compile_ir_to_rc(
     """
     Compile backend-independent CPC IR into the current RC/ngspice netlist.
 
-    This compatibility implementation deliberately delegates to the proven
-    v0.3 parity netlist emitter after reconstructing the source parity
-    instance exclusively from the IR.
+    The backend reconstructs the logical parity instance represented by the
+    IR and invokes the extracted RC emitter directly.
 
     The delegation protects byte-for-byte compatibility while establishing
     the backend boundary:
@@ -63,7 +61,7 @@ def compile_ir_to_rc(
         program
     )
 
-    compiled = compile_parity_instance(
+    netlist, raw_statistics = emit_parity_rc_netlist(
         instance,
         program.boundary_assignment_dict,
         supply_voltage=(
@@ -80,9 +78,34 @@ def compile_ir_to_rc(
         ),
     )
 
-    return _result_from_compiled(
-        program,
-        compiled,
+    statistics = CompilationStatistics(
+        constraint_count=(
+            raw_statistics["constraint_count"]
+        ),
+        variable_count=(
+            raw_statistics["variable_count"]
+        ),
+        boundary_variable_count=(
+            raw_statistics["boundary_variable_count"]
+        ),
+        internal_variable_count=(
+            raw_statistics["internal_variable_count"]
+        ),
+        candidate_count=(
+            raw_statistics["candidate_count"]
+        ),
+        candidate_source_count=(
+            raw_statistics["candidate_source_count"]
+        ),
+        behavioral_source_count=(
+            raw_statistics["behavioral_source_count"]
+        ),
+    )
+
+    return RCBackendResult(
+        program_name=program.name,
+        netlist=netlist,
+        statistics=statistics,
     )
 
 
@@ -107,15 +130,4 @@ def parity_instance_from_ir(
         boundary_variables=(
             program.boundary_variables
         ),
-    )
-
-
-def _result_from_compiled(
-    program: IRProgram,
-    compiled: CompiledParityNetwork,
-) -> RCBackendResult:
-    return RCBackendResult(
-        program_name=program.name,
-        netlist=compiled.netlist,
-        statistics=compiled.statistics,
     )
