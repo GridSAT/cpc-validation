@@ -38,17 +38,14 @@ class Literal:
 @dataclass(frozen=True)
 class Clause:
     """
-    One nonempty disjunction of CNF literals.
+    One disjunction of CNF literals.
+
+    An empty clause is valid CNF and represents falsity.
     """
 
     literals: tuple[Literal, ...]
 
     def __post_init__(self) -> None:
-        if not self.literals:
-            raise ValueError(
-                "a CNF clause must contain at least one literal"
-            )
-
         if any(
             not isinstance(literal, Literal)
             for literal in self.literals
@@ -79,14 +76,9 @@ class CNFInstance:
                 "CNF variable_count must be an integer"
             )
 
-        if self.variable_count <= 0:
+        if self.variable_count < 0:
             raise ValueError(
-                "CNF variable_count must be greater than zero"
-            )
-
-        if not self.clauses:
-            raise ValueError(
-                "a CNF instance must contain at least one clause"
+                "CNF variable_count must be non-negative"
             )
 
         if any(
@@ -97,10 +89,15 @@ class CNFInstance:
                 "every CNF constraint must be a Clause"
             )
 
-        largest_variable = max(
+        declared_variables = (
             literal.variable
             for clause in self.clauses
             for literal in clause.literals
+        )
+
+        largest_variable = max(
+            declared_variables,
+            default=0,
         )
 
         if largest_variable > self.variable_count:

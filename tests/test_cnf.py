@@ -60,12 +60,10 @@ def test_clause() -> None:
     assert len(clause.literals) == 2
 
 
-def test_empty_clause_rejected() -> None:
-    with pytest.raises(
-        ValueError,
-        match="at least one literal",
-    ):
-        Clause(literals=())
+def test_empty_clause_is_valid() -> None:
+    clause = Clause(literals=())
+
+    assert clause.literals == ()
 
 
 def test_nonliteral_clause_member_rejected() -> None:
@@ -103,7 +101,6 @@ def test_cnf_instance() -> None:
 @pytest.mark.parametrize(
     "variable_count",
     [
-        0,
         -1,
         True,
         2.5,
@@ -128,15 +125,14 @@ def test_invalid_variable_count_rejected(
         )
 
 
-def test_empty_cnf_rejected() -> None:
-    with pytest.raises(
-        ValueError,
-        match="at least one clause",
-    ):
-        CNFInstance(
-            variable_count=1,
-            clauses=(),
-        )
+def test_empty_cnf_is_valid() -> None:
+    instance = CNFInstance(
+        variable_count=0,
+        clauses=(),
+    )
+
+    assert instance.variable_count == 0
+    assert instance.clauses == ()
 
 
 def test_literal_beyond_declared_range_rejected() -> None:
