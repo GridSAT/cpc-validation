@@ -70,6 +70,31 @@ class UnsupportedBackendCapabilityError(
     """
 
 
+def validate_backend_capabilities(
+    program: CCIRProgram,
+    capabilities: BackendCapabilities,
+) -> None:
+    """
+    Reject CCIR programs requiring unsupported backend capabilities.
+    """
+
+    unsupported_families = sorted(
+        {
+            constraint.family
+            for constraint in program.constraints
+            if not capabilities.supports_constraint_family(
+                constraint.family
+            )
+        }
+    )
+
+    if unsupported_families:
+        raise UnsupportedBackendCapabilityError(
+            "unsupported CCIR constraint families: "
+            + ", ".join(unsupported_families)
+        )
+
+
 class Backend(Protocol):
     """
     Canonical RFC-0003 backend compilation interface.

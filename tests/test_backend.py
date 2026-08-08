@@ -200,3 +200,148 @@ def test_unsupported_backend_capability_error_is_value_error() -> None:
         error,
         ValueError,
     )
+
+
+def test_validate_backend_capabilities_accepts_supported_program() -> None:
+    from src.backend import (
+        BackendCapabilities,
+        validate_backend_capabilities,
+    )
+    from src.ccir import (
+        CCIRConstraint,
+        CCIRProgram,
+    )
+    from src.ccir_parity import (
+        CCIRParityPayload,
+    )
+
+    program = CCIRProgram(
+        name="supported",
+        variable_count=2,
+        boundary_variables=(),
+        constraints=(
+            CCIRConstraint(
+                family="parity",
+                payload=CCIRParityPayload(
+                    variables=(0, 1),
+                    parity=0,
+                ),
+            ),
+        ),
+    )
+
+    capabilities = BackendCapabilities(
+        constraint_families=frozenset(
+            {
+                "parity",
+            }
+        ),
+    )
+
+    validate_backend_capabilities(
+        program,
+        capabilities,
+    )
+
+
+def test_validate_backend_capabilities_rejects_unsupported_program() -> None:
+    from src.backend import (
+        BackendCapabilities,
+        UnsupportedBackendCapabilityError,
+        validate_backend_capabilities,
+    )
+    from src.ccir import (
+        CCIRConstraint,
+        CCIRProgram,
+    )
+    from src.ccir_clause import (
+        CCIRClausePayload,
+        CCIRLiteral,
+    )
+
+    program = CCIRProgram(
+        name="unsupported",
+        variable_count=1,
+        boundary_variables=(),
+        constraints=(
+            CCIRConstraint(
+                family="clause",
+                payload=CCIRClausePayload(
+                    literals=(
+                        CCIRLiteral(
+                            variable=0,
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    capabilities = BackendCapabilities(
+        constraint_families=frozenset(
+            {
+                "parity",
+            }
+        ),
+    )
+
+    with pytest.raises(
+        UnsupportedBackendCapabilityError,
+        match=(
+            "unsupported CCIR constraint families: "
+            "clause"
+        ),
+    ):
+        validate_backend_capabilities(
+            program,
+            capabilities,
+        )
+
+
+def test_validate_backend_capabilities_reports_families_sorted() -> None:
+    from src.backend import (
+        BackendCapabilities,
+        UnsupportedBackendCapabilityError,
+        validate_backend_capabilities,
+    )
+    from src.ccir import (
+        CCIRConstraint,
+        CCIRPayload,
+        CCIRProgram,
+    )
+
+    class DummyPayload(CCIRPayload):
+        def to_dict(self) -> dict[str, object]:
+            return {}
+
+    program = CCIRProgram(
+        name="multiple-unsupported",
+        variable_count=0,
+        boundary_variables=(),
+        constraints=(
+            CCIRConstraint(
+                family="zeta",
+                payload=DummyPayload(),
+            ),
+            CCIRConstraint(
+                family="alpha",
+                payload=DummyPayload(),
+            ),
+        ),
+    )
+
+    capabilities = BackendCapabilities(
+        constraint_families=frozenset(),
+    )
+
+    with pytest.raises(
+        UnsupportedBackendCapabilityError,
+        match=(
+            "unsupported CCIR constraint families: "
+            "alpha, zeta"
+        ),
+    ):
+        validate_backend_capabilities(
+            program,
+            capabilities,
+        )
