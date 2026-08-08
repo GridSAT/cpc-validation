@@ -732,6 +732,164 @@ that:
 - external reference answers do not influence compilation; and
 - the prescribed interface alone determines the decoded semantic result.
 
-## 13. Remaining Sections
+## 13. Acceptance Criteria
 
-1. Acceptance Criteria
+A backend implementation conforms to RFC-0003 only when all applicable
+requirements of this section are satisfied.
+
+### 13.1 Canonical Backend Input
+
+The backend SHALL consume valid CCIR as its canonical semantic input.
+
+The backend SHALL NOT require source-language objects, source files, benchmark
+formats, independently computed semantic answers, or other instance-specific
+inputs outside the admitted CCIR and globally fixed backend specification.
+
+### 13.2 Complete Execution Artifact
+
+Backend compilation SHALL produce an execution artifact satisfying the
+ExecutionArtifact contract of Section 4.
+
+The artifact SHALL contain or deterministically define:
+
+- topology;
+- backend parameters;
+- interface and readout specification;
+- backend metadata; and
+- complete provenance.
+
+Every generated artifact element SHALL have admissible provenance.
+
+### 13.3 Compiler Dependency Conformance
+
+The complete backend compilation dependency set SHALL satisfy:
+
+    D(C_X) = { C_X, Theta_backend }
+
+Every stage capable of influencing the final execution artifact SHALL respect
+this dependency boundary.
+
+### 13.4 Answer Independence
+
+The independent semantic evaluator and every answer-equivalent surrogate SHALL
+remain outside the compilation dependency graph.
+
+Compilation SHALL NOT consume, derive, reconstruct, query, cache, or encode
+semantic answer information.
+
+Compiler validation SHALL include machine-checkable tests of this requirement.
+
+### 13.5 Constraint-Derived Compilation
+
+Topology and backend parameters SHALL be generated from admitted CCIR data and
+globally fixed backend rules.
+
+One unchanged compiler and one unchanged backend rule set SHALL operate across
+the declared validation family.
+
+Instance-specific hand tuning based on semantic outcomes SHALL NOT be used.
+
+### 13.6 Reproducibility
+
+Repeated compilation of the same canonical CCIR input under the same declared
+backend specification SHALL produce equivalent execution artifacts.
+
+All permitted variability SHALL be explicitly represented in the backend
+specification or artifact metadata.
+
+### 13.7 Compiler Validation
+
+Compiler validation SHALL succeed independently of semantic evaluation.
+
+It SHALL verify at minimum:
+
+- compiler dependency conformance;
+- provenance completeness;
+- topology reproducibility;
+- parameter reproducibility;
+- absence of answer-derived artifact information; and
+- family-level use of unchanged compilation rules.
+
+### 13.8 Semantic Validation
+
+Semantic validation SHALL remain independent of backend compilation.
+
+For every condition required by the declared validation profile, the decoded
+backend result `d_X` SHALL equal the independently computed reference result
+`e_X`.
+
+A semantic mismatch SHALL cause semantic validation to fail.
+
+### 13.9 Restricted Interface
+
+Semantic correctness SHALL be determined only through the admitted interface
+and fixed decoder.
+
+Hidden backend state, diagnostic observables, intermediate trajectories, or
+non-interface simulator information SHALL NOT be used to recover or improve
+the semantic answer.
+
+### 13.10 Backend Independence
+
+A conforming backend SHALL remain independent of the source language that
+produced the admitted CCIR.
+
+Adding a new source language SHALL NOT require backend modification when that
+source language lowers to CCIR already admitted by the backend.
+
+Adding or replacing a backend SHALL NOT require modification of source-language
+semantics or source-to-CCIR lowering.
+
+### 13.11 RC Reference Backend
+
+The RC reference backend SHALL additionally demonstrate:
+
+- direct CCIR-driven compilation;
+- constraint-derived network topology;
+- fixed RC parameter-generation rules;
+- complete RC artifact provenance;
+- answer-independent artifact generation;
+- restricted interface readout;
+- validation across multiple structurally distinct parity instances; and
+- independent post-execution semantic comparison.
+
+The direct behavioral response realization MAY remain as a historical or
+comparison baseline, but SHALL NOT constitute the final conforming RFC-0003 RC
+reference backend.
+
+### 13.12 Completion of the RFC-0003 Implementation Milestone
+
+The RFC-0003 implementation milestone is complete when:
+
+1. a canonical backend software interface implements
+   `Compile_backend : CCIR -> ExecutionArtifact`;
+
+2. the RC reference backend consumes CCIR directly;
+
+3. the RC reference backend no longer relies on direct answer-conditioned
+   behavioral response realization;
+
+4. all RC topology and component settings are generated from CCIR and fixed
+   backend rules;
+
+5. artifact provenance is machine-checkable;
+
+6. compiler validation and semantic validation are implemented as distinct
+   validation paths;
+
+7. answer-independence audits pass across the declared validation family;
+
+8. the prescribed interface and fixed decoder reproduce the independent
+   semantic reference results across that family;
+
+9. the existing parity regression suite remains green or is superseded only by
+   explicitly documented equivalent validation; and
+
+10. the legacy parity-oriented execution path is retired from the canonical
+    backend pipeline.
+
+RFC-0003 completion does not establish polynomial-time solution of SAT,
+general physical scalability, hardware feasibility, robustness to arbitrary
+noise, or any complexity-theoretic claim not separately demonstrated.
+
+Those questions remain outside the scope of this backend compilation contract.
