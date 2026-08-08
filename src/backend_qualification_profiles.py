@@ -17,6 +17,15 @@ from src.backends.digital_execute import (
 from src.backends.digital_prepare import (
     DIGITAL_PREPARATION_ID,
 )
+from src.backends.fpga_ccir import (
+    FPGA_SPECIFICATION,
+)
+from src.backends.fpga_execute import (
+    FPGA_EXECUTION_ID,
+)
+from src.backends.fpga_prepare import (
+    FPGA_PREPARATION_ID,
+)
 from src.backends.rc_ccir import (
     RC_SPECIFICATION,
 )
@@ -34,6 +43,8 @@ DIGITAL_EXECUTION_ENGINE = (
 DIGITAL_EXECUTION_ENGINE_VERSION = "1"
 
 RC_EXECUTION_ENGINE = "ngspice"
+
+FPGA_EXECUTION_ENGINE = "iverilog/vvp"
 
 
 REFERENCE_BACKEND_CONFORMANCE = BackendConformance(
@@ -97,6 +108,34 @@ def build_digital_qualification_manifest(
 
     return manifest_from_summary(
         specification=DIGITAL_SPECIFICATION,
+        execution=execution,
+        conformance=REFERENCE_BACKEND_CONFORMANCE,
+        summary=summary,
+    )
+
+def build_fpga_qualification_manifest(
+    *,
+    execution_engine_version: str,
+    summary: Mapping[str, object] | None = None,
+) -> BackendQualificationManifest:
+    """
+    Construct the qualification manifest for the FPGA reference backend.
+
+    The Icarus Verilog execution-engine version is supplied from the actual
+    execution environment rather than fixed by the backend specification.
+    """
+
+    execution = BackendExecutionProfile(
+        preparation_id=FPGA_PREPARATION_ID,
+        execution_id=FPGA_EXECUTION_ID,
+        execution_engine=FPGA_EXECUTION_ENGINE,
+        execution_engine_version=(
+            execution_engine_version
+        ),
+    )
+
+    return manifest_from_summary(
+        specification=FPGA_SPECIFICATION,
         execution=execution,
         conformance=REFERENCE_BACKEND_CONFORMANCE,
         summary=summary,

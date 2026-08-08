@@ -12,6 +12,9 @@ from src.ccir_parity import (
 )
 
 
+FPGA_PREPARATION_ID = "fpga.verilog.v1"
+
+
 def prepare_fpga_execution(
     program: CCIRProgram,
     artifact: ExecutionArtifact,
@@ -263,7 +266,7 @@ def prepare_fpga_execution(
             ),
             (
                 "preparation_id",
-                "fpga.verilog.v1",
+                FPGA_PREPARATION_ID,
             ),
         ),
     )
