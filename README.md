@@ -153,6 +153,42 @@ one canonical representation is realized through heterogeneous execution
 technologies while remaining subject to one independent validation
 architecture.
 
+### Cross-Backend Benchmark Corpus
+
+RFC-0006 extends the single-case RFC-0005 comparison to deterministic benchmark
+corpora with exhaustive finite boundary enumeration.
+
+Run:
+
+    python validate_cross_backend_benchmarks.py benchmarks/
+
+The current accepted corpus discovers 16 benchmarks and executes 64 boundary
+cases across the RC and deterministic Digital backends.
+
+The accepted RFC-0006 validation result is:
+
+    Benchmarks:             16
+    Boundary cases:         64
+
+    Backend agreement:      64/64 PASS
+    RC semantic match:      64/64 PASS
+    Digital semantic match: 64/64 PASS
+
+    OVERALL:                PASS
+
+The command writes machine-readable evidence to:
+
+    results/cross_backend_validation.csv
+    results/cross_backend_summary.json
+
+The JSON summary uses schema:
+
+    cpc.cross-backend-summary.v1
+
+These results constitute finite validation evidence for the executed corpus.
+They do not establish universal correctness for arbitrary programs, arbitrary
+backends, or unexecuted instances.
+
 ---
 
 ## Architectural Philosophy
@@ -209,7 +245,7 @@ The CPC Reference Validation Framework currently provides:
 - comprehensive automated regression suite.
 
 These components establish the current reference implementation of the
-combined RFC-0001 through RFC-0004 CPC architecture.
+combined RFC-0001 through RFC-0006 CPC architecture.
 
 ---
 
@@ -1807,6 +1843,7 @@ the RFC series.
 | RFC-0003 | Execution-backend compilation contract, ExecutionArtifact, provenance, and validation |
 | RFC-0004 | Physical execution backend engineering and conformance |
 | RFC-0005 | Cross-backend equivalence and independent validation |
+| RFC-0006 | Cross-backend benchmark validation and reproducibility |
 
 The RC Reference Backend therefore represents the current reference
 implementation of the combined RFC architecture.
@@ -1873,12 +1910,18 @@ repository.
 ## Development Status
 
 The CPC Reference Validation Framework implements the combined RFC-0001
-through RFC-0005 architectural baseline with two current reference execution
+through RFC-0006 architectural baseline with two current reference execution
 realizations: the RC Reference Backend and the deterministic Digital Backend.
 
-The audited RFC-0005 implementation state used for this README passes
-**562 automated tests**. The repository's current test run remains authoritative
+The audited RFC-0006 implementation state used for this README passes
+**586 automated tests**. The repository's current test run remains authoritative
 as the suite evolves.
+
+The RFC-0006 acceptance corpus currently contains 16 discovered benchmarks and
+64 exhaustively enumerated boundary cases. All 64 cases pass backend agreement,
+RC semantic validation, and Digital semantic validation. This finite corpus
+result is validation evidence for the executed cases; it is not presented as a
+universal correctness theorem.
 
 ---
 
@@ -1924,7 +1967,7 @@ as the suite evolves.
 
 ---
 
-### RFC-0003 / RFC-0004 / RFC-0005 Audit Coverage
+### RFC-0003 / RFC-0004 / RFC-0005 / RFC-0006 Audit Coverage
 
 Dedicated tests cover:
 
@@ -1952,7 +1995,15 @@ Dedicated tests cover:
 - cross-backend canonical-input identity;
 - backend-result agreement separated from semantic correctness;
 - post-execution independent CCIR reference evaluation; and
-- RFC-0005 CB-1 through CB-10 conformance.
+- RFC-0005 CB-1 through CB-10 conformance;
+- deterministic benchmark discovery and ordering;
+- canonical corpus lowering;
+- exhaustive deterministic boundary enumeration;
+- machine-readable cross-backend CSV case records;
+- deterministic JSON corpus summaries;
+- failure propagation and non-vacuous corpus validation;
+- explicit finite-evidence boundary enforcement; and
+- RFC-0006 BV-1 through BV-14 conformance.
 
 The RC Reference Backend constitutes the current reference implementation of
 the execution-backend architecture.
@@ -1968,18 +2019,15 @@ validation framework.
 Planned work includes
 
 - FPGA execution backend;
-- digital logic execution backend;
 - graph execution backend;
 - C-parity execution backend;
 - additional physical execution substrates;
-- execution-backend equivalence validation;
-- expanded benchmark collections;
+- expanded and diversified benchmark collections;
 - automated backend certification;
-- cross-backend reproducibility studies.
 
 These developments are intended to extend the set of supported execution
 substrates without modifying the architectural contracts established by
-RFC-0001 through RFC-0004.
+RFC-0001 through RFC-0006.
 
 ---
 
@@ -2034,6 +2082,7 @@ The normative architecture is contained in:
 - [`docs/design/RFC-0003-Backend-Execution-Contract.md`](docs/design/RFC-0003-Backend-Execution-Contract.md)
 - [`docs/design/RFC-0004-Physical-Execution-Backend-Engineering-and-Conformance.md`](docs/design/RFC-0004-Physical-Execution-Backend-Engineering-and-Conformance.md)
 - [`docs/design/RFC-0005-Cross-Backend-Equivalence-and-Validation.md`](docs/design/RFC-0005-Cross-Backend-Equivalence-and-Validation.md)
+- [`docs/design/RFC-0006-Cross-Backend-Benchmark-Validation-and-Reproducibility.md`](docs/design/RFC-0006-Cross-Backend-Benchmark-Validation-and-Reproducibility.md)
 
 | RFC | Purpose |
 |---|---|
