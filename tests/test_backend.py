@@ -1388,3 +1388,290 @@ def test_validate_artifact_ccir_origins_rejects_unknown_kind() -> None:
             artifact,
             program,
         )
+
+
+def test_validate_execution_artifact_accepts_conforming_artifact() -> None:
+    from src.backend import (
+        BackendCapabilities,
+        BackendRuleDefinition,
+        BackendSpecification,
+        validate_execution_artifact,
+    )
+
+    program = CCIRProgram(
+        name="artifact-test",
+        variable_count=1,
+        boundary_variables=(0,),
+        constraints=(),
+    )
+
+    specification = BackendSpecification(
+        backend_id="test",
+        backend_version="1",
+        capabilities=BackendCapabilities(
+            constraint_families=frozenset()
+        ),
+        rules=(
+            BackendRuleDefinition(
+                rule_id="test.interface",
+            ),
+        ),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(
+            (
+                "interface:0",
+                ArtifactProvenance(
+                    ccir_origins=(
+                        CCIROrigin(
+                            kind="boundary_variable",
+                            identifier="0",
+                        ),
+                    ),
+                    backend_rules=(
+                        BackendRuleOrigin(
+                            rule_id="test.interface",
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    validate_execution_artifact(
+        program,
+        artifact,
+        specification,
+        (
+            "interface:0",
+        ),
+    )
+
+
+def test_validate_execution_artifact_rejects_unsupported_family() -> None:
+    from src.backend import (
+        BackendCapabilities,
+        BackendSpecification,
+        UnsupportedBackendCapabilityError,
+        validate_execution_artifact,
+    )
+    from src.ccir import CCIRConstraint
+    from src.ccir_clause import (
+        CCIRClausePayload,
+        CCIRLiteral,
+    )
+
+    program = CCIRProgram(
+        name="unsupported",
+        variable_count=1,
+        boundary_variables=(),
+        constraints=(
+            CCIRConstraint(
+                family="clause",
+                payload=CCIRClausePayload(
+                    literals=(
+                        CCIRLiteral(
+                            variable=0,
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    specification = BackendSpecification(
+        backend_id="test",
+        backend_version="1",
+        capabilities=BackendCapabilities(
+            constraint_families=frozenset(
+                {
+                    "parity",
+                }
+            )
+        ),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(),
+    )
+
+    with pytest.raises(
+        UnsupportedBackendCapabilityError,
+        match="unsupported CCIR constraint families: clause",
+    ):
+        validate_execution_artifact(
+            program,
+            artifact,
+            specification,
+            (),
+        )
+
+
+def test_validate_execution_artifact_rejects_missing_provenance() -> None:
+    from src.backend import (
+        BackendCapabilities,
+        BackendSpecification,
+        validate_execution_artifact,
+    )
+
+    program = CCIRProgram(
+        name="artifact-test",
+        variable_count=0,
+        boundary_variables=(),
+        constraints=(),
+    )
+
+    specification = BackendSpecification(
+        backend_id="test",
+        backend_version="1",
+        capabilities=BackendCapabilities(
+            constraint_families=frozenset()
+        ),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(),
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="artifact provenance missing elements: node:0",
+    ):
+        validate_execution_artifact(
+            program,
+            artifact,
+            specification,
+            (
+                "node:0",
+            ),
+        )
+
+
+def test_validate_execution_artifact_rejects_unresolved_ccir_origin() -> None:
+    from src.backend import (
+        BackendCapabilities,
+        BackendSpecification,
+        validate_execution_artifact,
+    )
+
+    program = CCIRProgram(
+        name="artifact-test",
+        variable_count=0,
+        boundary_variables=(),
+        constraints=(),
+    )
+
+    specification = BackendSpecification(
+        backend_id="test",
+        backend_version="1",
+        capabilities=BackendCapabilities(
+            constraint_families=frozenset()
+        ),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(
+            (
+                "node:0",
+                ArtifactProvenance(
+                    ccir_origins=(
+                        CCIROrigin(
+                            kind="constraint",
+                            identifier="9",
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    with pytest.raises(
+        ValueError,
+        match=(
+            "artifact provenance references unresolved "
+            "CCIR origins: constraint:9"
+        ),
+    ):
+        validate_execution_artifact(
+            program,
+            artifact,
+            specification,
+            (
+                "node:0",
+            ),
+        )
+
+
+def test_validate_execution_artifact_rejects_unregistered_rule() -> None:
+    from src.backend import (
+        BackendCapabilities,
+        BackendSpecification,
+        validate_execution_artifact,
+    )
+
+    program = CCIRProgram(
+        name="artifact-test",
+        variable_count=0,
+        boundary_variables=(),
+        constraints=(),
+    )
+
+    specification = BackendSpecification(
+        backend_id="test",
+        backend_version="1",
+        capabilities=BackendCapabilities(
+            constraint_families=frozenset()
+        ),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(
+            (
+                "node:0",
+                ArtifactProvenance(
+                    backend_rules=(
+                        BackendRuleOrigin(
+                            rule_id="unknown.rule",
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    with pytest.raises(
+        ValueError,
+        match=(
+            "artifact provenance references unregistered "
+            "backend rules: unknown.rule"
+        ),
+    ):
+        validate_execution_artifact(
+            program,
+            artifact,
+            specification,
+            (
+                "node:0",
+            ),
+        )

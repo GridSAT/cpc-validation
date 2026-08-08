@@ -81,6 +81,37 @@ class ExecutionArtifact:
     ]
 
 
+def validate_execution_artifact(
+    program: CCIRProgram,
+    artifact: ExecutionArtifact,
+    specification: BackendSpecification,
+    required_elements: Iterable[str],
+) -> None:
+    """
+    Run the generic RFC-0003 compiler-conformance checks for one artifact.
+    """
+
+    validate_backend_capabilities(
+        program,
+        specification.capabilities,
+    )
+
+    validate_artifact_provenance(
+        artifact,
+        required_elements,
+    )
+
+    validate_artifact_ccir_origins(
+        artifact,
+        program,
+    )
+
+    validate_artifact_backend_rules(
+        artifact,
+        specification,
+    )
+
+
 def validate_artifact_ccir_origins(
     artifact: ExecutionArtifact,
     program: CCIRProgram,
