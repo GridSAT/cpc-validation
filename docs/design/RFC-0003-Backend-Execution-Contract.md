@@ -104,24 +104,80 @@ Compile_RC : CCIR -> RCArtifact
 A future backend MAY define another artifact type while preserving the same
 canonical CCIR input boundary.
 
-## 4. Remaining Sections
+## 4. Execution Artifact
 
-1. Execution Artifact
+For an admitted CCIR program `C_X`, backend compilation SHALL produce an
+execution artifact
 
-2. Compiler Dependency Principle
+    A_X = (T_X, P_X, I_X, M_X, Pi_X)
 
-3. Answer Independence
+with the following required components.
 
-4. Physical Compilation Discipline
+### 4.1 Topology
 
-5. Compiler Validation
+`T_X` is the complete backend execution topology.
 
-6. Semantic Validation
+Depending on the backend, topology MAY describe nodes, edges, components,
+logic elements, dynamical couplings, state variables, or other structural
+execution elements.
 
-7. Backend Independence
+### 4.2 Backend Parameters
 
-8. Restricted Interface Principle
+`P_X` contains the backend-specific parameters required to instantiate the
+artifact.
 
-9. RC Reference Backend
+Examples MAY include component values, dynamical coefficients, thresholds,
+timing constants, logic configuration, or simulator parameters.
 
-10. Acceptance Criteria
+### 4.3 Interface Specification
+
+`I_X` defines the admitted execution interface.
+
+It SHALL identify the boundary or control inputs, prescribed observables,
+readout channel, and any information required by the fixed decoder.
+
+### 4.4 Backend Metadata
+
+`M_X` contains metadata required to identify and reproduce the compilation.
+
+Metadata MAY include the backend identifier, compiler version, fixed backend
+configuration, serialization version, or calibration identifier.
+
+### 4.5 Provenance
+
+`Pi_X` is a machine-checkable provenance map
+
+    Pi_X : ArtifactElement -> CCIROrigin union BackendRule
+
+Every generated artifact element SHALL be traceable to either admitted CCIR
+data or a globally fixed backend rule.
+
+No generated artifact element SHALL lack provenance.
+
+Backend-local auxiliary state MAY be introduced when required by the execution
+mechanism, but every such element SHALL have provenance under `Pi_X`.
+
+The execution-artifact contract does not require artifacts to be static.
+An artifact MAY represent a static network, a dynamical system, a simulator
+configuration, programmable logic, physical hardware configuration, or another
+backend-defined realization.
+
+## 5. Remaining Sections
+
+1. Compiler Dependency Principle
+
+2. Answer Independence
+
+3. Physical Compilation Discipline
+
+4. Compiler Validation
+
+5. Semantic Validation
+
+6. Backend Independence
+
+7. Restricted Interface Principle
+
+8. RC Reference Backend
+
+9. Acceptance Criteria
