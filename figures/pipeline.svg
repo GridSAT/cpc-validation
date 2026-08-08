@@ -1,75 +1,264 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="1200" height="170" viewBox="0 45 1200 170"
-     xmlns="http://www.w3.org/2000/svg">
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1400"
+     height="620"
+     viewBox="0 0 1400 620">
 
-<style>
-text{
-font-family:Arial,Helvetica,sans-serif;
-font-size:18px;
-fill:#222;
-}
-.box{
-fill:#eef5ff;
-stroke:#2d5aa3;
-stroke-width:2;
-rx:8;
-ry:8;
-}
-.arrow{
-stroke:#555;
-stroke-width:3;
-marker-end:url(#arrow);
-fill:none;
-}
-</style>
+  <defs>
+    <style>
+      .box {
+        fill: #ffffff;
+        stroke: #111111;
+        stroke-width: 2;
+        rx: 10;
+        ry: 10;
+      }
 
-<defs>
-<marker id="arrow"
-markerWidth="10"
-markerHeight="10"
-refX="8"
-refY="3"
-orient="auto">
-<path d="M0,0 L8,3 L0,6 Z" fill="#555"/>
-</marker>
-</defs>
+      .box-soft {
+        fill: #f7f7f7;
+        stroke: #111111;
+        stroke-width: 2;
+        rx: 10;
+        ry: 10;
+      }
 
+      .decision {
+        fill: #ffffff;
+        stroke: #111111;
+        stroke-width: 2;
+      }
 
+      .label {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 18px;
+        fill: #111111;
+        text-anchor: middle;
+        dominant-baseline: middle;
+      }
 
-<rect class="box" x="20" y="90" width="150" height="60"/>
-<text x="95" y="125" text-anchor="middle">
-Constraint
-</text>
+      .label-small {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 15px;
+        fill: #111111;
+        text-anchor: middle;
+        dominant-baseline: middle;
+      }
 
-<rect class="box" x="210" y="90" width="170" height="60"/>
-<text x="295" y="125" text-anchor="middle">
-Reference
-</text>
+      .title {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 28px;
+        font-weight: bold;
+        fill: #111111;
+        text-anchor: middle;
+      }
 
-<rect class="box" x="430" y="90" width="170" height="60"/>
-<text x="515" y="125" text-anchor="middle">
-SPICE
-</text>
+      .subtitle {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 16px;
+        fill: #444444;
+        text-anchor: middle;
+      }
 
-<rect class="box" x="650" y="90" width="170" height="60"/>
-<text x="735" y="125" text-anchor="middle">
-Measurement
-</text>
+      .arrow {
+        stroke: #111111;
+        stroke-width: 2;
+        fill: none;
+        marker-end: url(#arrowhead);
+      }
 
-<rect class="box" x="870" y="90" width="170" height="60"/>
-<text x="955" y="125" text-anchor="middle">
-Decoder
-</text>
+      .arrow-dashed {
+        stroke: #111111;
+        stroke-width: 2;
+        stroke-dasharray: 8 6;
+        fill: none;
+        marker-end: url(#arrowhead);
+      }
 
-<rect class="box" x="1070" y="90" width="110" height="60"/>
-<text x="1125" y="125" text-anchor="middle">
-PASS
-</text>
+      .separator {
+        stroke: #777777;
+        stroke-width: 1.5;
+        stroke-dasharray: 6 6;
+      }
+    </style>
 
-<line class="arrow" x1="170" y1="120" x2="210" y2="120"/>
-<line class="arrow" x1="380" y1="120" x2="430" y2="120"/>
-<line class="arrow" x1="600" y1="120" x2="650" y2="120"/>
-<line class="arrow" x1="820" y1="120" x2="870" y2="120"/>
-<line class="arrow" x1="1040" y1="120" x2="1070" y2="120"/>
+    <marker id="arrowhead"
+            markerWidth="10"
+            markerHeight="7"
+            refX="9"
+            refY="3.5"
+            orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7"
+               fill="#111111"/>
+    </marker>
+  </defs>
+
+  <text x="700" y="42" class="title">
+    CPC Canonical Compilation and Validation Architecture
+  </text>
+
+  <text x="700" y="70" class="subtitle">
+    RFC-0003 execution-backend contract with independent semantic validation
+  </text>
+
+  <!-- ========================================================= -->
+  <!-- Canonical execution path                                  -->
+  <!-- ========================================================= -->
+
+  <text x="700" y="105" class="subtitle">
+    Canonical execution path
+  </text>
+
+  <rect class="box" x="35" y="135" width="145" height="70"/>
+  <text x="107.5" y="163" class="label-small">
+    Source
+  </text>
+  <text x="107.5" y="184" class="label-small">
+    Representation
+  </text>
+
+  <line class="arrow" x1="180" y1="170" x2="220" y2="170"/>
+
+  <rect class="box" x="220" y="135" width="145" height="70"/>
+  <text x="292.5" y="163" class="label-small">
+    Canonical
+  </text>
+  <text x="292.5" y="184" class="label-small">
+    Lowering
+  </text>
+
+  <line class="arrow" x1="365" y1="170" x2="405" y2="170"/>
+
+  <rect class="box-soft" x="405" y="135" width="120" height="70"/>
+  <text x="465" y="170" class="label">
+    CCIR
+  </text>
+
+  <line class="arrow" x1="525" y1="170" x2="565" y2="170"/>
+
+  <rect class="box" x="565" y="135" width="160" height="70"/>
+  <text x="645" y="170" class="label-small">
+    Compile_backend
+  </text>
+
+  <line class="arrow" x1="725" y1="170" x2="765" y2="170"/>
+
+  <rect class="box-soft" x="765" y="135" width="165" height="70"/>
+  <text x="847.5" y="159" class="label-small">
+    Execution
+  </text>
+  <text x="847.5" y="182" class="label-small">
+    Artifact
+  </text>
+
+  <line class="arrow" x1="930" y1="170" x2="970" y2="170"/>
+
+  <rect class="box" x="970" y="135" width="120" height="70"/>
+  <text x="1030" y="170" class="label-small">
+    Preparation
+  </text>
+
+  <line class="arrow" x1="1090" y1="170" x2="1130" y2="170"/>
+
+  <rect class="box" x="1130" y="135" width="120" height="70"/>
+  <text x="1190" y="170" class="label-small">
+    Execution
+  </text>
+
+  <line class="arrow" x1="1250" y1="170" x2="1290" y2="170"/>
+
+  <rect class="box" x="1290" y="135" width="80" height="70"/>
+  <text x="1330" y="160" class="label-small">
+    Readout
+  </text>
+  <text x="1330" y="182" class="label-small">
+    + Decoder
+  </text>
+
+  <!-- decoded result d_X -->
+  <line class="arrow" x1="1330" y1="205" x2="1330" y2="270"/>
+
+  <rect class="box-soft" x="1260" y="270" width="140" height="60"/>
+  <text x="1330" y="300" class="label">
+    d_X
+  </text>
+
+  <!-- ========================================================= -->
+  <!-- Separation                                                 -->
+  <!-- ========================================================= -->
+
+  <line class="separator" x1="35" y1="365" x2="1365" y2="365"/>
+
+  <text x="700" y="395" class="subtitle">
+    Independent semantic reference path
+  </text>
+
+  <!-- ========================================================= -->
+  <!-- Independent evaluator                                      -->
+  <!-- ========================================================= -->
+
+  <rect class="box" x="250" y="425" width="200" height="70"/>
+  <text x="350" y="451" class="label-small">
+    Admitted Instance
+  </text>
+  <text x="350" y="474" class="label-small">
+    / CCIR Semantics
+  </text>
+
+  <line class="arrow-dashed" x1="450" y1="460" x2="520" y2="460"/>
+
+  <rect class="box" x="520" y="425" width="240" height="70"/>
+  <text x="640" y="451" class="label-small">
+    Independent Reference
+  </text>
+  <text x="640" y="474" class="label-small">
+    Evaluation
+  </text>
+
+  <line class="arrow-dashed" x1="760" y1="460" x2="830" y2="460"/>
+
+  <rect class="box-soft" x="830" y="425" width="140" height="70"/>
+  <text x="900" y="460" class="label">
+    e_X
+  </text>
+
+  <!-- ========================================================= -->
+  <!-- Comparison                                                  -->
+  <!-- ========================================================= -->
+
+  <line class="arrow" x1="1330" y1="330" x2="1330" y2="460"/>
+
+  <line class="arrow-dashed" x1="970" y1="460" x2="1110" y2="460"/>
+
+  <polygon class="decision"
+           points="1180,415 1250,460 1180,505 1110,460"/>
+
+  <text x="1180" y="450" class="label-small">
+    Compare
+  </text>
+  <text x="1180" y="472" class="label-small">
+    d_X = e_X
+  </text>
+
+  <line class="arrow" x1="1250" y1="460" x2="1300" y2="460"/>
+
+  <rect class="box-soft" x="1300" y="425" width="80" height="70"/>
+  <text x="1340" y="451" class="label-small">
+    PASS
+  </text>
+  <text x="1340" y="474" class="label-small">
+    / FAIL
+  </text>
+
+  <!-- ========================================================= -->
+  <!-- Principle annotation                                       -->
+  <!-- ========================================================= -->
+
+  <text x="700" y="555" class="subtitle">
+    Reference evaluation is outside the compiler dependency graph:
+    D(C_X) = { C_X, Theta_backend }
+  </text>
+
+  <text x="700" y="583" class="subtitle">
+    No semantic reference path enters Compile_backend.
+  </text>
 
 </svg>
