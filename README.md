@@ -1,1451 +1,1907 @@
-# CPC Validation
+# CPC Reference Validation Framework
+
+**Reference implementation of the Constraint Physical Computing (CPC) architecture**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://www.python.org/)
 [![ngspice](https://img.shields.io/badge/ngspice-42%2B-blue.svg)](https://ngspice.sourceforge.io/)
-[![Status](https://img.shields.io/badge/status-research%20prototype-orange.svg)](#project-status)
+[![Status](https://img.shields.io/badge/status-RFC--0003%20baseline-orange.svg)](#development-status)
 
-Reference implementation and SPICE validation framework for **C-Parity
-Computing (CPC)**, a constraint-to-carrier architecture for physical
-computation.
+---
 
-CPC Validation independently computes logical continuation values and verifies
-that a physical model reproduces those values through preparation, evolution,
-restricted readout, and semantic decoding.
+## Constraint Physical Computing
 
-The current release establishes a reproducible
-**reference → SPICE → measurement → decoder → validation** pipeline using
-ngspice. It provides the baseline for Monte Carlo robustness studies, compiled
-physical networks, hardware demonstrators, and later coherent-carrier
-experiments.
+**Constraint Physical Computing (CPC)** is the umbrella architecture. This
+repository is its **reference validation framework**, while individual
+execution backends are concrete realizations of the common CPC compilation and
+validation contracts.
 
-Every reported validation result is intended to be reproducible from a clean
-repository checkout using the documented software versions.
+Constraint Physical Computing (CPC) is a backend-independent computational
+architecture in which constraint systems are transformed into a canonical
+intermediate representation and compiled into execution artifacts suitable for
+physical or simulated computational substrates.
 
-## Validation pipeline
+Unlike architectures tied to a specific computational medium, CPC separates the
+logical description of a problem from its physical realization. Constraint
+representation, execution-backend compilation, preparation, execution,
+interface readout, semantic decoding, and independent validation are treated
+as distinct architectural layers with precisely defined interfaces.
+
+This separation permits multiple computational substrates to implement the same
+canonical constraint representation while remaining interchangeable at the
+architectural level.
+
+---
+
+## Purpose of this Repository
+
+This repository contains the reference implementation of the CPC Reference
+Validation Framework.
+
+Its purpose is not to define a particular physical implementation of CPC.
+Instead, it establishes the architectural contracts that every CPC execution backend
+must satisfy.
+
+These include
+
+- Canonical Constraint Intermediate Representation (CCIR);
+- execution-backend compilation contracts;
+- execution artifact definitions;
+- machine-checkable provenance;
+- answer-independence requirements;
+- execution-backend validation procedures;
+- semantic validation procedures; and
+- the RC Reference Backend.
+
+The current RC Reference Backend serves as the reference implementation of these
+contracts. Future implementations may target different computational
+substrates while preserving the same canonical interfaces.
+
+---
+
+## Quick Start
+
+Clone the repository and create an isolated Python environment:
+
+```bash
+git clone https://github.com/GridSAT/cpc-validation.git
+cd cpc-validation
+
+python3 -m venv .venv
+source .venv/bin/activate
+
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+Run the complete regression suite:
+
+```text
+python -m pytest -q
+```
+
+Run the built-in RC/ngspice verification:
+
+```text
+python run_spice.py
+```
+
+For exact environment reproduction, use requirements-lock.txt.
+
+---
+
+## Architectural Philosophy
+
+The central principle of CPC is the separation of **representation** from
+**realization**.
+
+Applications interact only with canonical constraint representations.
+Execution backends determine how those representations are transformed into executable
+artifacts.
+
+Consequently,
+
+```
+Constraint System
+        ↓
+      CCIR
+        ↓
+Compile_backend
+        ↓
+ExecutionArtifact
+```
+
+defines the architectural boundary of CPC.
+
+Everything below this boundary belongs to the execution-backend implementation.
+
+Everything above this boundary is backend-independent.
+
+This distinction allows new computational substrates to be introduced without
+changing the logical interface presented to applications.
+
+---
+
+## Current Status
+
+The CPC Reference Validation Framework currently provides:
+
+- complete CCIR infrastructure;
+- RFC-0003 execution-backend compilation contract;
+- execution artifact contract;
+- machine-checkable provenance model;
+- compiler validation;
+- semantic validation;
+- restricted-interface validation;
+- Answer Independence validation;
+- RC Reference Backend;
+- comprehensive automated regression suite.
+
+These components establish the current reference implementation of the
+RFC-0003 execution-backend architecture.
+
+---
+
+## Canonical Architecture
+
+The CPC architecture is organized as a sequence of strictly separated
+responsibility layers.
+
+```text
+                 Application
+                      │
+                      ▼
+             Source Representation
+                      │
+                      ▼
+        Canonical Constraint Lowering
+                      │
+                      ▼
+                     CCIR
+                      │
+                      ▼
+     Compile_backend : CCIR → ExecutionArtifact
+                      │
+                      ▼
+              ExecutionArtifact
+        (Topology, Parameters,
+       Interface, Metadata,
+           Provenance)
+                      │
+                      ▼
+                 Preparation
+                      │
+                      ▼
+                  Execution
+                      │
+                      ▼
+             Interface Readout
+                      │
+                      ▼
+               Fixed Decoder
+                      │
+                      ▼
+          Independent Validation
+```
 
 <p align="center">
-  <img src="figures/pipeline.svg" width="100%" alt="CPC validation pipeline">
+  <img src="figures/pipeline.svg" width="100%" alt="CPC canonical compilation and validation pipeline">
 </p>
 
----
+Each layer has a precisely defined responsibility.
 
-## Quick start
+The architectural objective is that adjacent layers communicate only through
+well-defined interfaces. No layer may depend upon implementation details that
+belong to another layer.
 
-    git clone https://github.com/GridSAT/cpc-validation.git
-    cd cpc-validation
-
-    python3 -m venv .venv
-    source .venv/bin/activate
-
-    python -m pip install --upgrade pip
-    python -m pip install -r requirements.txt
-
-    python -m pytest -q
-    python run_spice.py
-
-Expected SPICE result:
-
-    CPC ngspice boundary-response verification
-
-    x0=0 x3=0 expected=0 vout=0.000000 V decoded=0 PASS
-    x0=0 x3=1 expected=1 vout=4.999950 V decoded=1 PASS
-    x0=1 x3=0 expected=1 vout=4.999950 V decoded=1 PASS
-    x0=1 x3=1 expected=0 vout=0.000000 V decoded=0 PASS
-
-    Complete continuation table: PASS
+This separation enables independent evolution of frontend representations,
+execution-backend implementations, execution substrates, and validation procedures.
 
 ---
 
-## Contents
+## Three-Layer View
 
-- [Why this repository exists](#why-this-repository-exists)
-- [CPC overview](#cpc-overview)
-- [Validation functions](#validation-functions)
-- [Current benchmark](#current-benchmark)
-- [Reference continuation table](#reference-continuation-table)
-- [Current SPICE result](#current-spice-result)
-- [Current scope](#current-scope)
-- [Installation](#installation)
-- [Running the project](#running-the-project)
-- [Generic parity compiler](#generic-parity-compiler)
-- [External JSON benchmarks](#external-json-benchmarks)
-- [Reproducible benchmark generation](#reproducible-benchmark-generation)
-- [Compiler scaling study](#compiler-scaling-study)
-- [Tests](#tests)
-- [Repository structure](#repository-structure)
-- [Validation principles](#validation-principles)
-- [Project status](#project-status)
-- [Roadmap](#roadmap)
-- [Related CPC research](#related-cpc-research)
-- [Citation](#citation)
-- [Contributing](#contributing)
-- [License](#license)
-- [Organization](#organization)
+The same architecture can be summarized as three responsibility domains:
+
+```text
+Frontend
+    source representation
+    canonical lowering
+    CCIR
+         │
+         ▼
+==============================
+Canonical execution boundary
+==============================
+         │
+         ▼
+Execution Backend
+    compilation
+    ExecutionArtifact
+    preparation
+    execution
+    interface readout
+    fixed decoder
+         │
+         ▼
+Validation
+    compiler conformance
+    independent semantic evaluation
+    post-execution comparison
+```
+    
+The frontend determines the canonical constraint program. The execution
+backend determines how that program is realized. The validation layer
+independently establishes compiler conformance and semantic correctness.    
+    
+---
+
+## Layer Responsibilities
+
+### Source Representation
+
+Applications are free to describe computational problems using any supported
+representation.
+
+Examples include Boolean satisfiability, parity systems, graph constraints,
+finite-domain constraint systems, scheduling formulations, or future source
+languages.
+
+Source languages are **frontend concerns** only.
+
+Backends never operate directly on source-language representations.
 
 ---
 
-## Why this repository exists
+### Canonical Constraint Intermediate Representation (CCIR)
 
-Circuit simulators establish the electrical behavior of a model, but they do
-not independently establish that the measured response has the intended
-logical meaning.
+CCIR is the canonical architectural interface of CPC.
 
-CPC Validation separates:
+Every admitted frontend lowers its source representation into CCIR before any
+backend-specific processing occurs.
 
-1. the mathematical reference function;
-2. the generated physical model;
-3. physical evolution;
-4. restricted measurement;
-5. semantic decoding; and
-6. independent comparison.
+Consequently, all execution-backend implementations receive identical canonical
+input independent of the original source language.
 
-This separation makes it possible to test whether a physical implementation
-reproduces a represented continuation function without using the independently
-computed answers during compilation.
+CCIR therefore defines the stable boundary between frontend and backend.
 
 ---
 
-## CPC overview
+### Execution-Backend Compilation
 
-CPC treats physical computation as a complete and independently validated
-pipeline:
+Execution-backend compilation transforms CCIR into an executable realization suitable
+for a specific computational substrate.
 
-    constraint instance
-            |
-            v
-    representation compiler
-            |
-            v
-    physical program
-            |
-            v
-    preparation and evolution
-            |
-            v
-    restricted readout
-            |
-            v
-    semantic decoder
-            |
-            v
-    continuation value
+RFC-0003 defines this transformation abstractly as
 
-For an admitted instance $X$, let
-
-$$
-\mathrm{Eval}_X:
-\mathcal{B}_X
-\longrightarrow
-\mathcal{E}_X
-$$
-
-be an independently defined continuation function over the admitted boundary
-or interface conditions $b\in\mathcal{B}_X$.
-
-A physical realization is validated by requiring
-
-    Pr[Decode_X(M_X(U_X,tau_X(p), b)) = Eval_X(b) | p ~ Prep_X(b)]
-        >= 1 - epsilon_X
-
-The compiler and physical program may depend on the instance and the admitted
-boundary condition. The independently computed continuation values remain
-reserved for validation.
-
-A full architectural treatment is provided in
-[`docs/architecture.md`](docs/architecture.md).
-
----
-
-## Validation functions
-
-The repository separates five operational functions.
-
-### 1. Reference evaluation
-
-Compute the exact continuation value directly from the logical constraint
-system.
-
-### 2. Physical-model generation
-
-Generate an ngspice circuit from the admitted instance and boundary values.
-
-### 3. Physical evolution
-
-Simulate the transient electrical response.
-
-### 4. Restricted readout and decoding
-
-Read a designated output node and apply a fixed decoding rule.
-
-### 5. Independent validation
-
-Compare the decoded physical response with the independently computed
-continuation value.
-
-The detailed validation methodology is documented in
-[`docs/validation.md`](docs/validation.md).
-
----
-
-## Current benchmark
-
-The initial benchmark is the XOR constraint system
-
-$$
-x_0\oplus x_1\oplus x_2=0,
-$$
-
-$$
-x_1\oplus x_2\oplus x_3=1.
-$$
-
-The boundary variables are $x_0$ and $x_3$. The internal variables are
-$x_1$ and $x_2$.
-
-Eliminating the shared quantity $x_1\oplus x_2$ gives
-
-$$
-x_0\oplus x_3=1.
-$$
-
-The continuation function is therefore
-
-$$
-\mathrm{Eval}(x_0,x_3)=x_0\oplus x_3.
-$$
-
-A boundary assignment receives continuation value $1$ exactly when the
-residual system has at least one completion of its internal variables.
-
----
-
-## Reference continuation table
-
-| `x0` | `x3` | Continuation value | Internal completions |
-|---:|---:|---:|---:|
-| 0 | 0 | 0 | 0 |
-| 0 | 1 | 1 | 2 |
-| 1 | 0 | 1 | 2 |
-| 1 | 1 | 0 | 0 |
-
-The machine-readable reference data are stored in:
-
-- [`baselines/continuation_table.csv`](baselines/continuation_table.csv)
-- [`baselines/xor_reference.json`](baselines/xor_reference.json)
-
-The exact internal completions are generated by
-[`src/reference.py`](src/reference.py).
-
----
-
-## Current SPICE result
-
-Run:
-
-    python run_spice.py
-
-Expected output:
-
-    CPC ngspice boundary-response verification
-
-    x0=0 x3=0 expected=0 vout=0.000000 V decoded=0 PASS
-    x0=0 x3=1 expected=1 vout=4.999950 V decoded=1 PASS
-    x0=1 x3=0 expected=1 vout=4.999950 V decoded=1 PASS
-    x0=1 x3=1 expected=0 vout=0.000000 V decoded=0 PASS
-
-    Complete continuation table: PASS
-
-### Initial RC demonstrator
-
-<p align="center">
-  <img src="figures/rc-demo.svg" width="80%" alt="Initial CPC RC demonstrator">
-</p>
-
-The present SPICE model uses a controlled behavioral response followed by an RC
-output stage. It verifies the complete
-reference-to-SPICE-to-readout-to-decoder execution path.
-
----
-
-## Current scope
-
-The current release establishes that the repository can:
-
-- define the logical constraint system independently of the circuit;
-- enumerate its exact continuation table;
-- generate boundary-conditioned ngspice netlists;
-- execute transient simulation in ngspice batch mode;
-- extract a restricted analog output;
-- decode that output with a fixed rule;
-- validate every admitted boundary condition;
-- report complete continuation-table agreement; and
-- run automated regression tests.
-
-The behavioral response element is the initial verification baseline. The next
-engineering stage replaces direct response realization with a network generated
-from the constraint description under the anti-embedding rule.
-
-The current result therefore validates the complete execution and measurement
-pipeline. It provides the starting point for:
-
-- parameter variation;
-- Monte Carlo analysis;
-- compiled physical networks;
-- response-class invariance tests;
-- hardware validation; and
-- later coherent-carrier studies.
-
----
-
-## Installation
-
-### System requirements
-
-The current development environment uses:
-
-- Ubuntu Linux;
-- Python 3.12 or later;
-- ngspice 42 or later;
-- NumPy;
-- SciPy;
-- pandas;
-- matplotlib;
-- pytest; and
-- PySpice for supporting circuit construction and analysis.
-
-The principal simulation path invokes ngspice directly in batch mode.
-
-### Install Ubuntu packages
-
-    sudo apt update
-
-    sudo apt install -y \
-        git \
-        python3 \
-        python3-venv \
-        python3-pip \
-        ngspice \
-        libngspice0-dev
-
-Verify ngspice:
-
-    ngspice --version
-
-### Clone the repository
-
-    git clone https://github.com/GridSAT/cpc-validation.git
-    cd cpc-validation
-
-### Create the Python environment
-
-    python3 -m venv .venv
-    source .venv/bin/activate
-
-### Install dependencies
-
-    python -m pip install --upgrade pip
-    python -m pip install -r requirements.txt
-
-For exact reproduction of the tested environment:
-
-    python -m pip install -r requirements-lock.txt
-
----
-
-## Running the project
-
-### Print the exact reference continuation table
-
-    python -m src.reference
-
-Expected logical output:
-
-    CPC reference continuation table
-
-    Constraints:
-      x0 XOR x1 XOR x2 = 0
-      x1 XOR x2 XOR x3 = 1
-
-    Boundary variables: x0, x3
-
-    x0=0 x3=0 -> Eval=0, completions=0: []
-    x0=0 x3=1 -> Eval=1, completions=2: [(0, 0, 0, 1), (0, 1, 1, 1)]
-    x0=1 x3=0 -> Eval=1, completions=2: [(1, 0, 1, 0), (1, 1, 0, 0)]
-    x0=1 x3=1 -> Eval=0, completions=0: []
-
-### Run the SPICE verification
-
-    python run_spice.py
-
-The command:
-
-1. enumerates the four admitted boundary assignments;
-2. computes the independent continuation value;
-3. generates one ngspice netlist for each assignment;
-4. invokes ngspice in batch mode;
-5. reads the final output voltage;
-6. applies the fixed threshold decoder;
-7. compares the decoded result with the independent reference value; and
-8. reports the complete validation result.
-
----
-
-## Consolidated validation
-
-Run the reduced development profile:
-
-```bash
-python validate.py --quick
+```text
+Compile_backend : CCIR → ExecutionArtifact
 ```
 
-Run the complete reproducibility profile:
+The backend contract specifies *what* compilation must produce rather than
+*how* it is internally implemented.
 
-```bash
-python validate.py --full
-```
-
-Both commands generate:
-
-- `reports/validation_report.md`
-- `reports/validation_summary.csv`
-- profile-specific CSV files under `results/`
-- profile-specific figures under `results/`
-
-The full profile executes:
-
-1. the complete automated test suite;
-2. independent reference continuation generation;
-3. nominal four-condition SPICE validation;
-4. transient waveform and RC timing validation;
-5. the reproducible 1,000-sample Monte Carlo study;
-6. the decoder-threshold sweep;
-7. the supply-voltage sweep;
-8. the resistance and RC timing sweep;
-9. the capacitance and RC timing sweep; and
-10. the imposed temperature-drift sweep.
-
-The verified full-profile validation (5 August 2026) completed with:
-
-| Quantity | Result |
-|---|---:|
-| Validation stages | 10 |
-| Stages passed | 10 |
-| Stages failed | 0 |
-| Automated tests | 85 passed |
-| Monte Carlo parameter samples | 1,000 |
-| Monte Carlo boundary simulations | 4,000 |
-| Temperature points | 34 |
-| Temperature-conditioned boundary simulations | 136 |
-| Overall validation | PASS |
-
-Generated reports are reproducible build artifacts and are intentionally
-excluded from normal Git history.
+Different backends may employ entirely different compilation strategies while
+remaining conformant to the same architectural contract.
 
 ---
 
-## External JSON benchmarks
+### Execution Artifact
 
-The current development branch supports externally defined parity-constraint benchmarks.
+Compilation produces an **ExecutionArtifact**.
 
-Compile and simulate one admitted boundary assignment:
+Conceptually,
 
-```bash
-python run_benchmark.py \
-    benchmarks/default_xor.json \
-    --boundary 'x0=0,x3=1'
+```text
+ExecutionArtifact
+
+├── Topology
+├── Parameters
+├── Interface
+├── Metadata
+└── Provenance
 ```
 
-Validate every boundary assignment for every JSON benchmark discovered under
-the benchmark directory:
+The artifact contains the complete backend-specific description required by
+the execution contract.
 
-```bash
-python validate_benchmarks.py benchmarks/
-```
+RFC-0003 intentionally treats the artifact abstractly.
 
-Explicit benchmark files may also be supplied:
+For the RC Reference Backend, the topology contains an electrical circuit
+structure.
 
-```bash
-python validate_benchmarks.py \
-    benchmarks/default_xor.json \
-    benchmarks/parity_chain_5.json
-```
+For a digital backend it may contain logic structures.
 
-For each admitted boundary assignment, the validator records:
+For an FPGA execution backend it may contain configuration data.
 
-- the independently computed continuation value;
-- the internal-completion count;
-- the decoded SPICE response;
-- the output voltage;
-- the constraint and variable counts;
-- the candidate count;
-- the generated-netlist size;
-- the compilation time; and
-- the simulation time.
+For another physical substrate it may contain an entirely different execution
+representation.
 
-The benchmark schema and anti-embedding contract are documented in
-[`docs/benchmarks.md`](docs/benchmarks.md).
-
-The current compiler enumerates all internal assignments and uses behavioral
-sources for candidate validity and existential aggregation. This milestone
-establishes generic instance loading, compilation, simulation, and independent
-validation. It does not claim scalable passive-network realization.
+The architecture requires only that every backend expose the canonical
+ExecutionArtifact interface.
 
 ---
 
-## Generic parity compiler
+### Preparation
 
-The v0.3 milestone introduced a generic compiler for Boolean parity
-constraint systems.
+Preparation transforms an ExecutionArtifact into an executable state for the selected
+execution substrate.
 
-A parity constraint is represented as data:
+Examples include
 
-```python
-ParityConstraint(
-    variables=(0, 1, 2),
-    parity=0,
+- generating an ngspice netlist;
+- configuring FPGA resources;
+- loading digital hardware;
+- initializing analog systems;
+- preparing coherent physical media.
+
+Preparation belongs entirely to the backend implementation.
+
+It is not part of CCIR.
+
+---
+
+### Execution
+
+Execution is performed by the computational substrate.
+
+The CPC architecture intentionally does not prescribe execution dynamics.
+
+Execution may be
+
+- numerical,
+- digital,
+- analog,
+- physical,
+- hybrid,
+- deterministic,
+- stochastic,
+
+provided that execution operates exclusively upon the compiled
+ExecutionArtifact.
+
+---
+
+### Interface Readout
+
+Execution results become observable only through an admitted interface.
+
+Each backend specifies
+
+- observable quantities,
+- readout channels,
+- interface metadata,
+
+together with the information required by the fixed decoder.
+
+No semantic interpretation occurs during readout.
+
+Readout merely exposes admissible observations.
+
+---
+
+### Fixed Decoder
+
+The fixed decoder transforms admitted observations into backend outputs.
+
+The decoder forms part of the backend specification.
+
+It is fixed independently of any particular execution.
+
+Because every backend defines its own interface, every backend also defines its
+own decoder.
+
+RFC-0003 requires semantic validation to operate exclusively on decoder output.
+
+---
+
+### Independent Validation
+
+Validation is architecturally separated from compilation.
+
+Reference evaluators are never compiler components.
+
+Instead,
+
+1. compilation produces an ExecutionArtifact;
+2. execution produces interface observations;
+3. decoding produces backend outputs;
+4. independent validation compares those outputs against external semantic
+   reference procedures.
+
+This separation ensures that semantic correctness is established independently
+of backend compilation.
+
+It also provides the architectural foundation for the Answer Independence
+principle formalized in RFC-0003.
+
+---
+
+## Canonical Constraint Intermediate Representation (CCIR)
+
+The Canonical Constraint Intermediate Representation (CCIR) is the stable
+architectural interface between CPC frontends and execution-backend implementations.
+
+Every admitted source representation is lowered into CCIR before backend
+compilation begins. Execution-backend implementations therefore never operate directly
+on source-language representations.
+
+```text
+Application
+
+      │
+
+Source Language
+(DIMACS, parity systems,
+graph constraints, ...)
+
+      │
+      ▼
+
+Canonical Lowering
+
+      │
+      ▼
+
+     CCIR
+
+      │
+      ▼
+
+Compile_backend
+```
+
+CCIR deliberately separates **problem representation** from **execution
+strategy**.
+
+A backend receives only canonical constraint information together with the
+admitted interface specification. It does not receive information about the
+original source language, parser, benchmark format, or frontend implementation.
+
+Consequently,
+
+- DIMACS is not part of the backend architecture.
+- Parity systems are not part of the backend architecture.
+- CNF encodings are not part of the backend architecture.
+- Graph formulations are not part of the backend architecture.
+
+These are frontend concerns only.
+
+CCIR defines the unique canonical representation consumed by every backend.
+
+---
+
+### Architectural Role
+
+CCIR exists to ensure that backend implementations remain independent of
+source-language decisions.
+
+Without CCIR, every backend would require direct support for every frontend
+representation.
+
+Instead,
+
+```text
+Frontend A ─┐
+Frontend B ─┼────► CCIR ─────► Backend
+Frontend C ─┘
+```
+
+The frontend/backend interface therefore scales independently.
+
+Adding a new frontend does not require modifying existing backends.
+
+Adding a new backend does not require modifying existing frontends.
+
+This separation is one of the primary architectural objectives of CPC.
+
+---
+
+### Canonical Program Structure
+
+A CCIR program consists of four conceptual components.
+
+```text
+CCIR Program
+
+├── Variables
+├── Constraints
+├── Boundary Interface
+└── Metadata
+```
+
+---
+
+### Variables
+
+Variables define the canonical state space manipulated by the backend.
+
+Variables possess no backend-specific interpretation.
+
+They are logical identifiers only.
+
+---
+
+### Constraints
+
+Constraints describe admissible relationships among variables.
+
+Constraint families are represented canonically.
+
+Examples include
+
+- parity constraints,
+- clause constraints,
+- future constraint families admitted by the CCIR specification.
+
+Backends operate on canonical constraint families rather than on
+source-language syntax.
+
+---
+
+### Boundary Interface
+
+The boundary interface specifies the externally admitted interaction between
+the execution artifact and its environment.
+
+Typical interface information includes
+
+- boundary variables,
+- externally supplied values,
+- observable outputs,
+- decoder inputs.
+
+The interface forms part of the canonical program.
+
+It is therefore available to every backend independently of execution
+technology.
+
+---
+
+### Metadata
+
+Metadata records canonical descriptive information that accompanies the CCIR
+program.
+
+Metadata may include
+
+- program identifiers,
+- version information,
+- frontend provenance,
+- descriptive annotations.
+
+Metadata does not alter program semantics.
+
+---
+
+### Canonical Lowering
+
+Every frontend is responsible for producing valid CCIR.
+
+Canonical lowering is the only location where source-language semantics are
+interpreted.
+
+After lowering,
+
+```text
+Source Representation
+        │
+        ▼
+Canonical Lowering
+        │
+        ▼
+      CCIR
+```
+
+all subsequent processing operates exclusively on CCIR.
+
+This architectural rule guarantees that backend behavior is independent of the
+particular frontend used to construct the canonical program.
+
+---
+
+### Architectural Independence
+
+RFC-0002 establishes CCIR as the canonical boundary between frontend and
+backend.
+
+RFC-0003 extends this principle by requiring backend compilation to consume
+only CCIR together with the globally fixed backend specification.
+
+Consequently,
+
+```text
+Compile_backend : CCIR → ExecutionArtifact
+```
+
+is the only architectural contract required of backend implementations.
+
+Every conforming backend therefore receives identical canonical input,
+regardless of the original application or source-language representation.
+
+This property enables backend interchangeability while preserving a stable,
+backend-independent frontend architecture.
+
+---
+
+## Execution-Backend Compilation Contract
+
+RFC-0003 defines the canonical interface implemented by every CPC backend.
+
+Unlike backend-specific implementations, the compilation contract is entirely
+independent of execution technology.
+
+The contract specifies only the architectural transformation that every backend
+must realize.
+
+```text
+Compile_backend : CCIR → ExecutionArtifact
+```
+
+The compilation contract defines the unique boundary between canonical
+constraint representation and backend realization.
+
+Everything above this boundary belongs to the frontend architecture.
+
+Everything below this boundary belongs to the backend implementation.
+
+---
+
+### Architectural Responsibility
+
+Backend compilation transforms a canonical CCIR program into an executable
+artifact suitable for a particular computational substrate.
+
+The contract intentionally does **not** prescribe
+
+- execution dynamics;
+- numerical methods;
+- circuit realization;
+- physical implementation;
+- hardware architecture; or
+- simulation technology.
+
+These are backend-specific design decisions.
+
+RFC-0003 specifies only the observable architectural behavior of backend
+compilation.
+
+---
+
+### Execution-Backend Independence
+
+The backend contract is identical for every implementation.
+
+```text
+                 CCIR
+                   │
+                   ▼
+          Compile_backend
+                   │
+                   ▼
+           ExecutionArtifact
+```
+
+Different implementations may produce entirely different execution artifacts.
+
+For example,
+
+```text
+CCIR
+ │
+ ├────────► RC Reference Backend
+ │              │
+ │              ▼
+ │        RC ExecutionArtifact
+ │
+ ├────────► FPGA Execution Backend
+ │              │
+ │              ▼
+ │       FPGA ExecutionArtifact
+ │
+ ├────────► Digital Execution Backend
+ │              │
+ │              ▼
+ │      Logic ExecutionArtifact
+ │
+ └────────► Future Execution Backend
+                │
+                ▼
+        Backend-specific Artifact
+```
+
+Although these artifacts differ internally, they all satisfy the same
+architectural contract.
+
+This property permits backend substitution without modifying CCIR or frontend
+software.
+
+---
+
+### Compiler Dependency Principle
+
+One of the principal contributions of RFC-0003 is the explicit definition of
+compiler dependencies.
+
+Let
+
+```text
+Cₓ
+```
+
+denote an admitted CCIR program.
+
+Backend compilation is required to satisfy
+
+```text
+D(Cₓ) = { Cₓ, Θ_backend }
+```
+
+where
+
+- **Cₓ** is the canonical CCIR program; and
+- **Θ_backend** is the globally fixed backend specification.
+
+No additional semantic information may participate in compilation.
+
+---
+
+### Backend Specification
+
+Θ_backend represents the globally fixed description of backend behavior.
+
+Typical components include
+
+- compilation rules;
+- canonical parameter mappings;
+- deterministic construction rules;
+- backend constants;
+- interface definitions;
+- decoder specification;
+- provenance rules.
+
+Θ_backend is fixed independently of every compiled program.
+
+Changing Θ_backend defines a different backend specification.
+
+It does **not** modify the semantics of CCIR.
+
+---
+
+### Deterministic Compilation
+
+Backend compilation is deterministic.
+
+Repeated compilation of identical CCIR using the same backend specification
+produces equivalent execution artifacts.
+
+Conceptually,
+
+```text
+Compile_backend(
+    Cₓ,
+    Θ_backend
 )
+
+↓
+
+ExecutionArtifact
 ```
 
-A complete instance declares:
+is a deterministic architectural transformation.
 
-- one or more parity constraints;
-- the admitted boundary variables; and
-- physical-interface parameters such as supply voltage, resistance,
-  capacitance, and transient duration.
+This property enables
 
-Every variable appearing in a constraint but not declared as a boundary
-variable is treated as an internal variable.
-
-The compilation path is:
-
-```text
-parity instance
-        |
-        v
-internal-assignment enumeration
-        |
-        v
-candidate-validity sources
-        |
-        v
-existential aggregation
-        |
-        v
-restricted RC interface
-        |
-        v
-ngspice netlist
-```
-
-The generic compiler is implemented in:
-
-- `src/compiler.py`
-
-Inspect the built-in reference instance:
-
-```bash
-python run_compiler.py
-```
-
-The simulator delegates netlist generation to this generic compiler. The
-compiler is therefore the single source of truth for parity-to-SPICE
-translation.
-
-The current backend is intentionally explicit and auditable. It enumerates all
-internal assignments and uses behavioral sources for candidate validity and
-existential aggregation. For `k` internal variables, it generates `2^k`
-candidate assignments.
-
-This establishes a generic constraint-compilation interface. It does not claim
-polynomial scaling or a passive physical realization.
-
-## Reproducible benchmark generation
-
-The development branch includes a deterministic benchmark generator:
-
-```bash
-python generate_parity_benchmarks.py \
-    --family chain \
-    --variables 4:10:2 \
-    --output-directory benchmarks/generated/chain
-```
-
-Supported families are:
-
-- `chain`;
-- `cycle`;
-- `star`; and
-- `random`.
-
-The `--variables` argument accepts either one size or an inclusive range:
-
-```text
-8
-4:10:2
-```
-
-A reproducible random family can be generated with:
-
-```bash
-python generate_parity_benchmarks.py \
-    --family random \
-    --variables 4:8:2 \
-    --constraints 4 \
-    --arity 3 \
-    --seed 20260806 \
-    --output-directory benchmarks/generated/random
-```
-
-Generated random benchmarks guarantee that every declared variable occurs in
-the constraint system. This keeps requested variable counts, compiled variable
-counts, internal-variable counts, and candidate counts aligned.
-
-The generated corpus is a reproducible build artifact and is excluded from Git.
-It can be regenerated and validated with:
-
-```bash
-python validate_benchmarks.py benchmarks/generated/
-```
-
-The verified development corpus currently contains:
-
-| Quantity | Result |
-|---|---:|
-| Generated benchmark families | 4 |
-| Generated benchmarks | 13 |
-| Boundary simulations | 52 |
-| Passed | 52 |
-| Failed | 0 |
-| Largest variable count | 10 |
-| Largest internal-variable count | 8 |
-| Largest candidate count | 256 |
-| Overall result | PASS |
-
-The generator is implemented in:
-
-- `generate_parity_benchmarks.py`
-
-Its regression tests are in:
-
-- `tests/test_benchmark_generator.py`
-
-## Compiler scaling study
-
-The current exhaustive parity backend can be characterized across generated
-benchmark families with:
-
-```bash
-python run_scaling_study.py \
-    --families chain,cycle,star,random \
-    --variables 4:8:2 \
-    --seed 20260806
-```
-
-The study generates each benchmark deterministically, independently evaluates
-every admitted boundary assignment, compiles the corresponding ngspice
-netlists, executes the simulations, applies the fixed decoder, and aggregates
-one result row per benchmark.
-
-The verified smoke profile contains:
-
-| Quantity | Result |
-|---|---:|
-| Families | 4 |
-| Variable counts | 4, 6, 8 |
-| Benchmarks | 12 |
-| Boundary simulations | 48 |
-| Passed | 48 |
-| Failed | 0 |
-| Largest candidate count | 64 |
-| Overall result | PASS |
-
-The study records:
-
-- variable and constraint counts;
-- internal-variable count;
-- candidate count;
-- behavioral-source count;
-- generated-netlist size;
-- compilation time;
-- ngspice simulation time;
-- output-voltage range; and
-- complete validation success.
-
-Generated figures:
-
-- `figures/scaling_candidates.png`;
-- `figures/scaling_sources.png`;
-- `figures/scaling_netlist_size.png`;
-- `figures/scaling_compile_time.png`; and
-- `figures/scaling_simulation_time.png`.
-
-The current backend enumerates all internal assignments. The scaling results
-therefore characterize an explicit exhaustive backend and do not constitute a
-claim of polynomial scaling.
-
-See [`docs/scaling.md`](docs/scaling.md) for the full methodology,
-measurements, interpretation, and limitations.
+- reproducible builds;
+- machine verification;
+- backend auditing;
+- regression testing; and
+- independent validation.
 
 ---
 
-## Tests
+### Execution-Backend Capability Declaration
 
-Run all tests:
+Not every backend supports every CCIR constraint family.
 
-    python -m pytest -q
+RFC-0003 therefore requires each backend to declare its supported capability
+set explicitly.
 
-The current test suite verifies the logical reference model.
+Conceptually,
 
-The test program will be extended to cover:
+```text
+Backend Capability
 
-- continuation-evaluator correctness;
-- baseline-data consistency;
-- generated-netlist structure;
-- ngspice integration;
-- Monte Carlo tolerance experiments;
-- anti-embedding compliance;
-- response-class invariance; and
-- regression comparisons.
+Supported Constraint Families
+
+• parity
+• clause
+• ...
+```
+
+Compilation proceeds only if every constraint family appearing in the input
+program is supported by the selected backend.
+
+If a required capability is absent, compilation fails before artifact
+generation begins.
+
+Capability declarations therefore provide a stable architectural interface
+between CCIR and backend implementations.
 
 ---
 
-## Repository structure
+### Unsupported Programs
+
+A backend is not required to support every admitted CCIR program.
+
+However, unsupported programs must be rejected explicitly.
+
+Compilation must never silently reinterpret, discard, or modify unsupported
+canonical information.
+
+Consequently,
 
 ```text
-cpc-validation/
-├── baselines/
-│   ├── run_spice_behavioral.py
-│   └── spice_model_behavioral.py
-├── benchmarks/
-│   ├── generated/
-│   │   ├── chain/
-│   │   │   ├── generated-chain-10.json
-│   │   │   ├── generated-chain-4.json
-│   │   │   ├── generated-chain-6.json
-│   │   │   └── generated-chain-8.json
-│   │   ├── cycle/
-│   │   │   ├── generated-cycle-4.json
-│   │   │   ├── generated-cycle-6.json
-│   │   │   └── generated-cycle-8.json
-│   │   ├── random/
-│   │   │   ├── generated-random-4-4-seed-20260806.json
-│   │   │   ├── generated-random-6-4-seed-20260806.json
-│   │   │   └── generated-random-8-4-seed-20260806.json
-│   │   └── star/
-│   │       ├── generated-star-4.json
-│   │       ├── generated-star-6.json
-│   │       └── generated-star-8.json
-│   ├── default_xor.json
-│   ├── parity_chain_5.json
-│   └── parity_cycle_6.json
-├── docs/
-│   ├── design/
-│   │   ├── README.md
-│   │   ├── RFC-0001-CPC-Architecture.md
-│   │   └── RFC-0002-Generic-Constraint-IR-and-CNF-Front-End.md
-│   ├── releases/
-│   │   ├── v0.3.0.md
-│   │   └── v0.5.0-frontend.1.md
-│   ├── architecture.md
-│   ├── benchmarks.md
-│   ├── compiler.md
-│   ├── generator.md
-│   ├── roadmap.md
-│   ├── scaling.md
-│   └── validation.md
-├── figures/
-│   ├── capacitance_success_rate.png
-│   ├── capacitance_timing.png
-│   ├── capacitance_timing_error.png
-│   ├── pipeline.svg
-│   ├── rc-demo.svg
-│   ├── resistance_success_rate.png
-│   ├── resistance_timing.png
-│   ├── resistance_timing_error.png
-│   ├── scaling_candidates.png
-│   ├── scaling_compile_time.png
-│   ├── scaling_netlist_size.png
-│   ├── scaling_simulation_time.png
-│   ├── scaling_sources.png
-│   ├── supply_margin.png
-│   ├── supply_success_rate.png
-│   ├── supply_voltage_response.png
-│   ├── temperature_component_drift.png
-│   ├── temperature_margin.png
-│   ├── temperature_success_rate.png
-│   ├── temperature_timing.png
-│   ├── threshold_margin.png
-│   └── threshold_success_rate.png
-├── netlists/
-│   ├── benchmark-validation/
-│   │   ├── default-xor/
-│   │   │   ├── x0-0_x3-0.cir
-│   │   │   ├── x0-0_x3-0.out
-│   │   │   ├── x0-0_x3-1.cir
-│   │   │   ├── x0-0_x3-1.out
-│   │   │   ├── x0-1_x3-0.cir
-│   │   │   ├── x0-1_x3-0.out
-│   │   │   ├── x0-1_x3-1.cir
-│   │   │   └── x0-1_x3-1.out
-│   │   ├── generated-chain-10/
-│   │   │   ├── x0-0_x9-0.cir
-│   │   │   ├── x0-0_x9-0.out
-│   │   │   ├── x0-0_x9-1.cir
-│   │   │   ├── x0-0_x9-1.out
-│   │   │   ├── x0-1_x9-0.cir
-│   │   │   ├── x0-1_x9-0.out
-│   │   │   ├── x0-1_x9-1.cir
-│   │   │   └── x0-1_x9-1.out
-│   │   ├── generated-chain-4/
-│   │   │   ├── x0-0_x3-0.cir
-│   │   │   ├── x0-0_x3-0.out
-│   │   │   ├── x0-0_x3-1.cir
-│   │   │   ├── x0-0_x3-1.out
-│   │   │   ├── x0-1_x3-0.cir
-│   │   │   ├── x0-1_x3-0.out
-│   │   │   ├── x0-1_x3-1.cir
-│   │   │   └── x0-1_x3-1.out
-│   │   ├── generated-chain-6/
-│   │   │   ├── x0-0_x5-0.cir
-│   │   │   ├── x0-0_x5-0.out
-│   │   │   ├── x0-0_x5-1.cir
-│   │   │   ├── x0-0_x5-1.out
-│   │   │   ├── x0-1_x5-0.cir
-│   │   │   ├── x0-1_x5-0.out
-│   │   │   ├── x0-1_x5-1.cir
-│   │   │   └── x0-1_x5-1.out
-│   │   ├── generated-chain-8/
-│   │   │   ├── x0-0_x7-0.cir
-│   │   │   ├── x0-0_x7-0.out
-│   │   │   ├── x0-0_x7-1.cir
-│   │   │   ├── x0-0_x7-1.out
-│   │   │   ├── x0-1_x7-0.cir
-│   │   │   ├── x0-1_x7-0.out
-│   │   │   ├── x0-1_x7-1.cir
-│   │   │   └── x0-1_x7-1.out
-│   │   ├── generated-cycle-4/
-│   │   │   ├── x0-0_x3-0.cir
-│   │   │   ├── x0-0_x3-0.out
-│   │   │   ├── x0-0_x3-1.cir
-│   │   │   ├── x0-0_x3-1.out
-│   │   │   ├── x0-1_x3-0.cir
-│   │   │   ├── x0-1_x3-0.out
-│   │   │   ├── x0-1_x3-1.cir
-│   │   │   └── x0-1_x3-1.out
-│   │   ├── generated-cycle-6/
-│   │   │   ├── x0-0_x5-0.cir
-│   │   │   ├── x0-0_x5-0.out
-│   │   │   ├── x0-0_x5-1.cir
-│   │   │   ├── x0-0_x5-1.out
-│   │   │   ├── x0-1_x5-0.cir
-│   │   │   ├── x0-1_x5-0.out
-│   │   │   ├── x0-1_x5-1.cir
-│   │   │   └── x0-1_x5-1.out
-│   │   ├── generated-cycle-8/
-│   │   │   ├── x0-0_x7-0.cir
-│   │   │   ├── x0-0_x7-0.out
-│   │   │   ├── x0-0_x7-1.cir
-│   │   │   ├── x0-0_x7-1.out
-│   │   │   ├── x0-1_x7-0.cir
-│   │   │   ├── x0-1_x7-0.out
-│   │   │   ├── x0-1_x7-1.cir
-│   │   │   └── x0-1_x7-1.out
-│   │   ├── generated-random-4-4-seed-20260806/
-│   │   │   ├── x0-0_x3-0.cir
-│   │   │   ├── x0-0_x3-0.out
-│   │   │   ├── x0-0_x3-1.cir
-│   │   │   ├── x0-0_x3-1.out
-│   │   │   ├── x0-1_x3-0.cir
-│   │   │   ├── x0-1_x3-0.out
-│   │   │   ├── x0-1_x3-1.cir
-│   │   │   └── x0-1_x3-1.out
-│   │   ├── generated-random-6-4-seed-20260806/
-│   │   │   ├── x0-0_x5-0.cir
-│   │   │   ├── x0-0_x5-0.out
-│   │   │   ├── x0-0_x5-1.cir
-│   │   │   ├── x0-0_x5-1.out
-│   │   │   ├── x0-1_x5-0.cir
-│   │   │   ├── x0-1_x5-0.out
-│   │   │   ├── x0-1_x5-1.cir
-│   │   │   └── x0-1_x5-1.out
-│   │   ├── generated-random-8-4-seed-20260806/
-│   │   │   ├── x0-0_x7-0.cir
-│   │   │   ├── x0-0_x7-0.out
-│   │   │   ├── x0-0_x7-1.cir
-│   │   │   ├── x0-0_x7-1.out
-│   │   │   ├── x0-1_x7-0.cir
-│   │   │   ├── x0-1_x7-0.out
-│   │   │   ├── x0-1_x7-1.cir
-│   │   │   └── x0-1_x7-1.out
-│   │   ├── generated-star-4/
-│   │   │   ├── x0-0_x3-0.cir
-│   │   │   ├── x0-0_x3-0.out
-│   │   │   ├── x0-0_x3-1.cir
-│   │   │   ├── x0-0_x3-1.out
-│   │   │   ├── x0-1_x3-0.cir
-│   │   │   ├── x0-1_x3-0.out
-│   │   │   ├── x0-1_x3-1.cir
-│   │   │   └── x0-1_x3-1.out
-│   │   ├── generated-star-6/
-│   │   │   ├── x0-0_x5-0.cir
-│   │   │   ├── x0-0_x5-0.out
-│   │   │   ├── x0-0_x5-1.cir
-│   │   │   ├── x0-0_x5-1.out
-│   │   │   ├── x0-1_x5-0.cir
-│   │   │   ├── x0-1_x5-0.out
-│   │   │   ├── x0-1_x5-1.cir
-│   │   │   └── x0-1_x5-1.out
-│   │   ├── generated-star-8/
-│   │   │   ├── x0-0_x7-0.cir
-│   │   │   ├── x0-0_x7-0.out
-│   │   │   ├── x0-0_x7-1.cir
-│   │   │   ├── x0-0_x7-1.out
-│   │   │   ├── x0-1_x7-0.cir
-│   │   │   ├── x0-1_x7-0.out
-│   │   │   ├── x0-1_x7-1.cir
-│   │   │   └── x0-1_x7-1.out
-│   │   ├── parity-chain-5/
-│   │   │   ├── x0-0_x4-0.cir
-│   │   │   ├── x0-0_x4-0.out
-│   │   │   ├── x0-0_x4-1.cir
-│   │   │   ├── x0-0_x4-1.out
-│   │   │   ├── x0-1_x4-0.cir
-│   │   │   ├── x0-1_x4-0.out
-│   │   │   ├── x0-1_x4-1.cir
-│   │   │   └── x0-1_x4-1.out
-│   │   └── parity-cycle-6/
-│   │       ├── x0-0_x5-0.cir
-│   │       ├── x0-0_x5-0.out
-│   │       ├── x0-0_x5-1.cir
-│   │       ├── x0-0_x5-1.out
-│   │       ├── x0-1_x5-0.cir
-│   │       ├── x0-1_x5-0.out
-│   │       ├── x0-1_x5-1.cir
-│   │       └── x0-1_x5-1.out
-│   ├── compiler/
-│   │   ├── default_xor_0_0.cir
-│   │   ├── default_xor_0_1.cir
-│   │   ├── default_xor_1_0.cir
-│   │   └── default_xor_1_1.cir
-│   ├── default_xor_json_0_1.cir
-│   ├── default_xor_json_0_1.out
-│   ├── parity_chain_5_0_1.cir
-│   └── parity_chain_5_0_1.out
-├── reports/
-│   ├── validation_report.md
-│   └── validation_summary.csv
-├── results/
-│   ├── benchmark_netlists_full/
-│   │   ├── default-xor/
-│   │   │   ├── x0-0_x3-0.cir
-│   │   │   ├── x0-0_x3-0.out
-│   │   │   ├── x0-0_x3-1.cir
-│   │   │   ├── x0-0_x3-1.out
-│   │   │   ├── x0-1_x3-0.cir
-│   │   │   ├── x0-1_x3-0.out
-│   │   │   ├── x0-1_x3-1.cir
-│   │   │   └── x0-1_x3-1.out
-│   │   └── parity-chain-5/
-│   │       ├── x0-0_x4-0.cir
-│   │       ├── x0-0_x4-0.out
-│   │       ├── x0-0_x4-1.cir
-│   │       ├── x0-0_x4-1.out
-│   │       ├── x0-1_x4-0.cir
-│   │       ├── x0-1_x4-0.out
-│   │       ├── x0-1_x4-1.cir
-│   │       └── x0-1_x4-1.out
-│   ├── benchmark_netlists_quick/
-│   │   ├── default-xor/
-│   │   │   ├── x0-0_x3-0.cir
-│   │   │   ├── x0-0_x3-0.out
-│   │   │   ├── x0-0_x3-1.cir
-│   │   │   ├── x0-0_x3-1.out
-│   │   │   ├── x0-1_x3-0.cir
-│   │   │   ├── x0-1_x3-0.out
-│   │   │   ├── x0-1_x3-1.cir
-│   │   │   └── x0-1_x3-1.out
-│   │   └── parity-chain-5/
-│   │       ├── x0-0_x4-0.cir
-│   │       ├── x0-0_x4-0.out
-│   │       ├── x0-0_x4-1.cir
-│   │       ├── x0-0_x4-1.out
-│   │       ├── x0-1_x4-0.cir
-│   │       ├── x0-1_x4-0.out
-│   │       ├── x0-1_x4-1.cir
-│   │       └── x0-1_x4-1.out
-│   ├── scaling_size10_repeated/
-│   │   ├── trial_1/
-│   │   │   ├── candidates.png
-│   │   │   ├── compile_time.png
-│   │   │   ├── netlist_size.png
-│   │   │   ├── simulation_time.png
-│   │   │   ├── sources.png
-│   │   │   └── summary.csv
-│   │   ├── trial_2/
-│   │   │   ├── candidates.png
-│   │   │   ├── compile_time.png
-│   │   │   ├── netlist_size.png
-│   │   │   ├── simulation_time.png
-│   │   │   ├── sources.png
-│   │   │   └── summary.csv
-│   │   ├── trial_3/
-│   │   │   ├── candidates.png
-│   │   │   ├── compile_time.png
-│   │   │   ├── netlist_size.png
-│   │   │   ├── simulation_time.png
-│   │   │   ├── sources.png
-│   │   │   └── summary.csv
-│   │   ├── trial_4/
-│   │   │   ├── candidates.png
-│   │   │   ├── compile_time.png
-│   │   │   ├── netlist_size.png
-│   │   │   ├── simulation_time.png
-│   │   │   ├── sources.png
-│   │   │   └── summary.csv
-│   │   ├── trial_5/
-│   │   │   ├── candidates.png
-│   │   │   ├── compile_time.png
-│   │   │   ├── netlist_size.png
-│   │   │   ├── simulation_time.png
-│   │   │   ├── sources.png
-│   │   │   └── summary.csv
-│   │   └── repeated_summary.csv
-│   ├── benchmark_validation.csv
-│   ├── benchmark_validation_full.csv
-│   ├── benchmark_validation_quick.csv
-│   ├── capacitance_sweep.csv
-│   ├── capacitance_sweep_summary.csv
-│   ├── default_xor_ir_0_1.json
-│   ├── emitter_extraction_validation.csv
-│   ├── generated_benchmark_validation.csv
-│   ├── monte_carlo_1000.csv
-│   ├── monte_carlo_smoke.csv
-│   ├── parity_cycle_6_validation.csv
-│   ├── permanent_benchmark_validation.csv
-│   ├── resistance_sweep.csv
-│   ├── resistance_sweep_summary.csv
-│   ├── scaling_candidates_full.png
-│   ├── scaling_candidates_quick.png
-│   ├── scaling_compile_time_full.png
-│   ├── scaling_compile_time_quick.png
-│   ├── scaling_netlist_size_full.png
-│   ├── scaling_netlist_size_quick.png
-│   ├── scaling_simulation_time_full.png
-│   ├── scaling_simulation_time_quick.png
-│   ├── scaling_size10_candidates.png
-│   ├── scaling_size10_compile_time.png
-│   ├── scaling_size10_netlist_size.png
-│   ├── scaling_size10_simulation_time.png
-│   ├── scaling_size10_sources.png
-│   ├── scaling_size10_summary.csv
-│   ├── scaling_smoke_summary.csv
-│   ├── scaling_sources_full.png
-│   ├── scaling_sources_quick.png
-│   ├── scaling_summary_full.csv
-│   ├── scaling_summary_quick.csv
-│   ├── supply_sweep.csv
-│   ├── supply_sweep_summary.csv
-│   ├── temperature_sweep.csv
-│   ├── temperature_sweep_summary.csv
-│   ├── threshold_sweep.csv
-│   ├── threshold_sweep_summary.csv
-│   ├── validation_capacitance_error_full.png
-│   ├── validation_capacitance_error_quick.png
-│   ├── validation_capacitance_full.csv
-│   ├── validation_capacitance_quick.csv
-│   ├── validation_capacitance_success_full.png
-│   ├── validation_capacitance_success_quick.png
-│   ├── validation_capacitance_summary_full.csv
-│   ├── validation_capacitance_summary_quick.csv
-│   ├── validation_capacitance_timing_full.png
-│   ├── validation_capacitance_timing_quick.png
-│   ├── validation_monte_carlo_full.csv
-│   ├── validation_monte_carlo_quick.csv
-│   ├── validation_resistance_error_full.png
-│   ├── validation_resistance_error_quick.png
-│   ├── validation_resistance_full.csv
-│   ├── validation_resistance_quick.csv
-│   ├── validation_resistance_success_full.png
-│   ├── validation_resistance_success_quick.png
-│   ├── validation_resistance_summary_full.csv
-│   ├── validation_resistance_summary_quick.csv
-│   ├── validation_resistance_timing_full.png
-│   ├── validation_resistance_timing_quick.png
-│   ├── validation_supply_full.csv
-│   ├── validation_supply_margin_full.png
-│   ├── validation_supply_margin_quick.png
-│   ├── validation_supply_quick.csv
-│   ├── validation_supply_response_full.png
-│   ├── validation_supply_response_quick.png
-│   ├── validation_supply_success_full.png
-│   ├── validation_supply_success_quick.png
-│   ├── validation_supply_summary_full.csv
-│   ├── validation_supply_summary_quick.csv
-│   ├── validation_temperature_components_full.png
-│   ├── validation_temperature_components_quick.png
-│   ├── validation_temperature_full.csv
-│   ├── validation_temperature_margin_full.png
-│   ├── validation_temperature_margin_quick.png
-│   ├── validation_temperature_quick.csv
-│   ├── validation_temperature_success_full.png
-│   ├── validation_temperature_success_quick.png
-│   ├── validation_temperature_summary_full.csv
-│   ├── validation_temperature_summary_quick.csv
-│   ├── validation_temperature_timing_full.png
-│   ├── validation_temperature_timing_quick.png
-│   ├── validation_threshold_full.csv
-│   ├── validation_threshold_margin_full.png
-│   ├── validation_threshold_margin_quick.png
-│   ├── validation_threshold_quick.csv
-│   ├── validation_threshold_success_full.png
-│   ├── validation_threshold_success_quick.png
-│   ├── validation_threshold_summary_full.csv
-│   └── validation_threshold_summary_quick.csv
-├── src/
-│   ├── backends/
-│   │   ├── __init__.py
-│   │   └── rc.py
-│   ├── __init__.py
-│   ├── benchmark_io.py
-│   ├── ccir.py
-│   ├── ccir_clause.py
-│   ├── ccir_parity.py
-│   ├── cnf.py
-│   ├── cnf_semantics.py
-│   ├── compiler.py
-│   ├── dimacs.py
-│   ├── generic_reference.py
-│   ├── ir.py
-│   ├── ir_compiler.py
-│   ├── rc_emitter.py
-│   ├── reference.py
-│   ├── spice_model.py
-│   └── transient_analysis.py
-├── tests/
-│   ├── test_benchmark_generator.py
-│   ├── test_benchmark_io.py
-│   ├── test_capacitance_sweep.py
-│   ├── test_ccir.py
-│   ├── test_ccir_clause.py
-│   ├── test_ccir_parity.py
-│   ├── test_cnf.py
-│   ├── test_cnf_semantics.py
-│   ├── test_compiler.py
-│   ├── test_dimacs.py
-│   ├── test_generic_reference.py
-│   ├── test_ir.py
-│   ├── test_ir_compiler.py
-│   ├── test_monte_carlo.py
-│   ├── test_rc_backend.py
-│   ├── test_reference.py
-│   ├── test_resistance_sweep.py
-│   ├── test_scaling_study.py
-│   ├── test_spice_model.py
-│   ├── test_supply_sweep.py
-│   ├── test_temperature_sweep.py
-│   ├── test_threshold_sweep.py
-│   └── test_transient_analysis.py
-├── .gitignore
-├── CHANGELOG.md
-├── CITATION.cff
-├── CONTRIBUTING.md
-├── generate_parity_benchmarks.py
-├── LICENSE
-├── pytest.ini
-├── README.md
-├── requirements-lock.txt
-├── requirements.txt
-├── run_benchmark.py
-├── run_capacitance_sweep.py
-├── run_compiler.py
-├── run_ir.py
-├── run_monte_carlo.py
-├── run_resistance_sweep.py
-├── run_scaling_study.py
-├── run_spice.py
-├── run_supply_sweep.py
-├── run_temperature_sweep.py
-├── run_threshold_sweep.py
-├── run_transient_smoke.py
-├── validate.py
-└── validate_benchmarks.py
+Unsupported CCIR
+
+↓
+
+Explicit Compilation Failure
 ```
 
+is a conforming architectural outcome.
 
-Generated reports, SPICE netlists, benchmark corpora, validation tables,
-figures, and other reproducible artifacts are generated during validation and
-are intentionally excluded from normal Git history.
+Silent degradation is not.
 
+---
 
-## Validation principles
+### Backend Extensibility
 
-### Independent reference evaluation
+Because the compilation contract depends only upon CCIR,
 
-The continuation function is derived from the logical constraints independently
-of the physical model.
+```text
+Compile_backend : CCIR → ExecutionArtifact
+```
 
-The reference evaluator and the SPICE implementation remain separate validation
-layers.
+new backend implementations may be introduced without modifying
 
-### Anti-embedding
+- frontend software;
+- canonical lowering;
+- CCIR;
+- validation architecture; or
+- existing backend implementations.
 
-Reference answers and precomputed completion tables are reserved for independent
+RFC-0003 therefore establishes backend extensibility as an architectural
+property rather than an implementation convenience.
+
+This separation allows CPC to evolve by adding new computational substrates
+while preserving a stable canonical frontend and validation framework.
+
+---
+
+## ExecutionArtifact
+
+RFC-0003 introduces the concept of the **ExecutionArtifact** as the canonical
+result of backend compilation.
+
+Unlike traditional compiler outputs, an ExecutionArtifact is not defined by a
+particular implementation technology. It is the complete backend-specific
+description required to prepare, execute, observe, and validate a computation
+on a chosen computational substrate.
+
+Every conforming backend produces an ExecutionArtifact.
+
+Conceptually,
+
+```text
+Compile_backend
+        │
+        ▼
+ExecutionArtifact
+```
+
+is the only architectural obligation imposed upon backend implementations.
+
+---
+
+### Canonical Structure
+
+RFC-0003 defines the ExecutionArtifact as
+
+```text
+Aₓ = (Tₓ, Pₓ, Iₓ, Mₓ, Πₓ)
+```
+
+where
+
+| Component | Description |
+|-----------|-------------|
+| **Tₓ** | Execution topology |
+| **Pₓ** | Backend parameters |
+| **Iₓ** | Interface specification |
+| **Mₓ** | Backend metadata |
+| **Πₓ** | Machine-checkable provenance |
+
+These five components completely describe the executable backend realization.
+
+No additional hidden compiler information is required to define the execution
+artifact.
+
+---
+
+### Execution Topology
+
+The topology defines the structural organization of the execution artifact.
+
+Its precise meaning depends upon the backend.
+
+Examples include
+
+- electrical networks,
+- digital logic graphs,
+- FPGA routing structures,
+- dynamical systems,
+- optical interconnections,
+- coherent physical media,
+- future execution substrates.
+
+RFC-0003 intentionally leaves the topology abstract.
+
+Only the architectural role is specified.
+
+---
+
+### Backend Parameters
+
+Parameters instantiate the topology.
+
+Typical examples include
+
+- electrical component values,
+- timing constants,
+- logical configuration values,
+- numerical coefficients,
+- calibration constants,
+- substrate-specific operating parameters.
+
+Parameters belong entirely to the backend implementation.
+
+They are not represented in CCIR.
+
+---
+
+### Interface Specification
+
+Execution becomes observable only through the admitted interface.
+
+The interface specification defines
+
+- observable quantities,
+- readout locations,
+- decoding inputs,
+- interface metadata,
+- externally admitted interaction.
+
+Every backend defines its own interface.
+
+Validation operates exclusively through this interface.
+
+Internal backend state is never interpreted directly.
+
+---
+
+### Backend Metadata
+
+Metadata records descriptive information associated with the execution
+artifact.
+
+Examples include
+
+- backend identifier,
+- backend version,
+- compilation timestamp,
+- execution options,
+- implementation information.
+
+Metadata facilitates auditing and reproducibility.
+
+It does not modify computational semantics.
+
+---
+
+### Machine-Checkable Provenance
+
+One of the principal contributions of RFC-0003 is the introduction of
+machine-checkable provenance.
+
+Every generated artifact element must be traceable to its origin.
+
+Conceptually,
+
+```text
+Πₓ :
+
+ArtifactElement
+
+        │
+
+        ▼
+
+CCIROrigin
+      or
+BackendRuleOrigin
+```
+
+No artifact element may exist without provenance.
+
+Opaque descriptions such as
+
+```text
+generated_by_compiler
+```
+
+are explicitly insufficient.
+
+Instead, provenance must permit an auditor to determine
+
+- which CCIR information produced the element,
+- which backend rule generated it,
+- and how it entered the final execution artifact.
+
+This enables reproducible backend verification.
+
+---
+
+### Provenance as an Architectural Contract
+
+Provenance is not an implementation detail.
+
+It is part of the backend contract itself.
+
+Consequently,
+
+```text
+ExecutionArtifact
+
+├── Topology
+├── Parameters
+├── Interface
+├── Metadata
+└── Provenance
+```
+
+defines the canonical architectural interface exposed by every backend.
+
+Two implementations using entirely different execution technologies satisfy the
+same architectural contract provided that each exposes an admissible
+ExecutionArtifact with complete provenance.
+
+---
+
+### Preparation and Execution
+
+The ExecutionArtifact represents a compiled backend-specific computational
+description.
+
+Execution itself occurs afterwards.
+
+```text
+CCIR
+   │
+   ▼
+Compile_backend
+   │
+   ▼
+ExecutionArtifact
+   │
+   ▼
+Preparation
+   │
+   ▼
+Execution
+```
+
+Preparation transforms the artifact into an executable state for the selected
+execution substrate.
+
+Execution is then performed by the selected computational substrate.
+
+RFC-0003 intentionally separates these two stages.
+
+This distinction allows identical artifacts to be prepared repeatedly while
+keeping compilation independent of execution.
+
+---
+
+### Backend Independence
+
+ExecutionArtifacts produced by different backends need not resemble one
+another.
+
+For example,
+
+```text
+CCIR
+
+   │
+
+   ├────────► RC Artifact
+
+   ├────────► FPGA Artifact
+
+   ├────────► Digital Artifact
+
+   ├────────► Optical Artifact
+
+   └────────► Future Artifact
+```
+
+Each artifact may possess different internal organization.
+
+Nevertheless, each satisfies the same architectural interface
+
+```text
+ExecutionArtifact
+
+(T, P, I, M, Π)
+```
+
+This common contract permits backend substitution without changing CCIR,
+frontend software, or validation procedures.
+
+---
+
+### Architectural Significance
+
+Traditional compilers typically terminate with executable software or hardware
+descriptions.
+
+CPC generalizes this concept.
+
+Backend compilation always terminates with an ExecutionArtifact rather than a
+technology-specific output format.
+
+The ExecutionArtifact therefore becomes the canonical abstraction connecting
+
+- backend compilation,
+- preparation,
+- execution,
+- interface readout,
+- validation.
+
+This abstraction is one of the defining architectural contributions of
+RFC-0003 and provides the foundation for backend-independent Constraint
+Physical Computing.
+
+---
+
+## Validation Architecture
+
+A defining principle of Constraint Physical Computing (CPC) is the strict
+separation between **compilation** and **validation**.
+
+Backend compilation is responsible for constructing an executable realization
+of a canonical constraint program.
+
+Validation is responsible for determining whether the observable behavior of
+that realization agrees with the semantics of the original problem.
+
+These responsibilities are intentionally independent.
+
+```text
+           Execution-Backend Compilation
+
+CCIR
+  │
+  ▼
+Compile_backend
+  │
+  ▼
+ExecutionArtifact
+
+==============================
+ Architectural Boundary
+==============================
+
+Preparation
+  │
+  ▼
+Execution
+  │
+  ▼
+Interface Readout
+  │
+  ▼
+Fixed Decoder
+  │
+  ▼
+Independent Validation
+```
+
+The compiler constructs an executable artifact.
+
+The validator determines whether that artifact behaves correctly.
+
+RFC-0003 requires these two activities to remain architecturally distinct.
+
+---
+
+### Compiler Validation
+
+Compiler validation answers a structural question:
+
+> **Was the backend implementation conformant to the backend contract?**
+
+Compiler validation therefore examines properties such as
+
+- deterministic compilation;
+- admissible backend capabilities;
+- provenance completeness;
+- interface construction;
+- execution-artifact structure;
+- backend reproducibility.
+
+Compiler validation does **not** determine whether a computational answer is
+correct.
+
+Instead, it determines whether compilation itself satisfies the architectural
+requirements defined by RFC-0003.
+
+---
+
+### Semantic Validation
+
+Semantic validation answers a different question:
+
+> **Does the observable behavior of the execution artifact agree with the
+> semantics of the canonical constraint program?**
+
+Semantic validation operates only after
+
+1. execution,
+2. interface readout,
+3. decoding,
+
+have completed.
+
+The validator compares decoded backend outputs with an independent semantic
+reference procedure.
+
+Consequently,
+
+```text
+Compiler
+
+↓
+
+Execution
+
+↓
+
+Decoder
+
+↓
+
+Reference Evaluation
+
+↓
+
+Comparison
+```
+
+defines the validation pipeline.
+
+The reference evaluator is never part of backend compilation.
+
+---
+
+### Answer Independence Principle
+
+One of the principal architectural requirements introduced by RFC-0003 is the
+**Answer Independence Principle**.
+
+Backend compilation must not depend upon semantic knowledge of the problem
+being compiled.
+
+Conceptually,
+
+```text
+Compiler Input
+
+CCIR
+
++
+
+Θ_backend
+```
+
+and **nothing else**.
+
+Reference evaluators,
+
+- satisfying assignments,
+- completion tables,
+- expected outputs,
+- semantic oracles,
+
+must remain entirely outside the compiler dependency boundary.
+
+This requirement guarantees that compilation is determined solely by canonical
+problem structure together with the globally fixed backend specification.
+
+---
+
+### Compiler Dependency Principle
+
+Let
+
+```text
+Cₓ
+```
+
+denote an admitted CCIR program.
+
+RFC-0003 requires
+
+```text
+D(Cₓ) = { Cₓ, Θ_backend }
+```
+
+where
+
+- **Cₓ** is the canonical program; and
+- **Θ_backend** is the globally fixed backend specification.
+
+No semantic information may enlarge this dependency set.
+
+Consequently,
+
+```text
+Eval(Cₓ) ∉ D(Cₓ)
+```
+
+where `Eval(Cₓ)` denotes any independent semantic evaluation procedure.
+
+This distinction separates backend compilation from semantic reasoning.
+
+---
+
+### Restricted Interface Principle
+
+Validation is performed exclusively through the admitted backend interface.
+
+```text
+Execution
+
+↓
+
+Observable Interface
+
+↓
+
+Fixed Decoder
+
+↓
+
+Validation
+```
+
+Internal backend state is not interpreted directly.
+
+Examples include
+
+- hidden physical state;
+- transient implementation details;
+- auxiliary diagnostic information;
+- backend-local optimization structures.
+
+Such information may be useful for debugging but does not contribute to
+semantic correctness.
+
+Only the admitted interface participates in validation.
+
+---
+
+### Provenance Auditing
+
+Every generated artifact element possesses machine-checkable provenance.
+
+Validation therefore includes structural auditing of
+
+- topology;
+- parameters;
+- interface elements;
+- metadata;
+- provenance.
+
+Auditors must be able to reconstruct how every artifact element originated
+from either
+
+- canonical CCIR information; or
+- globally fixed backend rules.
+
+This enables independent verification of backend implementations without
+requiring knowledge of internal compiler algorithms.
+
+---
+
+### Backend Validation
+
+Every backend implementing the CPC architecture is expected to satisfy the same
+validation framework.
+
+Backend-specific implementation details may differ substantially.
+
+Validation procedures do not.
+
+Consequently,
+
+```text
+RC Reference Backend
+
+FPGA Execution Backend
+
+Digital Execution Backend
+
+Optical Execution Backend
+
+Future Execution Backend
+
+        │
+        ▼
+
+Common Validation Architecture
+```
+
+Backend independence therefore extends beyond compilation.
+
+It also encompasses validation.
+
+---
+
+### Architectural Significance
+
+Traditional compiler validation typically focuses on software correctness or
+hardware equivalence.
+
+RFC-0003 introduces a broader architectural perspective.
+
+Validation is divided into two independent responsibilities.
+
+1. **Compiler validation**
+
+   Determines whether backend compilation conforms to the architectural
+   contract.
+
+2. **Semantic validation**
+
+   Determines whether observable execution agrees with canonical problem
+   semantics.
+
+This separation permits backend implementations to evolve independently while
+preserving a common validation architecture across all computational
+substrates.
+
+It is therefore a foundational property of the CPC Reference Validation Framework.
+
+---
+
+## RC Reference Backend
+
+The CPC Reference Validation Framework currently provides an **RC Reference Backend**
+that implements the execution-backend compilation contract defined by RFC-0003.
+
+The RC Reference Backend is the current reference realization of the CPC
+execution-backend architecture. It demonstrates how canonical CCIR programs can be
+transformed into executable artifacts while satisfying the architectural requirements of
+the CPC Reference Validation Framework.
+
+Importantly, the RC Reference Backend is **not** the definition of Constraint Physical
+Computing. It is one implementation of the backend contract.
+
+```text
+                CPC Architecture
+
+                      │
+
+                      ▼
+
+      Compile_backend : CCIR → ExecutionArtifact
+
+                      │
+
+      ┌───────────────┴───────────────┐
+      │                               │
+
+      ▼                               ▼
+
+ RC Reference Backend          Future Backends
+
+      │                               │
+
+      ▼                               ▼
+
+ RC ExecutionArtifact        Backend-specific
+                             ExecutionArtifact
+```
+
+The purpose of the RC Reference Backend is therefore twofold.
+
+1. It serves as the reference implementation of the execution-backend compilation
+   contract.
+
+2. It provides an executable platform for validating the architectural
+   principles introduced by RFC-0003.
+
+---
+
+### Architectural Pipeline
+
+The RC Reference Backend follows the canonical CPC execution pipeline.
+
+```text
+CCIR
+  │
+  ▼
+Compile_backend
+  │
+  ▼
+RC ExecutionArtifact
+  │
+  ▼
+Netlist Preparation
+  │
+  ▼
+ngspice Execution
+  │
+  ▼
+Observable Voltages
+  │
+  ▼
+Fixed Decoder
+  │
+  ▼
+Semantic Validation
+```
+
+<p align="center">
+  <img src="figures/rc-demo.svg" width="100%" alt="RC Reference Backend execution pipeline">
+</p>
+
+Each stage corresponds directly to one layer of the CPC architecture.
+
+The RC Reference Backend therefore provides a concrete realization of the abstract
+backend contract without modifying the canonical frontend architecture.
+
+---
+
+### RC Execution Artifact
+
+The RC Reference Backend realizes the generic ExecutionArtifact through an electrical
+network representation suitable for simulation using ngspice.
+
+Its execution artifact contains
+
+- RC topology,
+- electrical component parameters,
+- interface description,
+- backend metadata,
+- machine-checkable provenance.
+
+Although these components are represented electrically, they satisfy the same
+ExecutionArtifact contract required of every CPC backend.
+
+Consequently, future backend implementations may replace the RC representation
+without affecting the frontend or validation architecture.
+
+---
+
+### Preparation
+
+Following compilation, the RC execution artifact is prepared for execution by
+generating an ngspice-compatible netlist.
+
+Preparation is intentionally separated from compilation.
+
+Compilation determines **what** shall be executed.
+
+Preparation determines **how** the execution artifact is presented to the
+selected execution environment.
+
+This distinction allows future backends to employ different preparation
+procedures while preserving the same execution-backend compilation contract.
+
+---
+
+### Physical Execution
+
+Execution is performed by ngspice using the prepared RC network.
+
+The simulator is treated as an execution environment rather than as a compiler
+component.
+
+Its responsibility is limited to executing the supplied execution artifact.
+
+No semantic interpretation occurs during simulation.
+
+---
+
+### Interface Readout
+
+Following execution, the backend exposes only the admitted observable
+interface.
+
+For the RC Reference Backend, this interface consists of measured electrical quantities
+defined by the backend specification.
+
+The backend does not expose hidden simulator state as part of semantic
 validation.
 
-A physical compiler may use:
-
-- the admitted instance description;
-- the admitted boundary condition;
-- fixed family-wide compilation rules; and
-- calibration data obtained independently of the continuation answers.
-
-It may not use the independently computed continuation value when constructing
-the physical program.
-
-### Restricted readout
-
-The physical response is extracted through a specified observable rather than
-through complete reconstruction of all internal state variables.
-
-In the current baseline, the restricted observable is the final voltage at the
-designated output node.
-
-### Fixed decoder
-
-The decoder is selected before validation and remains fixed across the admitted
-boundary conditions.
-
-In the current benchmark, the output voltage is decoded using a fixed voltage
-threshold.
-
-### Response-class invariance
-
-Later releases will test whether distinct initial conditions, transient
-histories, parameter perturbations, or microscopic states assigned to one
-response class produce the same decoded response.
-
-Validation therefore extends beyond truth-table agreement. It also tests
-whether physically distinct realizations preserve the same admitted semantic
-response.
-
-### Complete resource accounting
-
-Validation will report:
-
-- compilation cost;
-- physical-program size;
-- preparation cost;
-- convergence time;
-- readout cost;
-- decoding cost;
-- component precision;
-- calibration cost;
-- reset overhead;
-- repeated-run statistics; and
-- failure and non-convergence rates.
+Observable values are subsequently interpreted by the fixed decoder defined by
+the backend specification.
 
 ---
 
-### Current development validation
+### Reference Implementation
 
-The current `v0.4-dev` branch passes:
+The RC Reference Backend intentionally emphasizes architectural clarity rather than
+hardware optimization.
 
-- 359 automated Python tests; and
-- the complete four-condition parity SPICE continuation-table validation.
+Its primary objective is to provide a complete and executable realization of
+the CPC execution-backend architecture.
 
-The following source-to-CCIR translations are independently verified over
-complete Boolean assignments:
+Accordingly, the RC Reference Backend serves as
 
-- `ParityInstance` to CCIR; and
-- `CNFInstance` to CCIR.
+- the reference implementation of RFC-0003;
+- the basis for regression testing;
+- the canonical validation platform;
+- an executable example for future backend developers.
 
-These current-development checks supplement, but do not replace, the dated
-full-profile, Monte Carlo, generated-corpus, and scaling milestones reported
-above.
+Future CPC backends are expected to satisfy the same architectural contracts
+while employing different computational substrates.
 
-## Project status
+---
 
-**Released stable baseline:** v0.2.0 research prototype
+### Future Backend Families
 
-**Latest pre-release:** `v0.5.0-frontend.1`
-(RFC-0002 Front-End Milestone 1)
+The CPC architecture is designed to accommodate multiple backend
+implementations.
 
-**Current development branch:** `v0.4-dev`
+Potential backend families include
 
-**Accepted architecture:**
+- FPGA realizations;
+- digital logic implementations;
+- graph-based execution engines;
+- coherent physical substrates;
+- optical systems;
+- C-parity backend implementations;
+- additional simulation environments.
 
-- RFC-0001 — CPC Architecture
-- RFC-0002 — Generic Constraint IR and CNF Front End
-
-**Current completed milestone:** RFC-0002 CCIR front end
-
-Implemented and verified:
-
-- CNF source model and complete CNF boundary cases;
-- strict DIMACS parser;
-- independent complete-assignment CNF reference semantics;
-- immutable CCIR program and constraint containers;
-- typed CCIR payload contract;
-- CCIR parity and clause constraint families;
-- parity-source lowering to CCIR;
-- CNF-source lowering to CCIR;
-- independent CCIR parity and clause evaluation;
-- parity-to-CCIR assignment-semantic equivalence; and
-- CNF-to-CCIR assignment-semantic equivalence.
-
-**Current regression status:** 359 automated Python tests passing.
-
-**Milestone tag:** `ccir-front-end-v1`
-
-**GitHub pre-release:** `v0.5.0-frontend.1`
-
-Remaining execution-layer work:
-
-- backend execution contract;
-- CCIR-driven RC compilation;
-- continuation-level CNF validation;
-- complete DIMACS-to-SPICE workflow; and
-- retirement of the legacy parity-oriented IR.
-
-The established parity compiler, benchmark, scaling, and SPICE-validation
-pipelines remain operational during the incremental backend migration.
-
-## v0.4 Compiler Architecture
-
-The v0.4 development line separates logical compilation from physical
-netlist emission.
+Each backend remains interchangeable at the architectural level provided that
+it implements
 
 ```text
-ParityInstance
-      |
-      v
-compile_parity_instance_to_ir()
-      |
-      v
-IRProgram
-      |
-      v
-compile_ir_to_rc()
-      |
-      v
-emit_parity_rc_netlist()
-      |
-      v
-RC/ngspice netlist
+Compile_backend : CCIR → ExecutionArtifact
 ```
 
-`src/ir_compiler.py` constructs the backend-independent intermediate
-representation. `src/backends/rc.py` consumes that representation and
-invokes the extracted RC emitter directly.
+together with the validation requirements defined by RFC-0003.
 
-The RC backend no longer calls the legacy public
-`compile_parity_instance()` entry point. This preserves a distinct
-backend boundary while maintaining byte-compatible RC/netlist output.
+---
+
+### Relationship to the RFC Series
+
+The RC Reference Backend implements the architectural contracts introduced throughout
+the RFC series.
+
+| RFC | Contribution |
+|------|--------------|
+| RFC-0001 | Canonical compiler architecture |
+| RFC-0002 | Canonical Constraint Intermediate Representation (CCIR) |
+| RFC-0003 | Execution-backend compilation contract, ExecutionArtifact, provenance, and validation |
+
+The RC Reference Backend therefore represents the current reference
+implementation of the combined RFC architecture.
+
+It should be viewed as the reference realization of the CPC Reference Validation
+Framework rather than as the defining implementation of Constraint Physical Computing
+itself.
+
+---
+
+## Repository Organization
+
+The repository is organized around the architectural layers of the CPC
+Reference Validation Framework.
+
+```text
+docs/
+    RFC specifications,
+    architecture documentation,
+    validation methodology,
+    roadmap and releases
+
+src/
+    Backend-independent compiler interfaces,
+    CCIR infrastructure,
+    frontend lowering,
+    execution-backend contracts,
+    RC reference backend,
+    reference evaluators,
+    validation infrastructure,
+    transient analysis
+
+tests/
+    RFC conformance,
+    CCIR,
+    compilation,
+    provenance,
+    backend validation,
+    physical validation,
+    regression testing
+
+benchmarks/
+    canonical benchmark suite
+
+figures/
+    architectural diagrams and validation plots
+
+results/
+    generated validation reports and experimental outputs
+```
+
+Additional documentation is available in the `docs/` directory, including
+architecture notes, validation methodology, benchmark descriptions,
+release notes, and development roadmap.
+
+The repository structure mirrors the CPC architecture rather than any specific
+backend implementation.
+
+Consequently, additional backends may be introduced without restructuring the
+repository.
+
+---
+
+## Development Status
+
+The CPC Reference Validation Framework implements the RFC-0003 architectural
+baseline and its current RC reference realization.
+The audited RFC-0003 development state used for this README passes
+**465 automated tests**. The repository's current test run remains authoritative
+as the suite evolves.
+
+---
+
+### Implemented
+
+✓ Canonical Constraint Intermediate Representation (CCIR)
+
+✓ Execution-backend compilation contract
+
+✓ ExecutionArtifact model
+
+✓ Backend capability declarations
+
+✓ Machine-checkable provenance
+
+✓ Compiler dependency validation
+
+✓ Answer Independence Principle
+
+✓ Restricted Interface Principle
+
+✓ Compiler validation framework
+
+✓ Semantic validation framework
+
+✓ RC Reference Backend
+
+✓ Automated regression suite
+
+---
+
+### RFC-0003 Audit Coverage
+
+Dedicated tests cover:
+
+- execution-artifact validation;
+- execution-backend capability declarations;
+- machine-resolvable provenance;
+- backend-rule registration;
+- CCIR-origin validation;
+- canonical backend dispatch;
+- native CCIR RC compilation;
+- preparation separation;
+- Answer Independence negative controls;
+- generated-netlist answer-independence audit; and
+- canonical dependency-boundary enforcement.
+
+The RC Reference Backend constitutes the current reference implementation of
+the execution-backend architecture.
+
+---
 
 ## Roadmap
 
-### Version 0.1 — Reference validation baseline
+Future development will extend the CPC architecture through additional
+execution-backend implementations while preserving the canonical frontend and
+validation framework.
 
-Status: completed.
+Planned work includes
 
-### Version 0.2 — Engineering robustness validation
+- FPGA execution backend;
+- digital logic execution backend;
+- graph execution backend;
+- C-parity execution backend;
+- additional physical execution substrates;
+- execution-backend equivalence validation;
+- expanded benchmark collections;
+- automated backend certification;
+- cross-backend reproducibility studies.
 
-Status: completed and released.
+These developments are intended to extend the set of supported execution
+substrates without modifying the architectural contracts introduced by
+RFC-0003.
 
-### Version 0.3 — Generic parity compiler and benchmark framework
+---
 
-Status: completed.
+## Glossary
 
-### Version 0.4 — Backend-independent compiler architecture
+| Term | Meaning |
+|---|---|
+| **CPC** | Constraint Physical Computing |
+| **CPC Reference Validation Framework** | This repository and its canonical validation architecture |
+| **CCIR** | Canonical Constraint Intermediate Representation |
+| **Execution backend** | A backend implementing the CPC compilation contract for a particular execution substrate |
+| **`Compile_backend`** | Canonical mapping from CCIR to an ExecutionArtifact |
+| **ExecutionArtifact** | Backend-specific executable description containing topology, parameters, interface, metadata, and provenance |
+| **`Theta_backend`** | Globally fixed execution-backend specification |
+| **Provenance** | Machine-checkable origin information for generated artifact elements |
+| **Answer Independence Principle** | Requirement that semantic answers remain outside the compiler dependency set |
+| **Restricted Interface Principle** | Requirement that semantic validation use only the admitted readout interface and fixed decoder |
+| **Compiler validation** | Verification that compilation conforms to the execution-backend contract |
+| **Semantic validation** | Independent comparison of decoded execution behavior with reference semantics |
+| **RC Reference Backend** | Current reference execution backend implemented through the RC/ngspice pipeline |
+| **Legacy IR** | Earlier parity-oriented IR retained for compatibility and regression testing |
 
-Status: completed.
+---
 
-Completed:
+## Contributing
 
-- backend-independent parity IR;
-- canonical public compiler pipeline;
-- RC backend and extracted emitter;
-- architectural regression tests; and
-- accepted RFC-0001 architecture specification.
+Contributions are welcome in all areas of the framework.
 
-### Version 0.5 — Core Constraint IR and CNF front end
+Examples include
 
-Status: front end completed and tagged as `ccir-front-end-v1`.
+- frontend implementations;
+- CCIR tooling;
+- backend implementations;
+- validation infrastructure;
+- provenance tooling;
+- documentation;
+- regression tests;
+- benchmark suites.
 
-Completed:
+New backend implementations should conform to the architectural contracts
+defined by RFC-0003 and preserve compatibility with the canonical validation
+framework.
 
-- accepted RFC-0002;
-- CNF source model and strict DIMACS parser;
-- complete CNF boundary-case representation;
-- independent CNF reference semantics;
-- CCIR containers and typed payload contract;
-- parity and clause constraint payloads;
-- empty-clause preservation;
-- parity-to-CCIR lowering;
-- CNF-to-CCIR lowering;
-- CCIR parity and clause reference evaluation;
-- exhaustive parity assignment-semantic equivalence tests; and
-- exhaustive CNF assignment-semantic equivalence tests.
+---
 
-Deferred to the execution-layer phase:
+## Normative References
 
-- backend execution contract;
-- CCIR-to-RC compilation;
-- continuation-level CNF workflow;
-- complete DIMACS-to-SPICE validation; and
-- legacy-IR retirement.
+The normative architecture is contained in:
 
+- [`docs/design/RFC-0001-CPC-Architecture.md`](docs/design/RFC-0001-CPC-Architecture.md)
+- [`docs/design/RFC-0002-Generic-Constraint-IR-and-CNF-Front-End.md`](docs/design/RFC-0002-Generic-Constraint-IR-and-CNF-Front-End.md)
+- [`docs/design/RFC-0003-Backend-Execution-Contract.md`](docs/design/RFC-0003-Backend-Execution-Contract.md)
 
-### Version 0.6 — General Boolean constraints
+| RFC | Purpose |
+|---|---|
+| RFC-0001 | Canonical CPC compiler architecture |
+| RFC-0002 | Canonical Constraint Intermediate Representation (CCIR) |
+| RFC-0003 | Execution-backend compilation contract, ExecutionArtifact, provenance, Answer Independence, and validation |
 
-Planned:
-
-- additional typed constraint families;
-- analysis and optimization passes;
-- mixed Boolean constraint workflows; and
-- additional logical front ends.
-
-### Version 0.7 — Physical-backend extensions
-
-Planned:
-
-- additional physical backends;
-- passive or transistor-level experiments;
-- response-class invariance studies; and
-- expanded failure-mode validation.
-
-### Version 1.0 — CPC validation research release
-
-Planned:
-
-- complete reproducibility package;
-- stable public documentation;
-- archived validation data;
-- release DOI; and
-- external reproduction instructions.
-
-See [`docs/roadmap.md`](docs/roadmap.md) for the detailed plan.
-
-## Related CPC research
-
-This repository is an engineering companion to the C-Parity Computing research
-program, which develops:
-
-- configuration identity and quotient dynamics;
-- canonical quotient-state representations;
-- exact semantic carriers;
-- physical carrier-computing architectures;
-- response quotients;
-- bounded-arithmetic exactness criteria;
-- conditional unprovability of carrier separation; and
-- representation-relative physical computation.
-
-The repository supplies the staged validation framework through which these
-formal ideas can be translated into testable physical models.
-
-Persistent identifiers for the CPC papers will be added after publication on
-arXiv and Zenodo.
+This README is explanatory. The RFC documents are authoritative where this
+README and a normative RFC differ.
 
 ---
 
@@ -1455,40 +1911,11 @@ Citation metadata are provided in [`CITATION.cff`](CITATION.cff).
 
 Until a release DOI is available, cite the repository as:
 
-> Karim Daghbouche. *CPC Validation: Reference Implementation and SPICE
-> Validation Framework for C-Parity Computing*. GridSAT Stiftung, 2026.  
-> https://github.com/GridSAT/cpc-validation
-
-A Zenodo DOI will be added to a future archived release.
-
----
-
-## Contributing
-
-Research and engineering contributions are welcome.
-
-Before proposing a substantial change, open a GitHub issue describing:
-
-- the proposed physical or computational model;
-- its relation to the CPC validation contract;
-- its anti-embedding status;
-- its expected validation data;
-- its resource-accounting requirements; and
-- the accompanying tests and documentation.
-
-All contributions should preserve reproducibility and maintain a clear
-separation between reference evaluation, physical-model generation, physical
-execution, readout, decoding, and validation.
-
-See [`CONTRIBUTING.md`](CONTRIBUTING.md).
-
----
-
-## License
-
-Copyright © 2026 GridSAT Stiftung and contributors.
-
-This project is released under the [MIT License](LICENSE).
+> Karim Daghbouche.
+> *CPC Reference Validation Framework:
+> Reference Implementation of the Constraint Physical Computing Architecture*.
+> GridSAT Stiftung, 2026.
+> GitHub repository.
 
 ---
 
@@ -1499,66 +1926,23 @@ Georgstr. 11
 30159 Hannover  
 Germany
 
-GridSAT Stiftung is a German non-profit foundation established on 1 July 2021.
+**Repository:** https://github.com/GridSAT/cpc-validation
 
-**Repository**
+**CPC research program:** https://gridsat.eth.link
 
-https://github.com/GridSAT/cpc-validation
+---
 
-**CPC research program**
+## License
 
-https://gridsat.eth.link
+See the project license for licensing information.
 
+---
 
-## Architecture
+## Acknowledgements
 
-The CPC architecture is governed by the accepted RFCs in
-[`docs/design/`](docs/design/):
+The CPC Reference Validation Framework is developed as the reference validation
+implementation of the Constraint Physical Computing (CPC) architecture.
 
-- RFC-0001 — CPC Architecture — Accepted
-- RFC-0002 — Generic Constraint IR and CNF Front End — Accepted
-
-RFC-0001 defines the canonical compilation pipeline and the separation
-between front ends, intermediate representations, backends, and emitters.
-
-RFC-0002 defines the Core Constraint Intermediate Representation (CCIR)
-as the canonical backend-independent representation for typed constraint
-families.
-
-Both supported source models now lower into CCIR:
-
-```text
-ParityInstance -> parity lowering --+
-                                    +-> CCIRProgram
-CNFInstance    -> CNF lowering -----+
-```
-
-For both parity and CNF, exhaustive complete-assignment tests independently
-verify that source semantics agree with the semantics of the lowered CCIR
-program.
-
-Architectural changes should normally be introduced through new or
-superseding RFCs rather than by silently modifying accepted specifications.
-
-## Core Constraint IR
-
-The completed RFC-0002 front end provides:
-
-- immutable `CCIRProgram` and `CCIRConstraint` containers;
-- a typed `CCIRPayload` contract;
-- parity and clause constraint families;
-- empty-clause representation;
-- parity and CNF source lowering;
-- parity and clause reference evaluation; and
-- independently verified assignment-semantic preservation.
-
-The milestone is tagged `ccir-front-end-v1`.
-
-The next phase connects CCIR to execution backends.
-
-Outstanding work:
-
-- CCIR-driven RC compilation;
-- continuation-level CNF validation;
-- complete DIMACS-to-SPICE validation; and
-- retirement of the legacy parity-oriented IR.
+Its purpose is to provide a backend-independent foundation for canonical
+constraint compilation, execution artifact generation, and validation across
+diverse computational substrates.
