@@ -368,14 +368,99 @@ It does not answer:
 
 That question is reserved exclusively for semantic validation.
 
-## 9. Remaining Sections
+## 9. Semantic Validation
 
-1. Semantic Validation
+Semantic validation determines whether an independently executed backend
+artifact reproduces the independently defined semantic result of the admitted
+instance.
 
-2. Backend Independence
+Semantic validation SHALL remain separate from compiler validation.
 
-3. Restricted Interface Principle
+For an admitted instance `X`, let:
 
-4. RC Reference Backend
+    X -> C_X -> A_X -> Execute -> o_X -> Decode -> d_X
 
-5. Acceptance Criteria
+denote the compilation and execution path, where:
+
+- `C_X` is the canonical CCIR program;
+- `A_X` is the execution artifact;
+- `o_X` is the admitted observable or readout result; and
+- `d_X` is the decoded semantic result.
+
+Independently, let:
+
+    X -> Eval -> e_X
+
+denote the reference semantic path.
+
+Semantic correctness requires:
+
+    d_X = e_X
+
+### 9.1 Independent Evaluation
+
+`Eval` SHALL be defined and executed independently of backend compilation.
+
+The output `e_X` SHALL NOT influence:
+
+- CCIR construction;
+- backend compilation;
+- artifact topology;
+- artifact parameters;
+- backend metadata;
+- backend-local auxiliary state;
+- execution preparation;
+- prescribed readout; or
+- decoder selection.
+
+The independent semantic result MAY be consulted only after the backend
+execution path has produced `d_X`.
+
+### 9.2 Post-Execution Comparison
+
+The semantic validator SHALL compare `d_X` with `e_X` only after:
+
+- compilation has completed;
+- the execution artifact has been finalized;
+- execution has completed;
+- the prescribed observable has been read; and
+- the fixed decoder has produced `d_X`.
+
+A backend SHALL NOT be recompiled, modified, recalibrated, or otherwise
+instance-tuned in response to a semantic-validation mismatch unless the change
+is adopted as a new globally fixed backend rule and the affected validation
+family is rerun.
+
+### 9.3 Complete Admitted Interface Validation
+
+For instances with multiple admitted boundary or interface conditions,
+semantic validation SHALL evaluate every condition required by the declared
+validation profile.
+
+The validator SHALL record both the independently computed reference result and
+the independently decoded backend result for each admitted condition.
+
+### 9.4 Validation Failure
+
+Semantic validation SHALL fail whenever:
+
+    d_X != e_X
+
+for any condition required by the declared validation profile.
+
+Compiler conformance does not imply semantic correctness.
+
+Semantic correctness does not imply compiler conformance.
+
+A backend is conforming only when both compiler validation and semantic
+validation succeed under the applicable RFC-0003 requirements.
+
+## 10. Remaining Sections
+
+1. Backend Independence
+
+2. Restricted Interface Principle
+
+3. RC Reference Backend
+
+4. Acceptance Criteria
