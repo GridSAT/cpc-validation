@@ -18,6 +18,7 @@ class ObservableExecution:
     backend_id: str
     backend_version: str
     observations: tuple[tuple[str, Any], ...]
+    provenance: tuple[tuple[str, object], ...] = ()
     metadata: tuple[tuple[str, object], ...] = ()
 
     def __post_init__(self) -> None:

@@ -64,3 +64,18 @@ def test_observable_execution_requires_sorted_observations() -> None:
                 ("a", 2),
             ),
         )
+
+
+def test_observable_execution_preserves_provenance() -> None:
+    provenance = (
+        ("element:0", object()),
+    )
+
+    observable = ObservableExecution(
+        backend_id="rc",
+        backend_version="1",
+        observations=(),
+        provenance=provenance,
+    )
+
+    assert observable.provenance is provenance

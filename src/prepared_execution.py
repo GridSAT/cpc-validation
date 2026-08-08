@@ -21,6 +21,7 @@ class PreparedExecution:
     payload: Any
     interface: Any
     decoder_specification: Any
+    provenance: tuple[tuple[str, object], ...] = ()
     metadata: tuple[tuple[str, object], ...] = ()
 
     def __post_init__(self) -> None:

@@ -187,6 +187,7 @@ def prepare_rc_execution(
         payload=netlist,
         interface=interface,
         decoder_specification=decoder_specification,
+        provenance=artifact.provenance,
         metadata=metadata,
     )
 

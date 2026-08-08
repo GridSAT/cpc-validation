@@ -90,3 +90,20 @@ def test_prepared_execution_requires_sorted_metadata() -> None:
                 ("a", 2),
             ),
         )
+
+
+def test_prepared_execution_preserves_provenance() -> None:
+    provenance = (
+        ("element:0", object()),
+    )
+
+    prepared = PreparedExecution(
+        backend_id="rc",
+        backend_version="1",
+        payload="netlist",
+        interface=(),
+        decoder_specification=(),
+        provenance=provenance,
+    )
+
+    assert prepared.provenance is provenance

@@ -87,6 +87,7 @@ def execute_rc(
                 output_voltage,
             ),
         ),
+        provenance=prepared.provenance,
         metadata=(
             (
                 "execution_id",
