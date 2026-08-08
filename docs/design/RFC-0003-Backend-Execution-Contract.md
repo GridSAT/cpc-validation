@@ -298,16 +298,84 @@ Backend-local auxiliary elements SHALL also possess provenance.
 
 The compiler SHALL preserve provenance throughout every compilation stage.
 
-## 8. Remaining Sections
+## 8. Compiler Validation
 
-1. Compiler Validation
+Compiler validation determines whether an execution artifact was generated in
+conformance with the backend compilation contract.
 
-2. Semantic Validation
+Compiler validation is distinct from semantic validation.
 
-3. Backend Independence
+Compiler validation SHALL establish that the artifact satisfies the structural
+and dependency requirements of Sections 3 through 7 without consulting the
+independent semantic evaluator.
 
-4. Restricted Interface Principle
+### 8.1 Dependency Audit
 
-5. RC Reference Backend
+The validator SHALL verify that backend compilation depends only on:
 
-6. Acceptance Criteria
+- the admitted CCIR program `C_X`; and
+- the globally fixed backend specification `Theta_backend`.
+
+No semantic oracle or answer-derived dependency MAY participate in compiler
+validation or artifact generation.
+
+### 8.2 Provenance Audit
+
+The validator SHALL verify that every generated artifact element has exactly
+the provenance required by the execution-artifact contract.
+
+Every artifact element SHALL be traceable through `Pi_X` to either:
+
+- admitted CCIR data; or
+- a globally fixed backend rule.
+
+An artifact with missing, unresolved, or inadmissible provenance SHALL fail
+compiler validation.
+
+### 8.3 Topology and Parameter Audit
+
+The validator SHALL verify that generated topology and backend parameters can
+be reproduced from `C_X` and `Theta_backend` alone.
+
+Topology or parameter values that require semantic answers, satisfying
+assignments, completion information, expected outputs, or equivalent semantic
+surrogates SHALL cause compiler validation to fail.
+
+### 8.4 Reproducibility Audit
+
+Repeated compilation of the same canonical CCIR input under the same fixed
+backend specification SHALL produce equivalent execution artifacts.
+
+Any permitted nondeterminism SHALL be explicitly represented in
+`Theta_backend` or backend metadata and SHALL be reproducible from the recorded
+artifact information.
+
+### 8.5 Family-Level Validation
+
+A conforming backend SHALL be validated across an admitted family of instances
+using one unchanged compiler and one unchanged backend rule set.
+
+Instance-specific hand tuning outside admitted CCIR data SHALL NOT be used to
+obtain successful compilation or execution behavior.
+
+Compiler validation therefore answers:
+
+    Was A_X generated only from permitted compilation inputs?
+
+It does not answer:
+
+    Does A_X produce the correct semantic result?
+
+That question is reserved exclusively for semantic validation.
+
+## 9. Remaining Sections
+
+1. Semantic Validation
+
+2. Backend Independence
+
+3. Restricted Interface Principle
+
+4. RC Reference Backend
+
+5. Acceptance Criteria
