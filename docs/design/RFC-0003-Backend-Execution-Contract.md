@@ -619,8 +619,119 @@ between:
 - internal diagnostics; and
 - independent reference evaluation.
 
-## 12. Remaining Sections
+## 12. RC Reference Backend
 
-1. RC Reference Backend
+The RC backend is the first reference implementation of the RFC-0003 backend
+execution contract.
 
-2. Acceptance Criteria
+Its concrete compilation map is
+
+    Compile_RC : CCIR -> RCArtifact
+
+The RC backend SHALL satisfy every normative requirement of Sections 3
+through 11.
+
+The RC backend is a reference implementation only. RC-specific topology,
+component models, parameter choices, simulation mechanisms, and serialization
+formats SHALL NOT become requirements on other conforming backends.
+
+### 12.1 Constraint-Derived RC Topology
+
+The RC compiler SHALL derive generated network topology from:
+
+- admitted CCIR constraints;
+- admitted CCIR variable and interface relations; and
+- globally fixed RC backend rules.
+
+The RC compiler SHALL NOT generate topology from independently computed
+continuation values, satisfying assignments, completion tables, expected
+outputs, or equivalent semantic surrogates.
+
+Every generated RC node, connection, source, passive component, auxiliary
+element, and interface element SHALL possess provenance under `Pi_X`.
+
+### 12.2 Fixed RC Parameter Rules
+
+RC component parameters SHALL be generated from admitted structural CCIR data
+and globally fixed RC backend parameters.
+
+Conceptually,
+
+    theta_e = g(local CCIR data, Theta_RC)
+
+where `Theta_RC` is fixed independently of the semantic answer of the
+particular instance.
+
+Instance-specific hand tuning based on reference outcomes SHALL NOT be used.
+
+### 12.3 RC Execution Artifact
+
+An `RCArtifact` SHALL contain, directly or through a deterministic
+serialization:
+
+- the generated RC topology;
+- component and source parameters;
+- boundary and control specification;
+- prescribed readout specification;
+- backend metadata; and
+- complete artifact provenance.
+
+The serialized SPICE or ngspice representation SHALL be reproducible from the
+corresponding `RCArtifact`.
+
+### 12.4 RC Execution and Readout
+
+RC execution MAY be performed by ngspice or another explicitly admitted
+simulator compatible with the declared RC backend profile.
+
+Semantic validation SHALL use only the prescribed RC interface and fixed
+decoder.
+
+Internal node voltages, simulator state, intermediate trajectories, or other
+diagnostic information SHALL NOT be used to infer the semantic result unless
+they are explicitly part of the admitted readout interface.
+
+### 12.5 Multi-Instance Validation
+
+The RC reference backend SHALL be validated across an admitted family of
+constraint instances using:
+
+- one unchanged RC compiler;
+- one unchanged `Theta_RC`;
+- one unchanged readout rule; and
+- one unchanged decoder.
+
+At minimum, the validation family SHALL contain multiple structurally distinct
+parity instances.
+
+As CCIR clause execution support is introduced, the same RFC-0003 contract
+SHALL apply without changing the source-language or backend dependency
+boundaries.
+
+### 12.6 Behavioral Baseline Replacement
+
+The current direct behavioral response realization SHALL be treated as a
+validation baseline, not as the final RFC-0003 reference implementation.
+
+RFC-0003 implementation SHALL replace direct answer-conditioned behavioral
+response realization with constraint-derived RC topology and fixed compilation
+rules satisfying answer independence.
+
+The independent reference evaluator SHALL remain outside the RC compilation
+dependency graph and SHALL be used only for post-execution semantic validation.
+
+### 12.7 RC Artifact Audit
+
+The RC validation suite SHALL provide machine-checkable checks establishing
+that:
+
+- every generated artifact element has admissible provenance;
+- topology is reproducible from CCIR and `Theta_RC`;
+- component parameters are reproducible from CCIR and `Theta_RC`;
+- no oracle-derived artifact fields are present;
+- external reference answers do not influence compilation; and
+- the prescribed interface alone determines the decoded semantic result.
+
+## 13. Remaining Sections
+
+1. Acceptance Criteria
