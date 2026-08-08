@@ -104,6 +104,40 @@ Compile_RC : CCIR -> RCArtifact
 A future backend MAY define another artifact type while preserving the same
 canonical CCIR input boundary.
 
+### 3.1 Backend Capability Declaration
+
+Every conforming backend SHALL publish a backend capability declaration.
+
+The capability declaration SHALL identify the admitted CCIR constraint
+families, interface features, execution features, and artifact features
+implemented by that backend.
+
+A backend SHALL reject any CCIR program requiring unsupported capabilities
+before execution-artifact generation begins.
+
+Such rejection SHALL be deterministic and SHALL depend only on the admitted
+CCIR program and the declared backend capabilities.
+
+Capability rejection SHALL NOT depend on the independently computed semantic
+answer or on any answer-equivalent surrogate.
+
+A backend MAY implement only a subset of the constraint families or execution
+features admitted by the current CCIR specification.
+
+A backend capability declaration therefore defines the domain on which
+
+    Compile_backend : CCIR -> ExecutionArtifact
+
+is required to succeed.
+
+CCIR programs outside that declared domain SHALL fail compilation explicitly
+and SHALL NOT proceed to artifact generation, execution, or semantic
+validation.
+
+Capability declarations allow different conforming backends to support
+different admitted CCIR subsets while preserving the same canonical backend
+contract.
+
 ## 4. Execution Artifact
 
 For an admitted CCIR program `C_X`, backend compilation SHALL produce an
