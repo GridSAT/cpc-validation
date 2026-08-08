@@ -73,6 +73,12 @@ def test_execute_rc_consumes_prepared_execution_only(
         fake_read,
     )
 
+    monkeypatch.setattr(
+        src.spice_model,
+        "_ngspice_version",
+        lambda: "ngspice-42",
+    )
+
     result = execute_rc(
         _prepared()
     )
@@ -95,6 +101,8 @@ def test_execute_rc_consumes_prepared_execution_only(
     assert dict(
         result.metadata
     ) == {
+        "execution_engine": "ngspice",
+        "execution_engine_version": "ngspice-42",
         "execution_id": RC_EXECUTION_ID,
     }
 

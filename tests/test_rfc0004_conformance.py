@@ -138,6 +138,12 @@ def test_ec3_execution_consumes_prepared_execution_only(
         fake_read,
     )
 
+    monkeypatch.setattr(
+        src.spice_model,
+        "_ngspice_version",
+        lambda: "ngspice-42",
+    )
+
     observable = execute_rc(
         _prepared()
     )
@@ -168,6 +174,12 @@ def test_ec4_only_admitted_observations_are_exposed(
         src.spice_model,
         "_read_measured_voltage",
         lambda log_path: 3.5,
+    )
+
+    monkeypatch.setattr(
+        src.spice_model,
+        "_ngspice_version",
+        lambda: "ngspice-42",
     )
 
     observable = execute_rc(
@@ -287,6 +299,12 @@ def test_ec8_provenance_remains_available_through_execution(
         src.spice_model,
         "_read_measured_voltage",
         lambda log_path: 3.5,
+    )
+
+    monkeypatch.setattr(
+        src.spice_model,
+        "_ngspice_version",
+        lambda: "ngspice-42",
     )
 
     observable = execute_rc(

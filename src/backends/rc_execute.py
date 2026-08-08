@@ -78,6 +78,10 @@ def execute_rc(
             )
         )
 
+        execution_engine_version = (
+            spice_model._ngspice_version()
+        )
+
     return ObservableExecution(
         backend_id=prepared.backend_id,
         backend_version=prepared.backend_version,
@@ -89,6 +93,14 @@ def execute_rc(
         ),
         provenance=prepared.provenance,
         metadata=(
+            (
+                "execution_engine",
+                "ngspice",
+            ),
+            (
+                "execution_engine_version",
+                execution_engine_version,
+            ),
             (
                 "execution_id",
                 RC_EXECUTION_ID,

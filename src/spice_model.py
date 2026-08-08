@@ -140,6 +140,35 @@ def _build_constraint_netlist(
 
     return compiled.netlist
 
+def _ngspice_version() -> str:
+    completed = subprocess.run(
+        [
+            "ngspice",
+            "-v",
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    if completed.returncode != 0:
+        raise RuntimeError(
+            "could not determine ngspice version"
+        )
+
+    output = (
+        completed.stdout.strip()
+        or completed.stderr.strip()
+    )
+
+    if not output:
+        raise RuntimeError(
+            "ngspice version output is empty"
+        )
+
+    return output.splitlines()[0]
+
+
 def _run_ngspice(netlist_path: Path, log_path: Path) -> None:
     completed = subprocess.run(
         [
