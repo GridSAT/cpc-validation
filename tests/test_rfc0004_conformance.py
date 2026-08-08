@@ -313,3 +313,54 @@ def test_ec8_provenance_remains_available_through_execution(
 
     assert observable.provenance == artifact.provenance
     assert observable.provenance == prepared.provenance
+
+
+def test_reference_validation_remains_outside_rc_backend() -> None:
+    import ast
+    from pathlib import Path
+
+    backend_files = (
+        Path("src/backends/rc_prepare.py"),
+        Path("src/backends/rc_execute.py"),
+        Path("src/backends/rc_decode.py"),
+        Path("src/backends/rc_run.py"),
+    )
+
+    forbidden_modules = {
+        "src.ccir_reference",
+        "src.generic_reference",
+        "src.physical_validation",
+    }
+
+    for path in backend_files:
+        tree = ast.parse(
+            path.read_text(
+                encoding="utf-8"
+            )
+        )
+
+        imports = set()
+
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                imports.update(
+                    alias.name
+                    for alias in node.names
+                )
+
+            elif isinstance(
+                node,
+                ast.ImportFrom,
+            ):
+                if node.module is not None:
+                    imports.add(
+                        node.module
+                    )
+
+        assert forbidden_modules.isdisjoint(
+            imports
+        ), (
+            f"{path} imports independent semantic "
+            f"validation machinery: "
+            f"{sorted(forbidden_modules & imports)}"
+        )
