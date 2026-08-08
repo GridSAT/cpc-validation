@@ -162,22 +162,71 @@ An artifact MAY represent a static network, a dynamical system, a simulator
 configuration, programmable logic, physical hardware configuration, or another
 backend-defined realization.
 
-## 5. Remaining Sections
+## 5. Compiler Dependency Principle
 
-1. Compiler Dependency Principle
+Let `D(C_X)` denote the complete dependency set of backend compilation for an
+admitted CCIR program `C_X`.
 
-2. Answer Independence
+RFC-0003 requires
 
-3. Physical Compilation Discipline
+    D(C_X) = { C_X, Theta_backend }
 
-4. Compiler Validation
+where `Theta_backend` denotes the globally fixed rules, constants,
+configurations, and calibration data admitted by the backend specification.
 
-5. Semantic Validation
+A conforming backend SHALL derive every generated artifact solely from:
 
-6. Backend Independence
+- the admitted CCIR program `C_X`; and
+- `Theta_backend`.
 
-7. Restricted Interface Principle
+No instance-specific information outside `C_X` SHALL influence compilation.
 
-8. RC Reference Backend
+`Theta_backend` SHALL be fixed independently of the semantic outcome of the
+instance being compiled.
 
-9. Acceptance Criteria
+Backend rules MAY depend on structural CCIR properties such as:
+
+- constraint family;
+- local constraint payload;
+- variable incidence;
+- constraint arity;
+- boundary or interface role; and
+- other explicitly admitted structural data represented in CCIR.
+
+Backend rules MAY also depend on globally fixed backend quantities such as:
+
+- component libraries;
+- physical constants;
+- calibrated device parameters;
+- simulator settings;
+- serialization rules; and
+- backend-wide numerical tolerances.
+
+Such quantities SHALL be selected independently of the semantic answer of any
+particular admitted instance.
+
+The compiler dependency principle applies to every stage that contributes to
+the final execution artifact, including topology construction, parameter
+generation, interface construction, metadata generation, auxiliary-state
+construction, and serialization.
+
+Any intermediate compilation stage whose output can influence `A_X` SHALL
+itself satisfy the same dependency boundary.
+
+## 6. Remaining Sections
+
+1. Answer Independence
+
+2. Physical Compilation Discipline
+
+3. Compiler Validation
+
+4. Semantic Validation
+
+5. Backend Independence
+
+6. Restricted Interface Principle
+
+7. RC Reference Backend
+
+8. Acceptance Criteria
