@@ -213,20 +213,60 @@ construction, and serialization.
 Any intermediate compilation stage whose output can influence `A_X` SHALL
 itself satisfy the same dependency boundary.
 
-## 6. Remaining Sections
+## 6. Answer Independence
 
-1. Answer Independence
+Answer independence is a formal compiler dependency condition.
 
-2. Physical Compilation Discipline
+Let
 
-3. Compiler Validation
+    Eval(X)
 
-4. Semantic Validation
+denote the independent semantic evaluator for the admitted instance `X`.
 
-5. Backend Independence
+RFC-0003 requires
 
-6. Restricted Interface Principle
+    Eval(X) notin D(C_X)
 
-7. RC Reference Backend
+where `D(C_X)` is the compiler dependency set defined in Section 5.
 
-8. Acceptance Criteria
+Accordingly, backend compilation SHALL NOT consume, derive, reconstruct,
+query, cache, encode, or otherwise depend upon semantic information that is
+equivalent to the expected execution outcome.
+
+This prohibition includes, but is not limited to:
+
+- satisfying assignments;
+- completion enumerations;
+- completion counts;
+- residual satisfiability tables;
+- continuation tables;
+- expected decoder outputs;
+- externally supplied reference answers;
+- cached execution results;
+- precomputed truth tables; and
+- any surrogate carrying equivalent semantic information.
+
+Changing only the independently computed semantic answer SHALL NOT alter the
+generated execution artifact.
+
+Changing only the independent validation pipeline SHALL NOT alter the generated
+execution artifact.
+
+Answer independence is therefore a property of backend compilation itself and
+not merely of the validation procedure.
+
+## 7. Remaining Sections
+
+1. Physical Compilation Discipline
+
+2. Compiler Validation
+
+3. Semantic Validation
+
+4. Backend Independence
+
+5. Restricted Interface Principle
+
+6. RC Reference Backend
+
+7. Acceptance Criteria
