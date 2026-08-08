@@ -20,9 +20,9 @@ def lower_parity_instance_to_ccir(
     Lower a ParityInstance into the canonical CCIR representation.
 
     This transformation is purely structural. It preserves the declared
-    constraints, boundary variables, and ordering exactly. It performs no
-    optimization, semantic evaluation, candidate generation, or backend-
-    specific processing.
+    constraint sequence and boundary variables while canonicalizing variable
+    order within each parity constraint. It performs no optimization, semantic
+    evaluation, candidate generation, or backend-specific processing.
     """
 
     variable_count = 0
@@ -44,7 +44,11 @@ def lower_parity_instance_to_ccir(
         CCIRConstraint(
             family=PARITY_CONSTRAINT_FAMILY,
             payload=CCIRParityPayload(
-                variables=constraint.variables,
+                variables=tuple(
+                    sorted(
+                        constraint.variables
+                    )
+                ),
                 parity=constraint.parity,
             ),
         )

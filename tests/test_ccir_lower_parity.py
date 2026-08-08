@@ -120,3 +120,62 @@ def test_lowering_is_deterministic() -> None:
         ==
         lower_parity_instance_to_ccir(instance)
     )
+
+
+def test_lowering_canonicalizes_variable_order_within_constraint() -> None:
+    instance = ParityInstance(
+        constraints=(
+            ParityConstraint(
+                variables=(4, 5, 0),
+                parity=0,
+            ),
+        ),
+        boundary_variables=(0, 5),
+    )
+
+    ccir = lower_parity_instance_to_ccir(
+        instance
+    )
+
+    payload = ccir.constraints[0].payload
+
+    assert isinstance(
+        payload,
+        CCIRParityPayload,
+    )
+
+    assert payload.variables == (
+        0,
+        4,
+        5,
+    )
+
+    assert payload.parity == 0
+
+
+def test_source_variable_order_does_not_change_lowered_ccir() -> None:
+    first = ParityInstance(
+        constraints=(
+            ParityConstraint(
+                variables=(4, 5, 0),
+                parity=0,
+            ),
+        ),
+        boundary_variables=(0, 5),
+    )
+
+    second = ParityInstance(
+        constraints=(
+            ParityConstraint(
+                variables=(0, 4, 5),
+                parity=0,
+            ),
+        ),
+        boundary_variables=(0, 5),
+    )
+
+    assert (
+        lower_parity_instance_to_ccir(first)
+        ==
+        lower_parity_instance_to_ccir(second)
+    )
