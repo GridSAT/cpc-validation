@@ -7,40 +7,24 @@ from src.backends.digital_ccir import (
     DIGITAL_SPECIFICATION,
     DigitalBackend,
 )
-from src.backends.digital_decode import (
-    decode_digital,
-)
-from src.backends.digital_execute import (
-    execute_digital,
-)
-from src.backends.digital_prepare import (
-    prepare_digital_execution,
+from src.backends.digital_run import (
+    DigitalExecutionResult,
+    run_digital_execution,
 )
 from src.backends.fpga_ccir import (
-    FPGA_SPECIFICATION,
     FPGABackend,
 )
-from src.backends.fpga_decode import (
-    decode_fpga,
-)
-from src.backends.fpga_execute import (
-    execute_fpga,
-)
-from src.backends.fpga_prepare import (
-    prepare_fpga_execution,
+from src.backends.fpga_run import (
+    FPGAExecutionResult,
+    run_fpga_execution,
 )
 from src.backends.rc_ccir import (
     RC_SPECIFICATION,
     RCBackend,
 )
-from src.backends.rc_decode import (
-    decode_rc,
-)
-from src.backends.rc_execute import (
-    execute_rc,
-)
-from src.backends.rc_prepare import (
-    prepare_rc_execution,
+from src.backends.rc_run import (
+    RCExecutionResult,
+    run_rc_execution,
 )
 from src.ccir import CCIRProgram
 from src.physical_validation import (
@@ -53,20 +37,48 @@ class TriBackendValidationResult:
     """
     Post-execution comparison across RC, Digital, and FPGA backends.
 
+    Backend execution results are retained so backend identity, execution
+    metadata, admitted observations, provenance, and decoded values remain
+    available to downstream validation and reporting layers.
+
     Independent semantic evaluation occurs only after all three backend
-    execution and decoding paths have completed.
+    execution paths have completed.
     """
 
-    rc_decoded: int
-    digital_decoded: int
-    fpga_decoded: int
-    reference: int
+    rc: RCExecutionResult
+    digital: DigitalExecutionResult
+    fpga: FPGAExecutionResult
+    reference_result: int
 
     backend_agreement: bool
     rc_semantic_match: bool
     digital_semantic_match: bool
     fpga_semantic_match: bool
-    overall_pass: bool
+
+    @property
+    def rc_decoded(self) -> int:
+        return self.rc.decoded
+
+    @property
+    def digital_decoded(self) -> int:
+        return self.digital.decoded
+
+    @property
+    def fpga_decoded(self) -> int:
+        return self.fpga.decoded
+
+    @property
+    def reference(self) -> int:
+        return self.reference_result
+
+    @property
+    def overall_pass(self) -> bool:
+        return (
+            self.backend_agreement
+            and self.rc_semantic_match
+            and self.digital_semantic_match
+            and self.fpga_semantic_match
+        )
 
 
 def validate_tri_backend(
@@ -74,10 +86,12 @@ def validate_tri_backend(
     boundary_values: Mapping[int, int],
 ) -> TriBackendValidationResult:
     """
-    Compile, prepare, execute, and decode one CCIR program through the three
-    current heterogeneous reference backends.
+    Compile and execute one CCIR program through the RC, deterministic
+    digital, and FPGA backends, then compare all decoded results with
+    independent CCIR continuation semantics.
 
-    Reference semantics are evaluated only after all backend results exist.
+    Reference evaluation occurs only after all three backend executions
+    have completed and does not participate in any backend dependency graph.
     """
 
     rc_artifact = RCBackend().compile(
@@ -92,91 +106,53 @@ def validate_tri_backend(
         program
     )
 
-    rc_prepared = prepare_rc_execution(
+    rc_result = run_rc_execution(
         program,
         rc_artifact,
         boundary_values,
         RC_SPECIFICATION,
     )
 
-    digital_prepared = prepare_digital_execution(
+    digital_result = run_digital_execution(
         program,
         digital_artifact,
         boundary_values,
         DIGITAL_SPECIFICATION,
     )
 
-    fpga_prepared = prepare_fpga_execution(
+    fpga_result = run_fpga_execution(
         program,
         fpga_artifact,
         boundary_values,
     )
 
-    rc_observable = execute_rc(
-        rc_prepared
-    )
-
-    digital_observable = execute_digital(
-        digital_prepared
-    )
-
-    fpga_observable = execute_fpga(
-        fpga_prepared
-    )
-
-    rc_decoded = decode_rc(
-        rc_observable,
-        rc_prepared.decoder_specification,
-    )
-
-    digital_decoded = decode_digital(
-        digital_observable,
-        digital_prepared.decoder_specification,
-    )
-
-    fpga_decoded = decode_fpga(
-        fpga_observable,
-        fpga_prepared.decoder_specification,
-    )
-
-    reference = evaluate_ccir_continuation(
+    reference_result = evaluate_ccir_continuation(
         program,
         boundary_values,
     )
 
     backend_agreement = (
-        rc_decoded
-        == digital_decoded
-        == fpga_decoded
-    )
-
-    rc_semantic_match = (
-        rc_decoded == reference
-    )
-
-    digital_semantic_match = (
-        digital_decoded == reference
-    )
-
-    fpga_semantic_match = (
-        fpga_decoded == reference
-    )
-
-    overall_pass = (
-        backend_agreement
-        and rc_semantic_match
-        and digital_semantic_match
-        and fpga_semantic_match
+        rc_result.decoded
+        == digital_result.decoded
+        == fpga_result.decoded
     )
 
     return TriBackendValidationResult(
-        rc_decoded=rc_decoded,
-        digital_decoded=digital_decoded,
-        fpga_decoded=fpga_decoded,
-        reference=reference,
+        rc=rc_result,
+        digital=digital_result,
+        fpga=fpga_result,
+        reference_result=reference_result,
         backend_agreement=backend_agreement,
-        rc_semantic_match=rc_semantic_match,
-        digital_semantic_match=digital_semantic_match,
-        fpga_semantic_match=fpga_semantic_match,
-        overall_pass=overall_pass,
+        rc_semantic_match=(
+            rc_result.decoded
+            == reference_result
+        ),
+        digital_semantic_match=(
+            digital_result.decoded
+            == reference_result
+        ),
+        fpga_semantic_match=(
+            fpga_result.decoded
+            == reference_result
+        ),
     )

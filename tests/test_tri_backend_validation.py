@@ -92,3 +92,71 @@ def test_tri_backend_result_records_separate_conditions() -> None:
         result.overall_pass,
         bool,
     )
+
+
+def test_tri_backend_result_retains_execution_records() -> None:
+    program = lower_parity_instance_to_ccir(
+        DEFAULT_XOR_INSTANCE
+    )
+
+    result = validate_tri_backend(
+        program,
+        {
+            0: 0,
+            3: 1,
+        },
+    )
+
+    assert result.rc.prepared.backend_id == "rc"
+    assert result.digital.prepared.backend_id == "digital"
+    assert result.fpga.prepared.backend_id == "fpga"
+
+    assert result.rc.observable.backend_id == "rc"
+    assert result.digital.observable.backend_id == "digital"
+    assert result.fpga.observable.backend_id == "fpga"
+
+    assert result.rc.decoded == 1
+    assert result.digital.decoded == 1
+    assert result.fpga.decoded == 1
+
+
+def test_tri_backend_execution_metadata_identifies_actual_engines() -> None:
+    program = lower_parity_instance_to_ccir(
+        DEFAULT_XOR_INSTANCE
+    )
+
+    result = validate_tri_backend(
+        program,
+        {
+            0: 0,
+            3: 1,
+        },
+    )
+
+    rc_metadata = dict(
+        result.rc.observable.metadata
+    )
+
+    digital_metadata = dict(
+        result.digital.observable.metadata
+    )
+
+    fpga_metadata = dict(
+        result.fpga.observable.metadata
+    )
+
+    assert rc_metadata["execution_engine"] == "ngspice"
+
+    assert (
+        digital_metadata["execution_engine"]
+        == "python-digital-interpreter"
+    )
+
+    assert (
+        fpga_metadata["execution_engine"]
+        == "iverilog/vvp"
+    )
+
+    assert rc_metadata["execution_engine_version"]
+    assert digital_metadata["execution_engine_version"]
+    assert fpga_metadata["execution_engine_version"]
