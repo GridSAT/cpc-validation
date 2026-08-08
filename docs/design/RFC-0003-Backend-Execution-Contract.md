@@ -283,11 +283,15 @@ and SHALL NOT depend upon semantic outcomes.
 
 ### 7.3 Deterministic Compilation
 
-Equivalent CCIR programs SHALL generate reproducible execution artifacts,
-subject only to documented canonicalization rules.
+Repeated compilation of the same canonical CCIR program under the same
+`Theta_backend` SHALL produce equivalent execution artifacts.
 
-Repeated compilation of the same admitted CCIR program SHALL produce
-equivalent execution artifacts.
+RFC-0003 does not require semantically equivalent but structurally distinct
+CCIR programs to compile to identical artifacts unless a separate
+canonicalization rule explicitly requires that behavior.
+
+Any quantity capable of influencing `A_X` SHALL be fixed before compilation
+and SHALL belong to `C_X` or `Theta_backend`.
 
 ### 7.4 Canonical Provenance
 
@@ -346,9 +350,12 @@ surrogates SHALL cause compiler validation to fail.
 Repeated compilation of the same canonical CCIR input under the same fixed
 backend specification SHALL produce equivalent execution artifacts.
 
-Any permitted nondeterminism SHALL be explicitly represented in
-`Theta_backend` or backend metadata and SHALL be reproducible from the recorded
-artifact information.
+Any permitted variability capable of influencing the generated artifact
+SHALL be fixed before compilation and represented in `Theta_backend`.
+
+Backend metadata MAY record such variability for audit and reproduction, but
+metadata SHALL NOT introduce or authorize a compiler dependency that was not
+already contained in `C_X` or `Theta_backend`.
 
 ### 8.5 Family-Level Validation
 
@@ -794,8 +801,11 @@ Instance-specific hand tuning based on semantic outcomes SHALL NOT be used.
 Repeated compilation of the same canonical CCIR input under the same declared
 backend specification SHALL produce equivalent execution artifacts.
 
-All permitted variability SHALL be explicitly represented in the backend
-specification or artifact metadata.
+All permitted variability capable of influencing the artifact SHALL be
+represented in `Theta_backend` before compilation.
+
+Artifact metadata MAY record that variability but SHALL NOT serve as an
+additional compiler input.
 
 ### 13.7 Compiler Validation
 
