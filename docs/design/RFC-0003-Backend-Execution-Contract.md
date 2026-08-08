@@ -455,12 +455,90 @@ Semantic correctness does not imply compiler conformance.
 A backend is conforming only when both compiler validation and semantic
 validation succeed under the applicable RFC-0003 requirements.
 
-## 10. Remaining Sections
+## 10. Backend Independence
 
-1. Backend Independence
+RFC-0003 permits multiple backend implementations to realize the same admitted
+CCIR program using different execution mechanisms.
 
-2. Restricted Interface Principle
+Let `B_1` and `B_2` be two conforming backends.
 
-3. RC Reference Backend
+For the same admitted CCIR program `C_X`, they MAY produce structurally
+different execution artifacts:
 
-4. Acceptance Criteria
+    Compile_B1(C_X) = A_X^(1)
+
+    Compile_B2(C_X) = A_X^(2)
+
+Backend independence does not require identical topology, parameters, internal
+state, or execution mechanism across backends.
+
+It requires semantic agreement at the admitted decoded interface.
+
+For every admitted instance and interface condition required by the declared
+validation profile, conforming backends SHALL satisfy:
+
+    Decode_B1(Execute_B1(A_X^(1))) =
+    Decode_B2(Execute_B2(A_X^(2)))
+
+whenever both backends satisfy semantic validation for the same independently
+defined semantic result.
+
+Equivalently, if
+
+    Decode_B1(Execute_B1(A_X^(1))) = e_X
+
+and
+
+    Decode_B2(Execute_B2(A_X^(2))) = e_X
+
+then the backend realizations are semantically equivalent with respect to the
+admitted interface.
+
+### 10.1 Source-Language Independence
+
+Adding a new source language SHALL NOT require modification of a conforming
+backend provided that the new front end lowers the source instance into valid
+CCIR admitted by that backend.
+
+A backend SHALL NOT depend on the identity of the source language from which
+the CCIR program originated.
+
+### 10.2 Backend Substitutability
+
+Adding or replacing a backend SHALL NOT require modification of admitted
+source-language semantics or source-to-CCIR lowering.
+
+Backend-specific realization choices SHALL remain below the CCIR boundary.
+
+### 10.3 Backend-Specific Auxiliary Structure
+
+A backend MAY introduce auxiliary state, topology, parameters, preparation
+rules, or execution mechanisms that do not exist in CCIR.
+
+Such backend-specific structure SHALL:
+
+- satisfy the compiler dependency principle;
+- satisfy answer independence;
+- possess complete provenance;
+- remain internal to the backend unless explicitly exposed by the admitted
+  interface; and
+- preserve semantic correctness at the prescribed decoded interface.
+
+### 10.4 Semantic Equivalence Boundary
+
+Backend equivalence is defined relative to the admitted semantic interface.
+
+RFC-0003 does not require two conforming backends to reproduce identical
+internal trajectories, physical states, timing behavior, resource usage, or
+artifact structure.
+
+Those quantities MAY differ and SHALL be reported separately when required by
+the applicable validation profile.
+
+## 11. Remaining Sections
+
+1. Restricted Interface Principle
+
+2. RC Reference Backend
+
+3. Acceptance Criteria
