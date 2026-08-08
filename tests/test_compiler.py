@@ -328,26 +328,39 @@ def test_generic_compiler_and_simulator_agree(
     )
 
 
-def test_public_compiler_delegates_to_ir_compiler(
+def test_public_compiler_delegates_through_ccir(
     monkeypatch,
 ) -> None:
+    import src.ccir_lower_parity
     import src.compiler
     import src.ir_compiler
 
     called = {"count": 0}
 
     original = (
-        src.ir_compiler.compile_parity_instance_to_ir
+        src.ccir_lower_parity.lower_parity_instance_to_ccir
     )
 
-    def wrapper(*args, **kwargs):
+    def lower_wrapper(*args, **kwargs):
         called["count"] += 1
         return original(*args, **kwargs)
+
+    def fail_legacy_ir(*args, **kwargs):
+        raise AssertionError(
+            "legacy IR compiler must not participate "
+            "in the canonical parity compatibility path"
+        )
+
+    monkeypatch.setattr(
+        src.ccir_lower_parity,
+        "lower_parity_instance_to_ccir",
+        lower_wrapper,
+    )
 
     monkeypatch.setattr(
         src.ir_compiler,
         "compile_parity_instance_to_ir",
-        wrapper,
+        fail_legacy_ir,
     )
 
     compiled = src.compiler.compile_parity_instance(

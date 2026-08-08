@@ -164,30 +164,105 @@ def compile_parity_instance(
     end_time_ms: float = 50.0,
 ) -> CompiledParityNetwork:
     """
-    Compile through the canonical IR and RC backend pipeline.
+    Backward-compatible parity compilation entry point.
 
-    This compatibility entry point preserves the established return type and
-    byte-compatible netlist while delegating through:
+    The canonical compilation path is now:
 
-        ParityInstance -> IRProgram -> RC backend -> RC emitter
+        ParityInstance
+            -> CCIR
+            -> RFC-0003 backend dispatcher
+            -> RC ExecutionArtifact
+            -> boundary preparation
+            -> ngspice netlist
 
-    Imports are local to avoid circular module initialization.
+    Boundary values are execution-preparation inputs and do not participate
+    in canonical CCIR-to-RC backend compilation.
     """
-    from src.backends.rc import compile_ir_to_rc
-    from src.ir_compiler import compile_parity_instance_to_ir
+    from dataclasses import replace
 
-    program = compile_parity_instance_to_ir(
-        instance,
-        boundary_values,
-        supply_voltage=supply_voltage,
-        resistance_kohm=resistance_kohm,
-        capacitance_uf=capacitance_uf,
-        end_time_ms=end_time_ms,
+    from src.backends.rc_ccir import (
+        RCBackend,
+        RC_SPECIFICATION,
+    )
+    from src.backends.rc_prepare import (
+        prepare_rc_netlist,
+    )
+    from src.ccir_lower_parity import (
+        lower_parity_instance_to_ccir,
+    )
+    from src.compile_backend import (
+        compile_backend,
     )
 
-    backend_result = compile_ir_to_rc(program)
+    program = lower_parity_instance_to_ccir(
+        instance
+    )
+
+    specification = replace(
+        RC_SPECIFICATION,
+        fixed_parameters=(
+            (
+                "supply_voltage",
+                float(supply_voltage),
+            ),
+            (
+                "resistance_kohm",
+                float(resistance_kohm),
+            ),
+            (
+                "capacitance_uf",
+                float(capacitance_uf),
+            ),
+            (
+                "threshold_voltage",
+                2.5,
+            ),
+            (
+                "end_time_ms",
+                float(end_time_ms),
+            ),
+        ),
+    )
+
+    artifact = compile_backend(
+        program,
+        RCBackend(
+            specification=specification,
+        ),
+    )
+
+    netlist, raw_statistics = prepare_rc_netlist(
+        program,
+        artifact,
+        boundary_values,
+        specification,
+    )
+
+    statistics = CompilationStatistics(
+        constraint_count=(
+            raw_statistics["constraint_count"]
+        ),
+        variable_count=(
+            raw_statistics["variable_count"]
+        ),
+        boundary_variable_count=(
+            raw_statistics["boundary_variable_count"]
+        ),
+        internal_variable_count=(
+            raw_statistics["internal_variable_count"]
+        ),
+        candidate_count=(
+            raw_statistics["candidate_count"]
+        ),
+        candidate_source_count=(
+            raw_statistics["candidate_source_count"]
+        ),
+        behavioral_source_count=(
+            raw_statistics["behavioral_source_count"]
+        ),
+    )
 
     return CompiledParityNetwork(
-        netlist=backend_result.netlist,
-        statistics=backend_result.statistics,
+        netlist=netlist,
+        statistics=statistics,
     )
