@@ -44,10 +44,42 @@ class ExecutionArtifact:
     ]
 
 
+@dataclass(frozen=True)
+class BackendCapabilities:
+    """
+    Declared RFC-0003 capability domain for one backend.
+    """
+
+    constraint_families: frozenset[str]
+    interface_features: frozenset[str] = frozenset()
+    execution_features: frozenset[str] = frozenset()
+    artifact_features: frozenset[str] = frozenset()
+
+    def supports_constraint_family(
+        self,
+        family: str,
+    ) -> bool:
+        return family in self.constraint_families
+
+
+class UnsupportedBackendCapabilityError(
+    ValueError
+):
+    """
+    Raised when CCIR requires a capability not admitted by the backend.
+    """
+
+
 class Backend(Protocol):
     """
     Canonical RFC-0003 backend compilation interface.
     """
+
+    @property
+    def capabilities(
+        self,
+    ) -> BackendCapabilities:
+        ...
 
     def compile(
         self,

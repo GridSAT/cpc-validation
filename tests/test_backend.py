@@ -109,3 +109,94 @@ def test_backend_protocol_compile_shape() -> None:
     assert artifact.metadata == (
         ("variable_count", 0),
     )
+
+
+def test_backend_capabilities_support_declared_family() -> None:
+    from src.backend import BackendCapabilities
+
+    capabilities = BackendCapabilities(
+        constraint_families=frozenset(
+            {
+                "parity",
+                "clause",
+            }
+        ),
+    )
+
+    assert capabilities.supports_constraint_family(
+        "parity"
+    )
+
+    assert capabilities.supports_constraint_family(
+        "clause"
+    )
+
+    assert not capabilities.supports_constraint_family(
+        "unknown"
+    )
+
+
+def test_backend_capabilities_preserve_feature_sets() -> None:
+    from src.backend import BackendCapabilities
+
+    capabilities = BackendCapabilities(
+        constraint_families=frozenset(
+            {
+                "parity",
+            }
+        ),
+        interface_features=frozenset(
+            {
+                "boundary-control",
+            }
+        ),
+        execution_features=frozenset(
+            {
+                "transient",
+            }
+        ),
+        artifact_features=frozenset(
+            {
+                "provenance",
+            }
+        ),
+    )
+
+    assert capabilities.constraint_families == frozenset(
+        {
+            "parity",
+        }
+    )
+
+    assert capabilities.interface_features == frozenset(
+        {
+            "boundary-control",
+        }
+    )
+
+    assert capabilities.execution_features == frozenset(
+        {
+            "transient",
+        }
+    )
+
+    assert capabilities.artifact_features == frozenset(
+        {
+            "provenance",
+        }
+    )
+
+
+def test_unsupported_backend_capability_error_is_value_error() -> None:
+    from src.backend import (
+        UnsupportedBackendCapabilityError,
+    )
+
+    error = UnsupportedBackendCapabilityError(
+        "unsupported constraint family"
+    )
+
+    assert isinstance(
+        error,
+        ValueError,
+    )
