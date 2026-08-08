@@ -90,6 +90,71 @@ For exact environment reproduction, use requirements-lock.txt.
 
 ---
 
+## Cross-Backend Demonstration
+
+CPC backend independence can be exercised directly by compiling and executing
+the same canonical CCIR program through two structurally distinct execution
+backends.
+
+Run:
+
+    python validate_cross_backend.py \
+      benchmarks/default_xor.json \
+      --boundary 0=0 \
+      --boundary 3=1
+
+The reference comparison executes the same canonical constraint program through
+
+- the RC Reference Backend using ngspice; and
+- the deterministic Digital Backend using an independent digital instruction
+  execution path.
+
+Both backends consume the same CCIR program, but they produce different
+backend-specific ExecutionArtifacts, use different preparation procedures,
+execute through different engines, expose different admitted observations, and
+apply their own fixed decoders.
+
+The resulting decoded values are compared only after both backend executions
+have completed.
+
+Independent canonical continuation semantics are then evaluated outside both
+backend dependency graphs.
+
+A successful run reports:
+
+    RC Reference Backend
+      backend:            rc/1
+      execution engine:   ngspice
+      decoded result:     1
+
+    Digital Backend
+      backend:            digital/1
+      execution engine:   python-digital-interpreter
+      decoded result:     1
+
+    Independent Reference
+      semantic result:    1
+
+    Backend agreement:    PASS
+    RC semantic match:    PASS
+    Digital semantic:     PASS
+
+    OVERALL:              PASS
+
+Backend agreement and semantic correctness are deliberately separate
+conditions.
+
+Agreement between two backends is not treated as evidence of correctness
+unless each decoded result also agrees independently with canonical CCIR
+semantics.
+
+This provides an executable demonstration of CPC backend interchangeability:
+one canonical representation is realized through heterogeneous execution
+technologies while remaining subject to one independent validation
+architecture.
+
+---
+
 ## Architectural Philosophy
 
 The central principle of CPC is the separation of **representation** from
@@ -1741,6 +1806,7 @@ the RFC series.
 | RFC-0002 | Canonical Constraint Intermediate Representation (CCIR) |
 | RFC-0003 | Execution-backend compilation contract, ExecutionArtifact, provenance, and validation |
 | RFC-0004 | Physical execution backend engineering and conformance |
+| RFC-0005 | Cross-backend equivalence and independent validation |
 
 The RC Reference Backend therefore represents the current reference
 implementation of the combined RFC architecture.
@@ -1807,11 +1873,11 @@ repository.
 ## Development Status
 
 The CPC Reference Validation Framework implements the combined RFC-0001
-through RFC-0004 architectural baseline and its current RC reference
-realization.
+through RFC-0005 architectural baseline with two current reference execution
+realizations: the RC Reference Backend and the deterministic Digital Backend.
 
-The audited RFC-0004 implementation state used for this README passes
-**506 automated tests**. The repository's current test run remains authoritative
+The audited RFC-0005 implementation state used for this README passes
+**562 automated tests**. The repository's current test run remains authoritative
 as the suite evolves.
 
 ---
@@ -1858,7 +1924,7 @@ as the suite evolves.
 
 ---
 
-### RFC-0003 / RFC-0004 Audit Coverage
+### RFC-0003 / RFC-0004 / RFC-0005 Audit Coverage
 
 Dedicated tests cover:
 
@@ -1880,7 +1946,13 @@ Dedicated tests cover:
 - Answer Independence negative controls;
 - generated-netlist answer-independence audit;
 - canonical dependency-boundary enforcement; and
-- enforcement that reference validation remains outside the RC backend.
+- enforcement that reference validation remains outside the RC backend;
+- structurally heterogeneous RC and digital execution artifacts;
+- independent digital preparation, execution, observation, and decoding;
+- cross-backend canonical-input identity;
+- backend-result agreement separated from semantic correctness;
+- post-execution independent CCIR reference evaluation; and
+- RFC-0005 CB-1 through CB-10 conformance.
 
 The RC Reference Backend constitutes the current reference implementation of
 the execution-backend architecture.
@@ -1961,6 +2033,7 @@ The normative architecture is contained in:
 - [`docs/design/RFC-0002-Generic-Constraint-IR-and-CNF-Front-End.md`](docs/design/RFC-0002-Generic-Constraint-IR-and-CNF-Front-End.md)
 - [`docs/design/RFC-0003-Backend-Execution-Contract.md`](docs/design/RFC-0003-Backend-Execution-Contract.md)
 - [`docs/design/RFC-0004-Physical-Execution-Backend-Engineering-and-Conformance.md`](docs/design/RFC-0004-Physical-Execution-Backend-Engineering-and-Conformance.md)
+- [`docs/design/RFC-0005-Cross-Backend-Equivalence-and-Validation.md`](docs/design/RFC-0005-Cross-Backend-Equivalence-and-Validation.md)
 
 | RFC | Purpose |
 |---|---|
