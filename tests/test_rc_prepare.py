@@ -135,3 +135,153 @@ def test_rc_preparation_does_not_change_compiled_artifact() -> None:
     )
 
     assert artifact == before
+
+
+def test_prepare_rc_execution_returns_first_class_prepared_state() -> None:
+    from src.backends.rc_ccir import (
+        RCBackend,
+        RC_SPECIFICATION,
+    )
+    from src.backends.rc_prepare import (
+        prepare_rc_execution,
+    )
+    from src.ccir import (
+        CCIRConstraint,
+        CCIRProgram,
+    )
+    from src.ccir_parity import (
+        CCIRParityPayload,
+        PARITY_CONSTRAINT_FAMILY,
+    )
+    from src.prepared_execution import PreparedExecution
+
+    program = CCIRProgram(
+        name="prepared-execution",
+        variable_count=3,
+        boundary_variables=(0, 2),
+        constraints=(
+            CCIRConstraint(
+                family=PARITY_CONSTRAINT_FAMILY,
+                payload=CCIRParityPayload(
+                    variables=(0, 1, 2),
+                    parity=0,
+                ),
+            ),
+        ),
+    )
+
+    artifact = RCBackend().compile(
+        program
+    )
+
+    prepared = prepare_rc_execution(
+        program,
+        artifact,
+        {
+            0: 0,
+            2: 1,
+        },
+        RC_SPECIFICATION,
+    )
+
+    assert isinstance(
+        prepared,
+        PreparedExecution,
+    )
+
+    assert prepared.backend_id == "rc"
+    assert prepared.backend_version == "1"
+    assert isinstance(prepared.payload, str)
+
+    assert prepared.interface == artifact.interface
+
+    assert dict(
+        prepared.decoder_specification
+    ) == {
+        "threshold_voltage": 2.5,
+    }
+
+    metadata = dict(
+        prepared.metadata
+    )
+
+    assert metadata["preparation_id"] == (
+        "rc.ngspice-netlist.v1"
+    )
+
+    assert metadata["boundary_values"] == (
+        (0, 0),
+        (2, 1),
+    )
+
+    emitter_metadata = dict(
+        metadata["emitter_metadata"]
+    )
+
+    assert emitter_metadata["candidate_count"] == 2
+    assert emitter_metadata["constraint_count"] == 1
+
+
+def test_prepare_rc_netlist_compatibility_wrapper_matches_prepared_execution() -> None:
+    from src.backends.rc_ccir import (
+        RCBackend,
+        RC_SPECIFICATION,
+    )
+    from src.backends.rc_prepare import (
+        prepare_rc_execution,
+        prepare_rc_netlist,
+    )
+    from src.ccir import (
+        CCIRConstraint,
+        CCIRProgram,
+    )
+    from src.ccir_parity import (
+        CCIRParityPayload,
+        PARITY_CONSTRAINT_FAMILY,
+    )
+
+    program = CCIRProgram(
+        name="prepared-compatibility",
+        variable_count=3,
+        boundary_variables=(0, 2),
+        constraints=(
+            CCIRConstraint(
+                family=PARITY_CONSTRAINT_FAMILY,
+                payload=CCIRParityPayload(
+                    variables=(0, 1, 2),
+                    parity=0,
+                ),
+            ),
+        ),
+    )
+
+    artifact = RCBackend().compile(
+        program
+    )
+
+    boundary_values = {
+        0: 0,
+        2: 1,
+    }
+
+    prepared = prepare_rc_execution(
+        program,
+        artifact,
+        boundary_values,
+        RC_SPECIFICATION,
+    )
+
+    netlist, legacy_metadata = prepare_rc_netlist(
+        program,
+        artifact,
+        boundary_values,
+        RC_SPECIFICATION,
+    )
+
+    assert netlist == prepared.payload
+
+    assert legacy_metadata == dict(
+        dict(prepared.metadata)[
+            "emitter_metadata"
+        ]
+    )
