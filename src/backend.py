@@ -6,19 +6,55 @@ from typing import Any, Protocol
 from src.ccir import CCIRProgram
 
 
+@dataclass(frozen=True, order=True)
+class CCIROrigin:
+    """
+    Machine-resolvable reference to admitted CCIR data.
+    """
+
+    kind: str
+    identifier: str
+
+    def __post_init__(self) -> None:
+        if not self.kind:
+            raise ValueError(
+                "CCIR origin kind must be non-empty"
+            )
+
+        if not self.identifier:
+            raise ValueError(
+                "CCIR origin identifier must be non-empty"
+            )
+
+
+@dataclass(frozen=True, order=True)
+class BackendRuleOrigin:
+    """
+    Machine-resolvable reference to a globally fixed backend rule.
+    """
+
+    rule_id: str
+
+    def __post_init__(self) -> None:
+        if not self.rule_id:
+            raise ValueError(
+                "backend rule identifier must be non-empty"
+            )
+
+
 @dataclass(frozen=True)
 class ArtifactProvenance:
     """
     Machine-resolvable provenance for one generated artifact element.
 
-    At least one of ccir_origin or backend_rule must be present.
+    At least one CCIR origin or backend-rule origin must be present.
     """
 
-    ccir_origin: str | None = None
-    backend_rule: str | None = None
+    ccir_origins: tuple[CCIROrigin, ...] = ()
+    backend_rules: tuple[BackendRuleOrigin, ...] = ()
 
     def __post_init__(self) -> None:
-        if self.ccir_origin is None and self.backend_rule is None:
+        if not self.ccir_origins and not self.backend_rules:
             raise ValueError(
                 "artifact provenance requires a CCIR origin "
                 "or backend rule"

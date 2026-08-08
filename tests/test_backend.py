@@ -7,37 +7,118 @@ import pytest
 from src.backend import (
     ArtifactProvenance,
     Backend,
+    BackendRuleOrigin,
+    CCIROrigin,
     ExecutionArtifact,
 )
 from src.ccir import CCIRProgram
 
 
-def test_artifact_provenance_accepts_ccir_origin() -> None:
-    provenance = ArtifactProvenance(
-        ccir_origin="constraint:0",
+def test_ccir_origin_is_machine_resolvable() -> None:
+    origin = CCIROrigin(
+        kind="constraint",
+        identifier="0",
     )
 
-    assert provenance.ccir_origin == "constraint:0"
-    assert provenance.backend_rule is None
+    assert origin.kind == "constraint"
+    assert origin.identifier == "0"
+
+
+def test_ccir_origin_rejects_empty_kind() -> None:
+    with pytest.raises(
+        ValueError,
+        match="kind must be non-empty",
+    ):
+        CCIROrigin(
+            kind="",
+            identifier="0",
+        )
+
+
+def test_ccir_origin_rejects_empty_identifier() -> None:
+    with pytest.raises(
+        ValueError,
+        match="identifier must be non-empty",
+    ):
+        CCIROrigin(
+            kind="constraint",
+            identifier="",
+        )
+
+
+def test_backend_rule_origin_is_machine_resolvable() -> None:
+    rule = BackendRuleOrigin(
+        rule_id="rc.fixed-node-rule",
+    )
+
+    assert rule.rule_id == "rc.fixed-node-rule"
+
+
+def test_backend_rule_origin_rejects_empty_identifier() -> None:
+    with pytest.raises(
+        ValueError,
+        match="identifier must be non-empty",
+    ):
+        BackendRuleOrigin(
+            rule_id="",
+        )
+
+
+def test_artifact_provenance_accepts_ccir_origin() -> None:
+    origin = CCIROrigin(
+        kind="constraint",
+        identifier="0",
+    )
+
+    provenance = ArtifactProvenance(
+        ccir_origins=(origin,),
+    )
+
+    assert provenance.ccir_origins == (
+        origin,
+    )
+
+    assert provenance.backend_rules == ()
 
 
 def test_artifact_provenance_accepts_backend_rule() -> None:
-    provenance = ArtifactProvenance(
-        backend_rule="rc.fixed-node-rule",
+    rule = BackendRuleOrigin(
+        rule_id="rc.fixed-node-rule",
     )
 
-    assert provenance.ccir_origin is None
-    assert provenance.backend_rule == "rc.fixed-node-rule"
+    provenance = ArtifactProvenance(
+        backend_rules=(rule,),
+    )
+
+    assert provenance.ccir_origins == ()
+
+    assert provenance.backend_rules == (
+        rule,
+    )
 
 
 def test_artifact_provenance_accepts_both_origins() -> None:
-    provenance = ArtifactProvenance(
-        ccir_origin="constraint:0",
-        backend_rule="rc.constraint-rule",
+    origin = CCIROrigin(
+        kind="constraint",
+        identifier="0",
     )
 
-    assert provenance.ccir_origin == "constraint:0"
-    assert provenance.backend_rule == "rc.constraint-rule"
+    rule = BackendRuleOrigin(
+        rule_id="rc.constraint-rule",
+    )
+
+    provenance = ArtifactProvenance(
+        ccir_origins=(origin,),
+        backend_rules=(rule,),
+    )
+
+    assert provenance.ccir_origins == (
+        origin,
+    )
+
+    assert provenance.backend_rules == (
+        rule,
+    )
 
 
 def test_artifact_provenance_rejects_empty_origin() -> None:
@@ -49,8 +130,12 @@ def test_artifact_provenance_rejects_empty_origin() -> None:
 
 
 def test_execution_artifact_preserves_contract_fields() -> None:
+    rule = BackendRuleOrigin(
+        rule_id="test.rule",
+    )
+
     provenance = ArtifactProvenance(
-        backend_rule="test.rule",
+        backend_rules=(rule,),
     )
 
     artifact = ExecutionArtifact(
