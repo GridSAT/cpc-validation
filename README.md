@@ -1698,6 +1698,7 @@ the RFC series.
 | RFC-0001 | Canonical compiler architecture |
 | RFC-0002 | Canonical Constraint Intermediate Representation (CCIR) |
 | RFC-0003 | Execution-backend compilation contract, ExecutionArtifact, provenance, and validation |
+| RFC-0004 | Physical execution backend engineering and conformance |
 
 The RC Reference Backend therefore represents the current reference
 implementation of the combined RFC architecture.
@@ -1893,12 +1894,14 @@ The normative architecture is contained in:
 - [`docs/design/RFC-0001-CPC-Architecture.md`](docs/design/RFC-0001-CPC-Architecture.md)
 - [`docs/design/RFC-0002-Generic-Constraint-IR-and-CNF-Front-End.md`](docs/design/RFC-0002-Generic-Constraint-IR-and-CNF-Front-End.md)
 - [`docs/design/RFC-0003-Backend-Execution-Contract.md`](docs/design/RFC-0003-Backend-Execution-Contract.md)
+- [`docs/design/RFC-0004-Physical-Execution-Backend-Engineering-and-Conformance.md`](docs/design/RFC-0004-Physical-Execution-Backend-Engineering-and-Conformance.md)
 
 | RFC | Purpose |
 |---|---|
 | RFC-0001 | Canonical CPC compiler architecture |
 | RFC-0002 | Canonical Constraint Intermediate Representation (CCIR) |
 | RFC-0003 | Execution-backend compilation contract, ExecutionArtifact, provenance, Answer Independence, and validation |
+| RFC-0004 | Physical execution backend engineering and conformance |
 
 This README is explanatory. The RFC documents are authoritative where this
 README and a normative RFC differ.
