@@ -81,6 +81,32 @@ class ExecutionArtifact:
     ]
 
 
+def validate_artifact_backend_rules(
+    artifact: ExecutionArtifact,
+    specification: BackendSpecification,
+) -> None:
+    """
+    Verify that every provenance backend rule is registered in Theta_backend.
+    """
+
+    unknown_rules = sorted(
+        {
+            rule.rule_id
+            for _, provenance in artifact.provenance
+            for rule in provenance.backend_rules
+            if not specification.has_rule(
+                rule.rule_id
+            )
+        }
+    )
+
+    if unknown_rules:
+        raise ValueError(
+            "artifact provenance references unregistered backend rules: "
+            + ", ".join(unknown_rules)
+        )
+
+
 def validate_artifact_provenance(
     artifact: ExecutionArtifact,
     required_elements: Iterable[str],

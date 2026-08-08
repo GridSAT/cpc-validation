@@ -816,3 +816,203 @@ def test_backend_specification_missing_parameter_raises_key_error() -> None:
         specification.get_fixed_parameter(
             "missing"
         )
+
+
+def test_validate_artifact_backend_rules_accepts_registered_rule() -> None:
+    from src.backend import (
+        BackendCapabilities,
+        BackendRuleDefinition,
+        BackendSpecification,
+        validate_artifact_backend_rules,
+    )
+
+    specification = BackendSpecification(
+        backend_id="test",
+        backend_version="1",
+        capabilities=BackendCapabilities(
+            constraint_families=frozenset()
+        ),
+        rules=(
+            BackendRuleDefinition(
+                rule_id="test.rule",
+            ),
+        ),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(
+            (
+                "node:0",
+                ArtifactProvenance(
+                    backend_rules=(
+                        BackendRuleOrigin(
+                            rule_id="test.rule",
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    validate_artifact_backend_rules(
+        artifact,
+        specification,
+    )
+
+
+def test_validate_artifact_backend_rules_accepts_ccir_only_provenance() -> None:
+    from src.backend import (
+        BackendCapabilities,
+        BackendSpecification,
+        validate_artifact_backend_rules,
+    )
+
+    specification = BackendSpecification(
+        backend_id="test",
+        backend_version="1",
+        capabilities=BackendCapabilities(
+            constraint_families=frozenset()
+        ),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(
+            (
+                "constraint-derived:0",
+                ArtifactProvenance(
+                    ccir_origins=(
+                        CCIROrigin(
+                            kind="constraint",
+                            identifier="0",
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    validate_artifact_backend_rules(
+        artifact,
+        specification,
+    )
+
+
+def test_validate_artifact_backend_rules_rejects_unregistered_rule() -> None:
+    from src.backend import (
+        BackendCapabilities,
+        BackendSpecification,
+        validate_artifact_backend_rules,
+    )
+
+    specification = BackendSpecification(
+        backend_id="test",
+        backend_version="1",
+        capabilities=BackendCapabilities(
+            constraint_families=frozenset()
+        ),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(
+            (
+                "node:0",
+                ArtifactProvenance(
+                    backend_rules=(
+                        BackendRuleOrigin(
+                            rule_id="unknown.rule",
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    with pytest.raises(
+        ValueError,
+        match=(
+            "artifact provenance references unregistered "
+            "backend rules: unknown.rule"
+        ),
+    ):
+        validate_artifact_backend_rules(
+            artifact,
+            specification,
+        )
+
+
+def test_validate_artifact_backend_rules_reports_unknown_rules_sorted() -> None:
+    from src.backend import (
+        BackendCapabilities,
+        BackendRuleDefinition,
+        BackendSpecification,
+        validate_artifact_backend_rules,
+    )
+
+    specification = BackendSpecification(
+        backend_id="test",
+        backend_version="1",
+        capabilities=BackendCapabilities(
+            constraint_families=frozenset()
+        ),
+        rules=(
+            BackendRuleDefinition(
+                rule_id="known.rule",
+            ),
+        ),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(
+            (
+                "node:0",
+                ArtifactProvenance(
+                    backend_rules=(
+                        BackendRuleOrigin(
+                            rule_id="zeta.rule",
+                        ),
+                        BackendRuleOrigin(
+                            rule_id="known.rule",
+                        ),
+                    ),
+                ),
+            ),
+            (
+                "node:1",
+                ArtifactProvenance(
+                    backend_rules=(
+                        BackendRuleOrigin(
+                            rule_id="alpha.rule",
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    with pytest.raises(
+        ValueError,
+        match=(
+            "artifact provenance references unregistered "
+            "backend rules: alpha.rule, zeta.rule"
+        ),
+    ):
+        validate_artifact_backend_rules(
+            artifact,
+            specification,
+        )
