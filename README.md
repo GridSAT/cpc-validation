@@ -230,6 +230,9 @@ The CPC Reference Validation Framework currently provides:
 - complete CCIR infrastructure;
 - RFC-0003 execution-backend compilation contract;
 - RFC-0004 physical execution backend engineering and conformance;
+- RFC-0005 cross-backend equivalence and independent validation;
+- RFC-0006 cross-backend benchmark validation and reproducibility;
+- RFC-0007 backend qualification and conformance manifests;
 - ExecutionArtifact contract;
 - first-class PreparedExecution state;
 - first-class ObservableExecution result;
@@ -245,7 +248,7 @@ The CPC Reference Validation Framework currently provides:
 - comprehensive automated regression suite.
 
 These components establish the current reference implementation of the
-combined RFC-0001 through RFC-0006 CPC architecture.
+combined RFC-0001 through RFC-0007 CPC architecture.
 
 ---
 
@@ -1844,6 +1847,7 @@ the RFC series.
 | RFC-0004 | Physical execution backend engineering and conformance |
 | RFC-0005 | Cross-backend equivalence and independent validation |
 | RFC-0006 | Cross-backend benchmark validation and reproducibility |
+| RFC-0007 | Backend qualification and conformance manifests |
 
 The RC Reference Backend therefore represents the current reference
 implementation of the combined RFC architecture.
@@ -1910,11 +1914,11 @@ repository.
 ## Development Status
 
 The CPC Reference Validation Framework implements the combined RFC-0001
-through RFC-0006 architectural baseline with two current reference execution
+through RFC-0007 architectural baseline with two current reference execution
 realizations: the RC Reference Backend and the deterministic Digital Backend.
 
-The audited RFC-0006 implementation state used for this README passes
-**586 automated tests**. The repository's current test run remains authoritative
+The audited RFC-0007 implementation state used for this README passes
+**626 automated tests**. The repository's current test run remains authoritative
 as the suite evolves.
 
 The RFC-0006 acceptance corpus currently contains 16 discovered benchmarks and
@@ -1922,6 +1926,13 @@ The RFC-0006 acceptance corpus currently contains 16 discovered benchmarks and
 RC semantic validation, and Digital semantic validation. This finite corpus
 result is validation evidence for the executed cases; it is not presented as a
 universal correctness theorem.
+
+RFC-0007 adds deterministic backend qualification manifests for the current
+RC and Digital reference backends. Qualification binds canonical backend
+identity, capabilities, fixed parameters and rules, execution-profile identity,
+declared conformance, admitted RFC-0006 corpus evidence, and a deterministic
+SHA-256 manifest hash. The manifest records qualification claims and evidence
+identity; it is not itself a substitute for executable conformance evidence.
 
 ---
 
@@ -1961,13 +1972,27 @@ universal correctness theorem.
 
 ✓ RFC-0004 engineering conformance tests
 
+✓ RFC-0005 cross-backend validation
+
+✓ RFC-0006 benchmark validation and reproducibility
+
+✓ BackendQualificationManifest model
+
+✓ Deterministic qualification-manifest hashing
+
+✓ RC and Digital backend qualification profiles
+
+✓ Backend qualification CLI
+
+✓ RFC-0007 BQ-1 through BQ-15 conformance tests
+
 ✓ RC Reference Backend
 
 ✓ Automated regression suite
 
 ---
 
-### RFC-0003 / RFC-0004 / RFC-0005 / RFC-0006 Audit Coverage
+### RFC-0003 / RFC-0004 / RFC-0005 / RFC-0006 / RFC-0007 Audit Coverage
 
 Dedicated tests cover:
 
@@ -2003,10 +2028,67 @@ Dedicated tests cover:
 - deterministic JSON corpus summaries;
 - failure propagation and non-vacuous corpus validation;
 - explicit finite-evidence boundary enforcement; and
-- RFC-0006 BV-1 through BV-14 conformance.
+- RFC-0006 BV-1 through BV-14 conformance;
+- canonical backend qualification schema identity;
+- backend identity, capability, fixed-parameter, and backend-rule fidelity;
+- explicit preparation, execution-engine, and engine-version identity;
+- separation of qualification claims from executable evidence;
+- admission of passing RFC-0006 corpus evidence;
+- deterministic canonical qualification serialization;
+- deterministic and content-sensitive SHA-256 manifest identity;
+- qualification isolation from semantic reference evaluation;
+- failed-evidence preservation and substrate-neutral qualification; and
+- RFC-0007 BQ-1 through BQ-15 conformance.
 
 The RC Reference Backend constitutes the current reference implementation of
 the execution-backend architecture.
+
+---
+
+
+### Backend Qualification
+
+RFC-0007 provides a substrate-neutral qualification layer for execution
+backends. Qualification assembly consumes the canonical `BackendSpecification`,
+an explicit execution profile, declared conformance claims, and admitted
+RFC-0006 corpus evidence, and emits a deterministic
+`BackendQualificationManifest`.
+
+Generate the current reference manifests with:
+
+    python qualify_backends.py \
+      --summary results/rfc0006_acceptance_summary.json \
+      --output results/qualification
+
+The current qualified reference realizations are:
+
+    RC backend
+      identity:      rc/1
+      engine:        ngspice ngspice-42
+      corpus:        16 benchmarks, 64 cases
+      qualification: PASS
+
+    Digital backend
+      identity:      digital/1
+      engine:        python-digital-interpreter 1
+      corpus:        16 benchmarks, 64 cases
+      qualification: PASS
+
+Each manifest uses schema:
+
+    cpc.backend-qualification.v1
+
+and contains a deterministic `sha256:` manifest hash over canonical
+qualification content.
+
+The manifest records backend identity, capabilities, fixed parameters, backend
+rules, execution-profile identity, conformance claims, and admitted corpus
+evidence. It does not create conformance by declaration and does not replace
+the executable RFC-0003 through RFC-0006 evidence on which qualification
+depends.
+
+A backend is admitted by the fixed CPC qualification protocol rather than by
+its substrate or implementer.
 
 ---
 
@@ -2023,11 +2105,11 @@ Planned work includes
 - C-parity execution backend;
 - additional physical execution substrates;
 - expanded and diversified benchmark collections;
-- automated backend certification;
+- cryptographically signed qualification manifests and attestation;
 
 These developments are intended to extend the set of supported execution
 substrates without modifying the architectural contracts established by
-RFC-0001 through RFC-0006.
+RFC-0001 through RFC-0007.
 
 ---
 
@@ -2041,6 +2123,8 @@ RFC-0001 through RFC-0006.
 | **Execution backend** | A backend implementing the CPC compilation contract for a particular execution substrate |
 | **`Compile_backend`** | Canonical mapping from CCIR to an ExecutionArtifact |
 | **ExecutionArtifact** | Backend-specific executable description containing topology, parameters, interface, metadata, and provenance |
+| **BackendQualificationManifest** | Deterministic RFC-0007 record of backend identity, execution profile, conformance claims, admitted corpus evidence, and manifest hash |
+| **Qualification manifest hash** | SHA-256 content identity of canonical qualification content; not a signature or proof of conformance |
 | **`Theta_backend`** | Globally fixed execution-backend specification |
 | **Provenance** | Machine-checkable origin information for generated artifact elements |
 | **Answer Independence Principle** | Requirement that semantic answers remain outside the compiler dependency set |
@@ -2083,6 +2167,7 @@ The normative architecture is contained in:
 - [`docs/design/RFC-0004-Physical-Execution-Backend-Engineering-and-Conformance.md`](docs/design/RFC-0004-Physical-Execution-Backend-Engineering-and-Conformance.md)
 - [`docs/design/RFC-0005-Cross-Backend-Equivalence-and-Validation.md`](docs/design/RFC-0005-Cross-Backend-Equivalence-and-Validation.md)
 - [`docs/design/RFC-0006-Cross-Backend-Benchmark-Validation-and-Reproducibility.md`](docs/design/RFC-0006-Cross-Backend-Benchmark-Validation-and-Reproducibility.md)
+- [`docs/design/RFC-0007-Backend-Qualification-and-Conformance-Manifests.md`](docs/design/RFC-0007-Backend-Qualification-and-Conformance-Manifests.md)
 
 | RFC | Purpose |
 |---|---|

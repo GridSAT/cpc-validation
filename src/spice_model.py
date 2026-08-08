@@ -141,33 +141,42 @@ def _build_constraint_netlist(
     return compiled.netlist
 
 def _ngspice_version() -> str:
-    completed = subprocess.run(
-        [
-            "ngspice",
-            "-v",
-        ],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    """
+    Return the installed ngspice execution-engine version.
 
-    if completed.returncode != 0:
+    ngspice emits a multi-line banner whose first and last lines may consist
+    only of asterisks. The canonical version identity is taken from the banner
+    line containing the ngspice version token, for example ``ngspice-42``.
+    """
+    try:
+        completed = subprocess.run(
+            ["ngspice", "--version"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except (OSError, subprocess.CalledProcessError) as exc:
         raise RuntimeError(
             "could not determine ngspice version"
-        )
+        ) from exc
 
     output = (
-        completed.stdout.strip()
-        or completed.stderr.strip()
+        completed.stdout
+        + "\n"
+        + completed.stderr
     )
 
-    if not output:
-        raise RuntimeError(
-            "ngspice version output is empty"
-        )
+    for line in output.splitlines():
+        for token in line.split():
+            candidate = token.strip("*:,")
 
-    return output.splitlines()[0]
+            if candidate.lower().startswith("ngspice-"):
+                return candidate
 
+    raise RuntimeError(
+        "could not determine ngspice version "
+        "from ngspice version output"
+    )
 
 def _run_ngspice(netlist_path: Path, log_path: Path) -> None:
     completed = subprocess.run(
