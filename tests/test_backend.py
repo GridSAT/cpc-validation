@@ -430,3 +430,191 @@ def test_validate_backend_capabilities_reports_families_sorted() -> None:
             program,
             capabilities,
         )
+
+
+def test_validate_artifact_provenance_accepts_exact_coverage() -> None:
+    from src.backend import validate_artifact_provenance
+
+    provenance = ArtifactProvenance(
+        backend_rules=(
+            BackendRuleOrigin(
+                rule_id="test.rule",
+            ),
+        ),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(
+            ("node:0", provenance),
+            ("interface:out", provenance),
+        ),
+    )
+
+    validate_artifact_provenance(
+        artifact,
+        (
+            "node:0",
+            "interface:out",
+        ),
+    )
+
+
+def test_validate_artifact_provenance_rejects_missing_element() -> None:
+    from src.backend import validate_artifact_provenance
+
+    provenance = ArtifactProvenance(
+        backend_rules=(
+            BackendRuleOrigin(
+                rule_id="test.rule",
+            ),
+        ),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(
+            ("node:0", provenance),
+        ),
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="artifact provenance missing elements: interface:out",
+    ):
+        validate_artifact_provenance(
+            artifact,
+            (
+                "node:0",
+                "interface:out",
+            ),
+        )
+
+
+def test_validate_artifact_provenance_rejects_unknown_element() -> None:
+    from src.backend import validate_artifact_provenance
+
+    provenance = ArtifactProvenance(
+        backend_rules=(
+            BackendRuleOrigin(
+                rule_id="test.rule",
+            ),
+        ),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(
+            ("node:0", provenance),
+            ("orphan:0", provenance),
+        ),
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="artifact provenance contains unknown elements: orphan:0",
+    ):
+        validate_artifact_provenance(
+            artifact,
+            (
+                "node:0",
+            ),
+        )
+
+
+def test_validate_artifact_provenance_rejects_duplicate_provenance() -> None:
+    from src.backend import validate_artifact_provenance
+
+    provenance = ArtifactProvenance(
+        backend_rules=(
+            BackendRuleOrigin(
+                rule_id="test.rule",
+            ),
+        ),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(
+            ("node:0", provenance),
+            ("node:0", provenance),
+        ),
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="duplicate element identifiers",
+    ):
+        validate_artifact_provenance(
+            artifact,
+            (
+                "node:0",
+            ),
+        )
+
+
+def test_validate_artifact_provenance_rejects_duplicate_inventory() -> None:
+    from src.backend import validate_artifact_provenance
+
+    provenance = ArtifactProvenance(
+        backend_rules=(
+            BackendRuleOrigin(
+                rule_id="test.rule",
+            ),
+        ),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(
+            ("node:0", provenance),
+        ),
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="inventory contains duplicate identifiers",
+    ):
+        validate_artifact_provenance(
+            artifact,
+            (
+                "node:0",
+                "node:0",
+            ),
+        )
+
+
+def test_validate_artifact_provenance_rejects_empty_identifier() -> None:
+    from src.backend import validate_artifact_provenance
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(),
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="artifact element identifiers must be non-empty strings",
+    ):
+        validate_artifact_provenance(
+            artifact,
+            ("",),
+        )

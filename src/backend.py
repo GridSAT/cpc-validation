@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import Any, Protocol
 
@@ -78,6 +79,83 @@ class ExecutionArtifact:
         tuple[str, ArtifactProvenance],
         ...,
     ]
+
+
+def validate_artifact_provenance(
+    artifact: ExecutionArtifact,
+    required_elements: Iterable[str],
+) -> None:
+    """
+    Verify exact provenance coverage for generated artifact elements.
+
+    The backend supplies the complete machine-resolvable element inventory.
+    RFC-0003 requires one provenance entry for every generated element and
+    forbids provenance entries for elements outside that inventory.
+    """
+
+    required = tuple(required_elements)
+
+    if any(
+        not isinstance(element, str) or not element
+        for element in required
+    ):
+        raise ValueError(
+            "artifact element identifiers must be non-empty strings"
+        )
+
+    if len(set(required)) != len(required):
+        raise ValueError(
+            "artifact element inventory contains duplicate identifiers"
+        )
+
+    provenance_elements = tuple(
+        element
+        for element, provenance in artifact.provenance
+    )
+
+    if any(
+        not isinstance(element, str) or not element
+        for element in provenance_elements
+    ):
+        raise ValueError(
+            "provenance element identifiers must be non-empty strings"
+        )
+
+    if len(set(provenance_elements)) != len(provenance_elements):
+        raise ValueError(
+            "artifact provenance contains duplicate element identifiers"
+        )
+
+    if any(
+        not isinstance(provenance, ArtifactProvenance)
+        for _, provenance in artifact.provenance
+    ):
+        raise ValueError(
+            "artifact provenance entries must be ArtifactProvenance"
+        )
+
+    required_set = set(required)
+    provenance_set = set(provenance_elements)
+
+    missing = sorted(
+        required_set - provenance_set
+    )
+
+    unexpected = sorted(
+        provenance_set - required_set
+    )
+
+    if missing:
+        raise ValueError(
+            "artifact provenance missing elements: "
+            + ", ".join(missing)
+        )
+
+    if unexpected:
+        raise ValueError(
+            "artifact provenance contains unknown elements: "
+            + ", ".join(unexpected)
+        )
 
 
 @dataclass(frozen=True)
