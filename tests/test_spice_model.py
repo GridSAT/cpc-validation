@@ -66,3 +66,26 @@ def test_unequal_boundaries_produce_high_response(x0: int, x3: int) -> None:
 def test_invalid_boundary_values_are_rejected(x0: int, x3: int) -> None:
     with pytest.raises(ValueError):
         simulate_response(x0, x3)
+
+
+def test_ngspice_version_reports_execution_engine(
+    monkeypatch,
+) -> None:
+    import subprocess
+
+    import src.spice_model as spice_model
+
+    class Completed:
+        returncode = 0
+        stdout = "ngspice-42 : Circuit level simulation program\n"
+        stderr = ""
+
+    monkeypatch.setattr(
+        subprocess,
+        "run",
+        lambda *args, **kwargs: Completed(),
+    )
+
+    assert spice_model._ngspice_version() == (
+        "ngspice-42 : Circuit level simulation program"
+    )

@@ -15,6 +15,7 @@ from src.ccir_parity import (
 from src.rc_emitter import (
     emit_parity_rc_netlist,
 )
+from src.prepared_execution import PreparedExecution
 
 
 @dataclass(frozen=True)
@@ -54,12 +55,12 @@ class _CCIRParityInstanceView:
         )
 
 
-def prepare_rc_netlist(
+def prepare_rc_execution(
     program: CCIRProgram,
     artifact: ExecutionArtifact,
     boundary_values: Mapping[int, int],
     specification: BackendSpecification,
-) -> tuple[str, dict[str, int]]:
+) -> PreparedExecution:
     """
     Prepare one concrete RC/ngspice execution from a compiled RC artifact.
 
@@ -119,7 +120,7 @@ def prepare_rc_netlist(
         boundary_variables=program.boundary_variables,
     )
 
-    return emit_parity_rc_netlist(
+    netlist, emitter_metadata = emit_parity_rc_netlist(
         view,
         boundary_values,
         supply_voltage=float(
@@ -141,5 +142,81 @@ def prepare_rc_netlist(
             specification.get_fixed_parameter(
                 "end_time_ms"
             )
+        ),
+    )
+
+    interface = tuple(
+        artifact.interface
+    )
+
+    decoder_specification = (
+        (
+            "threshold_voltage",
+            specification.get_fixed_parameter(
+                "threshold_voltage"
+            ),
+        ),
+    )
+
+    metadata = (
+        (
+            "boundary_values",
+            tuple(
+                sorted(
+                    boundary_values.items()
+                )
+            ),
+        ),
+        (
+            "emitter_metadata",
+            tuple(
+                sorted(
+                    emitter_metadata.items()
+                )
+            ),
+        ),
+        (
+            "preparation_id",
+            "rc.ngspice-netlist.v1",
+        ),
+    )
+
+    return PreparedExecution(
+        backend_id=specification.backend_id,
+        backend_version=specification.backend_version,
+        payload=netlist,
+        interface=interface,
+        decoder_specification=decoder_specification,
+        provenance=artifact.provenance,
+        metadata=metadata,
+    )
+
+
+def prepare_rc_netlist(
+    program: CCIRProgram,
+    artifact: ExecutionArtifact,
+    boundary_values: Mapping[int, int],
+    specification: BackendSpecification,
+) -> tuple[str, dict[str, int]]:
+    """
+    Compatibility wrapper returning the historical RC preparation tuple.
+
+    New RFC-0004 code should use prepare_rc_execution().
+    """
+    prepared = prepare_rc_execution(
+        program,
+        artifact,
+        boundary_values,
+        specification,
+    )
+
+    metadata = dict(
+        prepared.metadata
+    )
+
+    return (
+        prepared.payload,
+        dict(
+            metadata["emitter_metadata"]
         ),
     )

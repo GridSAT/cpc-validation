@@ -128,8 +128,14 @@ The CPC Reference Validation Framework currently provides:
 
 - complete CCIR infrastructure;
 - RFC-0003 execution-backend compilation contract;
-- execution artifact contract;
-- machine-checkable provenance model;
+- RFC-0004 physical execution backend engineering and conformance;
+- ExecutionArtifact contract;
+- first-class PreparedExecution state;
+- first-class ObservableExecution result;
+- fixed backend decoding;
+- independent post-execution physical validation;
+- machine-checkable provenance through execution;
+- execution-environment reproducibility metadata;
 - compiler validation;
 - semantic validation;
 - restricted-interface validation;
@@ -138,7 +144,7 @@ The CPC Reference Validation Framework currently provides:
 - comprehensive automated regression suite.
 
 These components establish the current reference implementation of the
-RFC-0003 execution-backend architecture.
+combined RFC-0001 through RFC-0004 CPC architecture.
 
 ---
 
@@ -172,16 +178,29 @@ responsibility layers.
                  Preparation
                       │
                       ▼
+              PreparedExecution
+                      │
+                      ▼
                   Execution
                       │
                       ▼
-             Interface Readout
+             ObservableExecution
                       │
                       ▼
                Fixed Decoder
                       │
                       ▼
+               Decoded Result
+                      │
+        =========================
+          Backend boundary ends
+        =========================
+                      │
+                      ▼
           Independent Validation
+                      │
+                      ▼
+                 PASS / FAIL
 ```
 
 <p align="center">
@@ -219,15 +238,23 @@ Execution Backend
     compilation
     ExecutionArtifact
     preparation
+    PreparedExecution
     execution
-    interface readout
+    ObservableExecution
     fixed decoder
+    decoded result
+         │
+         ▼
+==============================
+Backend boundary ends
+==============================
          │
          ▼
 Validation
     compiler conformance
     independent semantic evaluation
     post-execution comparison
+    PASS / FAIL
 ```
     
 The frontend determines the canonical constraint program. The execution
@@ -1552,16 +1579,25 @@ RC ExecutionArtifact
 Netlist Preparation
   │
   ▼
+PreparedExecution
+  │
+  ▼
 ngspice Execution
   │
   ▼
-Observable Voltages
+ObservableExecution
   │
   ▼
 Fixed Decoder
   │
   ▼
-Semantic Validation
+Decoded Result
+  │
+  ▼
+Independent Physical Validation
+  │
+  ▼
+PASS / FAIL
 ```
 
 <p align="center">
@@ -1652,10 +1688,16 @@ the CPC execution-backend architecture.
 
 Accordingly, the RC Reference Backend serves as
 
-- the reference implementation of RFC-0003;
-- the basis for regression testing;
+- the reference implementation of the RFC-0003 backend compilation contract;
+- the reference realization of the RFC-0004 physical execution lifecycle;
+- the basis for regression and conformance testing;
 - the canonical validation platform;
 - an executable example for future backend developers.
+
+The implemented lifecycle explicitly separates `ExecutionArtifact`,
+`PreparedExecution`, `ObservableExecution`, fixed decoding, and independent
+post-execution validation. Reference semantic evaluation remains outside the
+RC backend dependency boundary.
 
 Future CPC backends are expected to satisfy the same architectural contracts
 while employing different computational substrates.
@@ -1764,10 +1806,12 @@ repository.
 
 ## Development Status
 
-The CPC Reference Validation Framework implements the RFC-0003 architectural
-baseline and its current RC reference realization.
-The audited RFC-0003 development state used for this README passes
-**465 automated tests**. The repository's current test run remains authoritative
+The CPC Reference Validation Framework implements the combined RFC-0001
+through RFC-0004 architectural baseline and its current RC reference
+realization.
+
+The audited RFC-0004 implementation state used for this README passes
+**506 automated tests**. The repository's current test run remains authoritative
 as the suite evolves.
 
 ---
@@ -1794,13 +1838,27 @@ as the suite evolves.
 
 ✓ Semantic validation framework
 
+✓ First-class PreparedExecution state
+
+✓ First-class ObservableExecution result
+
+✓ Fixed backend decoder
+
+✓ Execution-environment reproducibility metadata
+
+✓ Provenance preservation through execution
+
+✓ Independent post-execution physical validation
+
+✓ RFC-0004 engineering conformance tests
+
 ✓ RC Reference Backend
 
 ✓ Automated regression suite
 
 ---
 
-### RFC-0003 Audit Coverage
+### RFC-0003 / RFC-0004 Audit Coverage
 
 Dedicated tests cover:
 
@@ -1812,9 +1870,17 @@ Dedicated tests cover:
 - canonical backend dispatch;
 - native CCIR RC compilation;
 - preparation separation;
+- first-class prepared execution;
+- execution/interface separation;
+- fixed decoding;
+- execution-environment recording;
+- provenance preservation through execution;
+- independent physical validation;
+- RFC-0004 EC-1 through EC-8 conformance;
 - Answer Independence negative controls;
-- generated-netlist answer-independence audit; and
-- canonical dependency-boundary enforcement.
+- generated-netlist answer-independence audit;
+- canonical dependency-boundary enforcement; and
+- enforcement that reference validation remains outside the RC backend.
 
 The RC Reference Backend constitutes the current reference implementation of
 the execution-backend architecture.
@@ -1840,8 +1906,8 @@ Planned work includes
 - cross-backend reproducibility studies.
 
 These developments are intended to extend the set of supported execution
-substrates without modifying the architectural contracts introduced by
-RFC-0003.
+substrates without modifying the architectural contracts established by
+RFC-0001 through RFC-0004.
 
 ---
 
