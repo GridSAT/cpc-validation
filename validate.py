@@ -353,6 +353,88 @@ def build_steps(
             ),
         ),
 
+        ValidationStep(
+            name="Generic JSON benchmark validation",
+            command=(
+                sys.executable,
+                "validate_benchmarks.py",
+                "benchmarks/default_xor.json",
+                "benchmarks/parity_chain_5.json",
+                "--working-directory",
+                str(
+                    RESULT_DIRECTORY
+                    / f"benchmark_netlists_{profile}"
+                ),
+                "--output",
+                str(
+                    RESULT_DIRECTORY
+                    / f"benchmark_validation_{profile}.csv"
+                ),
+            ),
+            description=(
+                "Load external JSON parity benchmarks, independently "
+                "enumerate their continuation values, compile each admitted "
+                "boundary assignment, simulate the generated netlists, and "
+                "compare the decoded outputs with the independent reference."
+            ),
+        ),
+
+        ValidationStep(
+            name="Compiler scaling regression",
+            command=(
+                sys.executable,
+                "run_scaling_study.py",
+                "--families",
+                "chain,cycle,star,random",
+                "--variables",
+                "4:6:2",
+                "--seed",
+                "20260806",
+                "--working-directory",
+                str(
+                    RESULT_DIRECTORY
+                    / f"scaling_work_{profile}"
+                ),
+                "--summary-output",
+                str(
+                    RESULT_DIRECTORY
+                    / f"scaling_summary_{profile}.csv"
+                ),
+                "--candidate-figure",
+                str(
+                    RESULT_DIRECTORY
+                    / f"scaling_candidates_{profile}.png"
+                ),
+                "--source-figure",
+                str(
+                    RESULT_DIRECTORY
+                    / f"scaling_sources_{profile}.png"
+                ),
+                "--netlist-figure",
+                str(
+                    RESULT_DIRECTORY
+                    / f"scaling_netlist_size_{profile}.png"
+                ),
+                "--compilation-figure",
+                str(
+                    RESULT_DIRECTORY
+                    / f"scaling_compile_time_{profile}.png"
+                ),
+                "--simulation-figure",
+                str(
+                    RESULT_DIRECTORY
+                    / f"scaling_simulation_time_{profile}.png"
+                ),
+            ),
+            description=(
+                "Generate four parity benchmark families at two sizes, "
+                "compile and simulate every admitted boundary assignment, "
+                "validate against the independent reference evaluator, and "
+                "record candidate, source, netlist, compilation, and "
+                "simulation growth."
+            ),
+        ),
+
     ]
 
 
@@ -569,7 +651,9 @@ def write_markdown_report(
                 "passive carrier network, a coherent physical carrier, or "
                 "real hardware. The temperature stage uses explicitly "
                 "imposed linear component-drift coefficients; it is a "
-                "parameter-sensitivity study, not a calibrated device model."
+                "parameter-sensitivity study, not a calibrated device model. "
+                "The generic benchmark stage validates external parity-instance "
+                "descriptions against an independent enumerative reference."
             ),
             "",
             "## Detailed step output",

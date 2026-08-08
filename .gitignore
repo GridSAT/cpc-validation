@@ -8,3 +8,16 @@ results/
 
 # Generated validation reports
 reports/
+
+# Generated compiler netlists
+netlists/compiler/
+
+# Generated benchmark netlists and logs
+netlists/*.cir
+netlists/*.out
+
+# Generated netlists and ngspice logs
+netlists/benchmark-validation/
+
+# Reproducibly generated benchmark corpus
+benchmarks/generated/

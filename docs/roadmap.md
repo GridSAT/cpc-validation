@@ -1,221 +1,149 @@
-# CPC Validation Roadmap
-
-## Vision
-
-The long-term objective of CPC Validation is to establish a reproducible,
-experimentally validated engineering framework for C-Parity Computing (CPC).
-
-The current repository represents the first validation milestone: a complete
-software-to-SPICE verification pipeline. Future milestones progressively
-replace abstract circuit models with compiled physical networks while
-preserving the same mathematical continuation specification.
-
----
-
-# Stage 0 — Reference Continuation
-
-Status: Completed
-
-Objectives
-
-- Independent continuation computation
-- Deterministic benchmark generation
-- Reference truth tables
-- Unit testing
-
-Deliverables
-
-- Python reference implementation
-- Regression tests
-- Automated verification
-
----
-
-# Stage 1 — SPICE Validation
-
-Status: Completed
-
-Objectives
-
-- Automatic circuit generation
-- ngspice transient simulation
-- Threshold decoding
-- Reference comparison
-
-Deliverables
-
-- Reproducible SPICE validation
-- PASS / FAIL verification
-- Continuous testing
-
----
-
-# Stage 2 — Monte Carlo Analysis
-
-Status: Planned
-
-Objectives
-
-- Component tolerances
-- Statistical robustness
-- Noise sensitivity
-- Decoder margin analysis
-
-Deliverables
-
-- Monte Carlo simulations
-- Yield statistics
-- Robustness reports
-
----
-
-# Stage 3 — Passive Compiled Networks
-
-Status: Planned
-
-Objectives
-
-- Replace behavioral sources
-- Compile constraints directly into passive RC networks
-- Preserve continuation behavior
-
-Deliverables
-
-- Automatically generated RC circuits
-- Verification against reference continuations
-
----
-
-# Stage 4 — Automatic Network Synthesis
-
-Status: Planned
-
-Objectives
-
-- Constraint compiler
-- Netlist generation
-- Topology optimization
-- Automated validation
-
-Deliverables
-
-- End-to-end compiler
-- Generated SPICE netlists
-- Regression benchmarks
-
----
-
-# Stage 5 — Hardware Demonstrator
-
-Status: Planned
-
-Objectives
-
-- PCB implementation
-- Laboratory measurements
-- Oscilloscope verification
-- Experimental reproducibility
-
-Deliverables
-
-- Physical demonstrator
-- Measured continuation tables
-- Measurement documentation
-
----
-
-# Stage 6 — Scaling Studies
-
-Status: Planned
-
-Objectives
-
-- Larger benchmark instances
-- Automated benchmarking
-- Runtime measurements
-- Resource analysis
-
-Deliverables
-
-- Benchmark suite
-- Performance reports
-- Scaling documentation
-
----
-
-# Stage 7 — Carrier-Based Implementations
-
-Status: Long-term
-
-Objectives
-
-- Candidate carrier systems
-- Representation compilation
-- Physical preparation
-- Restricted readout
-- Experimental validation
-
-Deliverables
-
-- Prototype carrier implementations
-- Comparison with RC validation pipeline
-- Unified validation framework
-
----
-
-# Guiding Principles
-
-Every development stage preserves the following principles.
-
-- Mathematical continuation is computed independently.
-- Physical systems are validated against that reference.
-- Validation is reproducible.
-- Simulation and experiment are clearly separated.
-- Every stage is regression tested.
-
----
-
-# Success Criteria
-
-Each milestone is considered complete only if
-
-- all automated tests pass;
-- the physical response agrees with the mathematical reference;
-- results are reproducible from a clean repository checkout; and
-- documentation is updated accordingly.
-
----
-
-# Long-Term Goal
-
-The ultimate objective is a complete validation framework spanning
-
-Constraint specification
-
-↓
-
-Reference continuation
-
-↓
-
-Representation compilation
-
-↓
-
-Physical implementation
-
-↓
-
-Measurement
-
-↓
-
-Semantic decoding
-
-↓
-
-Independent verification
-
-This repository serves as the engineering foundation for that validation
-pipeline.
-
+# CPC Validation Development Roadmap
+
+## Version 0.1 — Reference Validation Baseline
+
+**Status:** Completed
+
+- independent XOR continuation evaluator;
+- four-condition reference table;
+- generated ngspice model;
+- fixed voltage decoder;
+- regression tests; and
+- machine-readable baseline data.
+
+## Version 0.2 — Engineering Robustness Validation
+
+**Status:** Completed and released as `v0.2.0`
+
+- reproducible Monte Carlo validation;
+- deterministic decoder-threshold sweep;
+- deterministic supply-voltage sweep;
+- transient waveform extraction;
+- resistance and capacitance timing studies;
+- first-order RC theory comparisons;
+- imposed temperature-drift study;
+- consolidated quick and full validation profiles;
+- Markdown validation report; and
+- machine-readable validation summary.
+
+The temperature stage uses declared linear component-drift coefficients. It is
+a parameter-sensitivity study rather than a calibrated physical-device model.
+
+## Version 0.3 — Generic Parity Compiler and Benchmark Framework
+
+**Status:** In progress
+
+### Completed
+
+- generic parity constraint representation;
+- generic parity-instance validation;
+- arbitrary-length XOR-expression generation;
+- generic parity-to-ngspice compiler;
+- compiler statistics;
+- simulator delegation to the generic compiler;
+- JSON benchmark schema;
+- benchmark loader;
+- boundary-assignment parser;
+- independent generic continuation evaluator;
+- recursive benchmark discovery;
+- complete-boundary benchmark validation;
+- permanent XOR, chain, and cycle benchmarks;
+- deterministic chain generator;
+- deterministic cycle generator;
+- deterministic star generator;
+- seeded random generator;
+- full declared-variable coverage for random systems;
+- generated-corpus validation;
+- benchmark resource accounting; and
+- extensive compiler and benchmark regression tests.
+
+### Current verified generated corpus
+
+- generated benchmark families: 4;
+- generated benchmarks: 13;
+- boundary simulations: 52;
+- passed: 52;
+- failed: 0;
+- largest variable count: 10;
+- largest internal-variable count: 8; and
+- largest candidate count: 256.
+
+### Remaining
+
+- compiler scaling runner;
+- per-benchmark aggregation;
+- candidate-growth figure;
+- behavioral-source growth figure;
+- netlist-size figure;
+- compilation-time figure;
+- ngspice simulation-time figure;
+- scaling methodology documentation;
+- consolidated scaling-validation stage; and
+- v0.3 release preparation.
+
+## Version 0.4 — Compiler Scaling and Statistics
+
+**Status:** Planned
+
+- systematic family-by-family size studies;
+- repeated compilation measurements;
+- repeated simulation measurements;
+- growth-model comparison;
+- publication-quality scaling figures;
+- documented backend limits; and
+- archived scaling dataset.
+
+The scaling results will characterize the current exhaustive backend. They will
+not be presented as evidence of efficient general-purpose computation.
+
+## Version 0.5 — CNF and DIMACS Front End
+
+**Status:** Planned
+
+- strict DIMACS parser;
+- CNF instance representation;
+- independent CNF continuation evaluator;
+- CNF benchmark schema;
+- small canonical SAT families;
+- CNF backend compilation; and
+- complete reference-to-physical validation.
+
+## Version 0.6 — General Boolean Constraint IR
+
+**Status:** Planned
+
+- typed logical intermediate representation;
+- AND constraints;
+- OR constraints;
+- NOT constraints;
+- XOR constraints;
+- mixed systems;
+- modular compilation; and
+- backend-independent validation.
+
+## Version 0.7 — Response-Class and Physical-Backend Validation
+
+**Status:** Planned
+
+- multiple preparation states;
+- transient-history variation;
+- reset studies;
+- response-equivalence statistics;
+- passive-network experiments;
+- transistor-level models;
+- failure classification; and
+- hardware-oriented interfaces.
+
+## Version 1.0 — CPC Validation Research Release
+
+**Status:** Planned
+
+- complete reproducibility package;
+- archived compiler datasets;
+- archived simulation datasets;
+- stable benchmark schema;
+- stable compiler interface;
+- CPC white-paper integration;
+- release DOI;
+- documented experimental results; and
+- external reproduction instructions.

@@ -190,3 +190,40 @@ Consequently the validation framework compares physical responses against
 an independently computed mathematical ground truth rather than comparing
 one physical implementation against another.
 
+## Intermediate Representation and RC Backend
+
+The v0.4 compiler path is:
+
+```text
+ParityInstance
+  -> compile_parity_instance_to_ir()
+  -> IRProgram
+  -> compile_ir_to_rc()
+  -> emit_parity_rc_netlist()
+  -> RC/ngspice netlist
+```
+
+`src/ir_compiler.py` constructs the backend-independent IR.
+`src/backends/rc.py` consumes the IR and calls the RC emitter.
+`src/rc_emitter.py` generates the netlist text.
+
+The RC backend no longer calls `compile_parity_instance()`.
+
+## Core Constraint Intermediate Representation
+
+RFC-0002 defines CCIR as the canonical representation shared by
+front ends, analysis passes, optimization passes, and backends.
+
+The implemented CCIR foundation currently consists of:
+
+- `src/ccir.py`: program, constraint, and typed-payload contracts;
+- `src/ccir_parity.py`: Boolean parity constraints; and
+- `src/ccir_clause.py`: Boolean clause constraints.
+
+CCIR remains independent of DIMACS, parity JSON, ngspice syntax,
+source-language parsing, and independently computed continuation
+answers.
+
+The existing parity-oriented IR remains operational during incremental
+migration. It will be retired only after both source-model lowerings and
+the RC backend migration have passed full regression and SPICE validation.

@@ -214,3 +214,86 @@ will be distributed under the terms of the MIT License.
 
 Copyright © 2026 GridSAT Stiftung and contributors.
 
+
+---
+
+# Contributing Benchmarks
+
+Parity benchmarks are stored as JSON files under `benchmarks/`.
+
+A contributed benchmark must contain only:
+
+- schema version;
+- benchmark name;
+- optional description;
+- boundary-variable indices; and
+- parity constraints.
+
+It must not contain:
+
+- expected continuation values;
+- precomputed completion counts;
+- satisfying assignments;
+- expected SPICE voltages;
+- decoded results; or
+- cached truth tables.
+
+Every contributed benchmark must:
+
+1. conform to the schema documented in `docs/benchmarks.md`;
+2. load through `src.benchmark_io.load_parity_benchmark`;
+3. include every declared boundary variable in at least one constraint;
+4. include a clear description of its topology or intended purpose;
+5. pass complete-boundary validation;
+6. include regression tests when it introduces a new structural family; and
+7. preserve the anti-embedding separation between compilation and reference
+   evaluation.
+
+Validate a contributed benchmark with:
+
+```bash
+python validate_benchmarks.py path/to/benchmark.json
+```
+
+# Contributing Benchmark Generators
+
+A benchmark generator must be deterministic for fixed input parameters.
+
+Generators must:
+
+- emit schema-compatible JSON;
+- expose an explicit seed for random generation;
+- ensure every declared variable occurs in the generated constraint system;
+- reject parameter combinations that cannot satisfy coverage requirements;
+- avoid writing expected answers or completion data;
+- include reproducibility tests;
+- include structural validation tests; and
+- document the intended topology and size parameters.
+
+Generated corpora should normally remain excluded from Git unless a release
+explicitly freezes them as archival data.
+
+# Contributing Compiler Backends
+
+A compiler backend must preserve the separation between:
+
+- instance description;
+- boundary assignment;
+- physical-model generation;
+- physical execution;
+- measurement;
+- decoding; and
+- independent reference comparison.
+
+A backend may not receive independently computed continuation values or
+completion tables.
+
+Compiler contributions should include:
+
+- a clearly defined input contract;
+- deterministic output for fixed inputs;
+- model-size statistics;
+- resource accounting;
+- answer-independence tests;
+- backend-specific regression tests; and
+- explicit scope and scaling limitations.

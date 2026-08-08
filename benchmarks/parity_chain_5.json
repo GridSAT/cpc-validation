@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "name": "parity-chain-5",
+  "description": "Three linked parity constraints with boundary variables x0 and x4.",
+  "boundary_variables": [0, 4],
+  "constraints": [
+    {
+      "variables": [0, 1, 2],
+      "parity": 0
+    },
+    {
+      "variables": [1, 2, 3],
+      "parity": 1
+    },
+    {
+      "variables": [2, 3, 4],
+      "parity": 0
+    }
+  ]
+}
