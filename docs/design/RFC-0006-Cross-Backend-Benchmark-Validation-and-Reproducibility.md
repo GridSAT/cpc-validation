@@ -1,6 +1,6 @@
 # RFC-0006: Cross-Backend Benchmark Validation and Reproducibility
 
-**Status:** Draft  
+**Status:** Accepted  
 **Category:** CPC Validation Architecture  
 **Depends on:** RFC-0001, RFC-0002, RFC-0003, RFC-0004, RFC-0005
 
