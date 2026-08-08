@@ -41,4 +41,4 @@ Routine bug fixes, documentation corrections, and implementation-preserving
 refactors do not require a new RFC.
 - RFC-0002 — Generic Constraint IR and CNF Front End — Accepted
 
-- RFC-0003 — Backend Execution Contract (Draft)
+- RFC-0003 — Backend Execution Contract — Accepted

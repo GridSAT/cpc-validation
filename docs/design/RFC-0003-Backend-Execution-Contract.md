@@ -2,7 +2,7 @@
 
 # Backend Execution Contract
 
-Status: Draft
+Status: Accepted
 
 Supersedes: —
 
