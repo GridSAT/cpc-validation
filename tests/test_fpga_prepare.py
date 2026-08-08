@@ -2,9 +2,9 @@ import pytest
 
 from src.backends.fpga_ccir import FPGABackend
 from src.backends.fpga_prepare import (
-    FPGAPreparedExecution,
     prepare_fpga_execution,
 )
+from src.prepared_execution import PreparedExecution
 from src.ccir import (
     CCIRConstraint,
     CCIRProgram,
@@ -41,7 +41,7 @@ def make_program() -> CCIRProgram:
 
 def prepare(
     boundary_values: dict[int, int] | None = None,
-) -> FPGAPreparedExecution:
+) -> PreparedExecution:
     program = make_program()
     artifact = FPGABackend().compile(program)
 
@@ -60,8 +60,17 @@ def test_preparation_identity() -> None:
 
     assert prepared.backend_id == "fpga"
     assert prepared.backend_version == "1"
-    assert prepared.execution_engine == "verilog-2001"
-    assert prepared.module_name == "cpc_fpga_execution"
+    assert isinstance(
+        prepared,
+        PreparedExecution,
+    )
+
+    metadata = dict(
+        prepared.metadata
+    )
+
+    assert metadata["execution_engine"] == "verilog-2001"
+    assert metadata["module_name"] == "cpc_fpga_execution"
 
 
 def test_preparation_preserves_boundary_values() -> None:
@@ -72,17 +81,21 @@ def test_preparation_preserves_boundary_values() -> None:
         }
     )
 
-    assert prepared.boundary_values == (
+    metadata = dict(
+        prepared.metadata
+    )
+
+    assert metadata["boundary_values"] == (
         (0, 1),
         (3, 0),
     )
 
-    assert "assign x0 = 1'b1;" in prepared.verilog_source
-    assert "assign x3 = 1'b0;" in prepared.verilog_source
+    assert "assign x0 = 1'b1;" in prepared.payload
+    assert "assign x3 = 1'b0;" in prepared.payload
 
 
 def test_two_internal_variables_create_four_parallel_completions() -> None:
-    source = prepare().verilog_source
+    source = prepare().payload
 
     for index in range(4):
         assert (
@@ -94,7 +107,7 @@ def test_two_internal_variables_create_four_parallel_completions() -> None:
 
 
 def test_internal_assignments_are_structural_constants() -> None:
-    source = prepare().verilog_source
+    source = prepare().payload
 
     assert (
         "assign completion_0_x1 = 1'b0;"
@@ -115,7 +128,7 @@ def test_internal_assignments_are_structural_constants() -> None:
 
 
 def test_constraints_are_emitted_as_xor_logic() -> None:
-    source = prepare().verilog_source
+    source = prepare().payload
 
     assert (
         "assign completion_0_parity_0 = "
@@ -131,7 +144,7 @@ def test_constraints_are_emitted_as_xor_logic() -> None:
 
 
 def test_result_is_existential_or_of_completions() -> None:
-    source = prepare().verilog_source
+    source = prepare().payload
 
     assert (
         "assign result = "
@@ -142,7 +155,7 @@ def test_result_is_existential_or_of_completions() -> None:
 
 
 def test_preparation_does_not_embed_expected_answer() -> None:
-    source = prepare().verilog_source.lower()
+    source = prepare().payload.lower()
 
     assert "expected_continuation" not in source
     assert "semantic result" not in source
@@ -171,15 +184,15 @@ def test_boundary_assignment_changes_only_prepared_input_constants() -> None:
         }
     )
 
-    assert first.verilog_source != second.verilog_source
+    assert first.payload != second.payload
 
     assert (
         "assign x0 = 1'b0;"
-        in first.verilog_source
+        in first.payload
     )
     assert (
         "assign x0 = 1'b1;"
-        in second.verilog_source
+        in second.payload
     )
 
 

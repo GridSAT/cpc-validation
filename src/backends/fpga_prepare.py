@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from itertools import product
 from typing import Mapping
 
 from src.backend import ExecutionArtifact
+from src.prepared_execution import PreparedExecution
 from src.ccir import CCIRProgram
 from src.ccir_parity import (
     CCIRParityPayload,
@@ -12,29 +12,11 @@ from src.ccir_parity import (
 )
 
 
-@dataclass(frozen=True)
-class FPGAPreparedExecution:
-    """
-    Deterministic Verilog-2001 realization of an FPGA ExecutionArtifact.
-
-    Internal Boolean completions are represented structurally as parallel
-    combinational branches. Preparation does not evaluate continuation
-    semantics and does not receive an expected result.
-    """
-
-    backend_id: str
-    backend_version: str
-    execution_engine: str
-    module_name: str
-    boundary_values: tuple[tuple[int, int], ...]
-    verilog_source: str
-
-
 def prepare_fpga_execution(
     program: CCIRProgram,
     artifact: ExecutionArtifact,
     boundary_values: Mapping[int, int],
-) -> FPGAPreparedExecution:
+) -> PreparedExecution:
     """
     Prepare a hardware-oriented FPGA execution as deterministic Verilog-2001.
 
@@ -234,22 +216,56 @@ def prepare_fpga_execution(
     lines.extend(
         [
             "",
+            "  initial begin",
+            "    #1;",
+            '    $display("CPC_RESULT=%b", result);',
+            "    $finish;",
+            "  end",
+            "",
             "endmodule",
             "",
         ]
     )
 
-    return FPGAPreparedExecution(
+    return PreparedExecution(
         backend_id="fpga",
         backend_version="1",
-        execution_engine="verilog-2001",
-        module_name="cpc_fpga_execution",
-        boundary_values=tuple(
-            sorted(
-                normalized_boundary.items()
-            )
+        payload="\n".join(lines),
+        interface=(
+            (
+                "readout_signal",
+                "result",
+            ),
         ),
-        verilog_source="\n".join(lines),
+        decoder_specification=(
+            (
+                "readout_signal",
+                "result",
+            ),
+        ),
+        provenance=artifact.provenance,
+        metadata=(
+            (
+                "boundary_values",
+                tuple(
+                    sorted(
+                        normalized_boundary.items()
+                    )
+                ),
+            ),
+            (
+                "execution_engine",
+                "verilog-2001",
+            ),
+            (
+                "module_name",
+                "cpc_fpga_execution",
+            ),
+            (
+                "preparation_id",
+                "fpga.verilog.v1",
+            ),
+        ),
     )
 
 
