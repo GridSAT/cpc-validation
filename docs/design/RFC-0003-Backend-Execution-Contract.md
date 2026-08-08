@@ -535,10 +535,92 @@ artifact structure.
 Those quantities MAY differ and SHALL be reported separately when required by
 the applicable validation profile.
 
-## 11. Remaining Sections
+## 11. Restricted Interface Principle
 
-1. Restricted Interface Principle
+Semantic correctness SHALL be established exclusively through the admitted
+execution interface defined by `I_X`.
 
-2. RC Reference Backend
+The validator SHALL observe only the prescribed readout channel and SHALL apply
+only the fixed decoder associated with that interface.
 
-3. Acceptance Criteria
+The validation question is therefore:
+
+    Does the prescribed interface decode to the independently defined
+    semantic result?
+
+It is not:
+
+    Can the semantic result be reconstructed from arbitrary internal backend
+    state?
+
+### 11.1 Admitted Observable
+
+For each execution artifact, `I_X` SHALL identify the observable or finite set
+of observables that constitute the admitted semantic readout channel.
+
+The validator SHALL NOT inspect additional internal state for the purpose of
+recovering or improving the semantic result.
+
+### 11.2 Fixed Decoder
+
+The decoder SHALL be selected independently of the semantic answer of the
+particular instance or interface condition being validated.
+
+A decoder MAY depend on:
+
+- the backend type;
+- the admitted interface specification;
+- globally fixed calibration data; and
+- globally fixed decoding rules.
+
+The decoder SHALL NOT depend on:
+
+- `Eval(X)`;
+- satisfying assignments;
+- completion information;
+- expected outputs; or
+- hidden backend state outside the admitted interface.
+
+### 11.3 No Post-Hoc State Search
+
+Validation SHALL NOT search internal trajectories, hidden node values,
+auxiliary variables, simulator state, or other non-interface information for
+a representation of the semantic answer.
+
+The existence of answer-correlated information somewhere inside the execution
+artifact is insufficient to establish semantic correctness.
+
+Only the prescribed decoded interface result `d_X` is admissible for semantic
+comparison.
+
+### 11.4 Interface Stability
+
+For one declared backend configuration and validation profile, the admitted
+readout interface and decoder SHALL remain unchanged across the admitted
+instance family unless the change is adopted as a new globally fixed backend
+rule.
+
+Instance-specific interface selection or decoder tuning SHALL NOT be used to
+obtain successful semantic validation.
+
+### 11.5 Separation from Diagnostic Observation
+
+A backend MAY expose additional internal observables for engineering,
+debugging, physical analysis, or resource measurement.
+
+Such diagnostic observables SHALL be explicitly distinguished from the
+semantic interface and SHALL NOT participate in the semantic correctness
+decision.
+
+The restricted interface principle therefore preserves a strict separation
+between:
+
+- semantic readout;
+- internal diagnostics; and
+- independent reference evaluation.
+
+## 12. Remaining Sections
+
+1. RC Reference Backend
+
+2. Acceptance Criteria
