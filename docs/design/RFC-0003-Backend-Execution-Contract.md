@@ -149,8 +149,22 @@ configuration, serialization version, or calibration identifier.
 
     Pi_X : ArtifactElement -> CCIROrigin union BackendRule
 
-Every generated artifact element SHALL be traceable to either admitted CCIR
-data or a globally fixed backend rule.
+`CCIROrigin` SHALL identify machine-resolvable admitted CCIR data sufficient to
+recover the structural compiler input responsible for the generated element.
+
+`BackendRule` SHALL identify a machine-resolvable globally fixed backend rule
+registered in `Theta_backend`.
+
+When an artifact element is produced by applying a backend rule to admitted
+CCIR data, its provenance SHALL permit an auditor to recover both the relevant
+CCIR origin and the applied backend rule through the recorded provenance
+structure.
+
+A generic or opaque provenance label such as `generated_by_compiler` SHALL NOT
+satisfy this requirement.
+
+Every generated artifact element SHALL be traceable to admitted CCIR data, a
+globally fixed backend rule, or both as required by the generation step.
 
 No generated artifact element SHALL lack provenance.
 
@@ -246,11 +260,19 @@ This prohibition includes, but is not limited to:
 - precomputed truth tables; and
 - any surrogate carrying equivalent semantic information.
 
-Changing only the independently computed semantic answer SHALL NOT alter the
-generated execution artifact.
+Changing, corrupting, substituting, withholding, or otherwise modifying only
+the externally supplied output of the independent reference evaluator SHALL
+NOT alter the generated execution artifact.
 
 Changing only the independent validation pipeline SHALL NOT alter the generated
 execution artifact.
+
+A conforming validation suite SHOULD include negative-control tests in which
+external reference outputs are deliberately altered or withheld while
+compilation is repeated from the same `C_X` and `Theta_backend`.
+
+The resulting execution artifacts SHALL remain equivalent under the declared
+artifact-equivalence rules.
 
 Answer independence is therefore a property of backend compilation itself and
 not merely of the validation procedure.
@@ -732,11 +754,13 @@ dependency graph and SHALL be used only for post-execution semantic validation.
 The RC validation suite SHALL provide machine-checkable checks establishing
 that:
 
-- every generated artifact element has admissible provenance;
+- every generated artifact element has admissible, machine-resolvable
+  provenance;
 - topology is reproducible from CCIR and `Theta_RC`;
 - component parameters are reproducible from CCIR and `Theta_RC`;
 - no oracle-derived artifact fields are present;
-- external reference answers do not influence compilation; and
+- altered, substituted, or withheld external reference outputs do not
+  influence compilation; and
 - the prescribed interface alone determines the decoded semantic result.
 
 ## 13. Acceptance Criteria
