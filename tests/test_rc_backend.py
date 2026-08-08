@@ -2,269 +2,221 @@ from __future__ import annotations
 
 import pytest
 
-from src.backends.rc import (
-    compile_ir_to_rc,
-    parity_instance_from_ir,
+from src.backends.rc_ccir import (
+    RCBackend,
+    RC_SPECIFICATION,
 )
-from src.compiler import (
-    DEFAULT_XOR_INSTANCE,
-    compile_parity_instance,
+from src.ccir import (
+    CCIRConstraint,
+    CCIRProgram,
 )
-from src.ir_compiler import (
-    compile_parity_instance_to_ir,
+from src.ccir_clause import (
+    CCIRClausePayload,
+    CCIRLiteral,
+)
+from src.ccir_parity import (
+    CCIRParityPayload,
+)
+from src.compile_backend import (
+    compile_backend,
+)
+from src.backend import (
+    UnsupportedBackendCapabilityError,
 )
 
 
-@pytest.mark.parametrize(
-    ("x0", "x3"),
-    [
-        (0, 0),
-        (0, 1),
-        (1, 0),
-        (1, 1),
-    ],
-)
-def test_rc_backend_is_byte_identical_to_existing_compiler(
-    x0: int,
-    x3: int,
-) -> None:
-    boundary_values = {
-        0: x0,
-        3: x3,
+def parity_program() -> CCIRProgram:
+    return CCIRProgram(
+        name="rc-parity",
+        variable_count=4,
+        boundary_variables=(0, 3),
+        constraints=(
+            CCIRConstraint(
+                family="parity",
+                payload=CCIRParityPayload(
+                    variables=(0, 1, 2),
+                    parity=0,
+                ),
+            ),
+            CCIRConstraint(
+                family="parity",
+                payload=CCIRParityPayload(
+                    variables=(1, 2, 3),
+                    parity=1,
+                ),
+            ),
+        ),
+    )
+
+
+def test_rc_backend_declares_parity_capability() -> None:
+    backend = RCBackend()
+
+    assert backend.capabilities.supports_constraint_family(
+        "parity"
+    )
+
+    assert not backend.capabilities.supports_constraint_family(
+        "clause"
+    )
+
+
+def test_rc_backend_compiles_directly_from_ccir() -> None:
+    program = parity_program()
+
+    artifact = compile_backend(
+        program,
+        RCBackend(),
+    )
+
+    metadata = dict(
+        artifact.metadata
+    )
+
+    assert metadata["backend_id"] == "rc"
+    assert metadata["program_name"] == "rc-parity"
+    assert metadata["constraint_count"] == 2
+    assert metadata["candidate_count"] == 4
+
+
+def test_rc_backend_exposes_boundary_interface_without_values() -> None:
+    artifact = compile_backend(
+        parity_program(),
+        RCBackend(),
+    )
+
+    interface = dict(
+        artifact.interface
+    )
+
+    assert interface["boundary_variables"] == (
+        0,
+        3,
+    )
+
+    assert "boundary_assignment" not in interface
+
+
+def test_rc_backend_topology_is_constraint_derived() -> None:
+    artifact = compile_backend(
+        parity_program(),
+        RCBackend(),
+    )
+
+    element_ids = tuple(
+        element_id
+        for element_id, _ in artifact.topology
+    )
+
+    assert "node:x0" in element_ids
+    assert "node:x1" in element_ids
+    assert "node:x2" in element_ids
+    assert "node:x3" in element_ids
+
+    assert "candidate:0" in element_ids
+    assert "candidate:1" in element_ids
+    assert "candidate:2" in element_ids
+    assert "candidate:3" in element_ids
+
+    assert "aggregate:existential" in element_ids
+    assert "readout:vout" in element_ids
+
+
+def test_rc_backend_artifact_has_complete_provenance() -> None:
+    artifact = compile_backend(
+        parity_program(),
+        RCBackend(),
+    )
+
+    topology_ids = {
+        element_id
+        for element_id, _ in artifact.topology
     }
 
-    existing = compile_parity_instance(
-        DEFAULT_XOR_INSTANCE,
-        boundary_values,
-    )
-
-    program = compile_parity_instance_to_ir(
-        DEFAULT_XOR_INSTANCE,
-        boundary_values,
-    )
-
-    backend = compile_ir_to_rc(
-        program
-    )
-
-    assert backend.netlist == existing.netlist
-    assert (
-        backend.netlist.encode("utf-8")
-        == existing.netlist.encode("utf-8")
-    )
-    assert backend.statistics == existing.statistics
-    assert backend.netlist_bytes == len(
-        existing.netlist.encode("utf-8")
-    )
-
-
-@pytest.mark.parametrize(
-    (
-        "supply_voltage",
-        "resistance_kohm",
-        "capacitance_uf",
-        "threshold_voltage",
-        "end_time_ms",
-    ),
-    [
-        (
-            5.0,
-            10.0,
-            1.0,
-            2.5,
-            50.0,
-        ),
-        (
-            4.2,
-            8.5,
-            0.75,
-            2.0,
-            70.0,
-        ),
-        (
-            5.5,
-            17.0,
-            1.625,
-            3.0,
-            125.0,
-        ),
-    ],
-)
-def test_rc_backend_preserves_physical_parameters(
-    supply_voltage: float,
-    resistance_kohm: float,
-    capacitance_uf: float,
-    threshold_voltage: float,
-    end_time_ms: float,
-) -> None:
-    boundary_values = {
-        0: 0,
-        3: 1,
+    provenance_ids = {
+        element_id
+        for element_id, _ in artifact.provenance
     }
 
-    existing = compile_parity_instance(
-        DEFAULT_XOR_INSTANCE,
-        boundary_values,
-        supply_voltage=supply_voltage,
-        resistance_kohm=resistance_kohm,
-        capacitance_uf=capacitance_uf,
-        end_time_ms=end_time_ms,
+    assert provenance_ids == topology_ids
+
+
+def test_rc_backend_uses_fixed_theta_rc() -> None:
+    artifact = compile_backend(
+        parity_program(),
+        RCBackend(),
     )
 
-    program = compile_parity_instance_to_ir(
-        DEFAULT_XOR_INSTANCE,
-        boundary_values,
-        supply_voltage=supply_voltage,
-        resistance_kohm=resistance_kohm,
-        capacitance_uf=capacitance_uf,
-        threshold_voltage=threshold_voltage,
-        end_time_ms=end_time_ms,
-    )
-
-    backend = compile_ir_to_rc(
-        program
-    )
-
-    assert backend.netlist == existing.netlist
-    assert backend.statistics == existing.statistics
-
-    # The semantic threshold is intentionally retained in the IR interface.
-    # It does not alter the physical netlist emitted by the RC backend.
-    assert (
-        program.interface.threshold_voltage
-        == threshold_voltage
+    assert dict(
+        artifact.parameters
+    ) == dict(
+        RC_SPECIFICATION.fixed_parameters
     )
 
 
-def test_rc_backend_reconstructs_source_instance() -> None:
-    program = compile_parity_instance_to_ir(
-        DEFAULT_XOR_INSTANCE,
-        {
-            0: 1,
-            3: 0,
-        },
+def test_rc_backend_rejects_clause_ccir() -> None:
+    program = CCIRProgram(
+        name="clause",
+        variable_count=1,
+        boundary_variables=(),
+        constraints=(
+            CCIRConstraint(
+                family="clause",
+                payload=CCIRClausePayload(
+                    literals=(
+                        CCIRLiteral(
+                            variable=0,
+                        ),
+                    ),
+                ),
+            ),
+        ),
     )
 
-    reconstructed = parity_instance_from_ir(
-        program
-    )
-
-    assert reconstructed == DEFAULT_XOR_INSTANCE
-
-
-def test_backend_result_preserves_program_name() -> None:
-    program = compile_parity_instance_to_ir(
-        DEFAULT_XOR_INSTANCE,
-        {
-            0: 0,
-            3: 1,
-        },
-        name="named-ir-program",
-    )
-
-    result = compile_ir_to_rc(
-        program
-    )
-
-    assert result.program_name == "named-ir-program"
+    with pytest.raises(
+        UnsupportedBackendCapabilityError,
+        match="unsupported CCIR constraint families: clause",
+    ):
+        compile_backend(
+            program,
+            RCBackend(),
+        )
 
 
-def test_backend_statistics_match_ir_structure() -> None:
-    program = compile_parity_instance_to_ir(
-        DEFAULT_XOR_INSTANCE,
-        {
-            0: 0,
-            3: 1,
-        },
-    )
-
-    result = compile_ir_to_rc(
-        program
-    )
-
-    assert result.statistics.constraint_count == (
-        len(program.constraints)
-    )
-
-    assert result.statistics.variable_count == (
-        len(program.variables)
-    )
-
-    assert (
-        result.statistics.boundary_variable_count
-        == len(program.boundary_variables)
-    )
-
-    assert (
-        result.statistics.internal_variable_count
-        == len(program.internal_variables)
-    )
-
-    assert result.statistics.candidate_count == (
-        program.candidate_count
-    )
-
-    assert (
-        result.statistics.behavioral_source_count
-        == program.behavioral_source_count
-    )
-
-
-def test_rc_backend_does_not_mutate_ir() -> None:
-    program = compile_parity_instance_to_ir(
-        DEFAULT_XOR_INSTANCE,
-        {
-            0: 0,
-            3: 1,
-        },
-    )
-
-    before = program.to_json()
-
-    compile_ir_to_rc(
-        program
-    )
-
-    after = program.to_json()
-
-    assert after == before
-
-
-def test_backend_output_contains_no_reference_answer_comment() -> None:
-    program = compile_parity_instance_to_ir(
-        DEFAULT_XOR_INSTANCE,
-        {
-            0: 0,
-            3: 1,
-        },
-    )
-
-    result = compile_ir_to_rc(
-        program
-    )
-
-    forbidden_terms = (
-        "expected=",
-        "continuation_value",
-        "completion_count",
-        "satisfying_assignments",
-        "decoded=",
-    )
-
-    for term in forbidden_terms:
-        assert term not in result.netlist
-
-
-def test_rc_backend_does_not_call_public_compiler_entrypoint(
+def test_rc_backend_does_not_call_legacy_ir_compiler(
     monkeypatch,
 ) -> None:
-    import src.compiler
-    from src.backends.rc import compile_ir_to_rc
-    from src.ir_compiler import compile_parity_instance_to_ir
+    import src.ir_compiler
 
     def fail_if_called(*args, **kwargs):
         raise AssertionError(
-            "compile_parity_instance must not be called by the RC backend"
+            "legacy IR compiler must not participate "
+            "in native CCIR RC compilation"
+        )
+
+    monkeypatch.setattr(
+        src.ir_compiler,
+        "compile_parity_instance_to_ir",
+        fail_if_called,
+    )
+
+    artifact = compile_backend(
+        parity_program(),
+        RCBackend(),
+    )
+
+    assert artifact.topology
+
+
+def test_rc_backend_does_not_call_public_parity_compiler(
+    monkeypatch,
+) -> None:
+    import src.compiler
+
+    def fail_if_called(*args, **kwargs):
+        raise AssertionError(
+            "public parity compiler must not participate "
+            "in native CCIR RC compilation"
         )
 
     monkeypatch.setattr(
@@ -273,15 +225,9 @@ def test_rc_backend_does_not_call_public_compiler_entrypoint(
         fail_if_called,
     )
 
-    program = compile_parity_instance_to_ir(
-        DEFAULT_XOR_INSTANCE,
-        {
-            0: 0,
-            3: 1,
-        },
+    artifact = compile_backend(
+        parity_program(),
+        RCBackend(),
     )
 
-    result = compile_ir_to_rc(program)
-
-    assert result.netlist
-    assert result.statistics.candidate_count == 4
+    assert artifact.topology
