@@ -176,6 +176,98 @@ class BackendCapabilities:
         return family in self.constraint_families
 
 
+@dataclass(frozen=True, order=True)
+class BackendRuleDefinition:
+    """
+    One globally fixed rule admitted by Theta_backend.
+    """
+
+    rule_id: str
+
+    def __post_init__(self) -> None:
+        if not self.rule_id:
+            raise ValueError(
+                "backend rule identifier must be non-empty"
+            )
+
+
+@dataclass(frozen=True)
+class BackendSpecification:
+    """
+    Machine-visible representation of Theta_backend.
+
+    Every quantity capable of influencing compilation outside CCIR must
+    be fixed here before compilation begins.
+    """
+
+    backend_id: str
+    backend_version: str
+    capabilities: BackendCapabilities
+    rules: tuple[BackendRuleDefinition, ...] = ()
+    fixed_parameters: tuple[
+        tuple[str, object],
+        ...,
+    ] = ()
+
+    def __post_init__(self) -> None:
+        if not self.backend_id:
+            raise ValueError(
+                "backend identifier must be non-empty"
+            )
+
+        if not self.backend_version:
+            raise ValueError(
+                "backend version must be non-empty"
+            )
+
+        rule_ids = tuple(
+            rule.rule_id
+            for rule in self.rules
+        )
+
+        if len(set(rule_ids)) != len(rule_ids):
+            raise ValueError(
+                "backend rule identifiers must be unique"
+            )
+
+        parameter_names = tuple(
+            name
+            for name, value in self.fixed_parameters
+        )
+
+        if any(
+            not isinstance(name, str) or not name
+            for name in parameter_names
+        ):
+            raise ValueError(
+                "backend parameter names must be non-empty strings"
+            )
+
+        if len(set(parameter_names)) != len(parameter_names):
+            raise ValueError(
+                "backend parameter names must be unique"
+            )
+
+    def has_rule(
+        self,
+        rule_id: str,
+    ) -> bool:
+        return any(
+            rule.rule_id == rule_id
+            for rule in self.rules
+        )
+
+    def get_fixed_parameter(
+        self,
+        name: str,
+    ) -> object:
+        for parameter_name, value in self.fixed_parameters:
+            if parameter_name == name:
+                return value
+
+        raise KeyError(name)
+
+
 class UnsupportedBackendCapabilityError(
     ValueError
 ):

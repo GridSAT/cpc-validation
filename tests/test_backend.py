@@ -618,3 +618,201 @@ def test_validate_artifact_provenance_rejects_empty_identifier() -> None:
             artifact,
             ("",),
         )
+
+
+def test_backend_specification_represents_theta_backend() -> None:
+    from src.backend import (
+        BackendCapabilities,
+        BackendRuleDefinition,
+        BackendSpecification,
+    )
+
+    capabilities = BackendCapabilities(
+        constraint_families=frozenset(
+            {
+                "parity",
+            }
+        ),
+    )
+
+    rule = BackendRuleDefinition(
+        rule_id="rc.parity.constraint",
+    )
+
+    specification = BackendSpecification(
+        backend_id="rc",
+        backend_version="1",
+        capabilities=capabilities,
+        rules=(
+            rule,
+        ),
+        fixed_parameters=(
+            ("resistance_ohm", 1000.0),
+            ("capacitance_f", 1e-6),
+        ),
+    )
+
+    assert specification.backend_id == "rc"
+    assert specification.backend_version == "1"
+    assert specification.capabilities == capabilities
+    assert specification.rules == (
+        rule,
+    )
+
+    assert specification.has_rule(
+        "rc.parity.constraint"
+    )
+
+    assert not specification.has_rule(
+        "rc.unknown"
+    )
+
+    assert specification.get_fixed_parameter(
+        "resistance_ohm"
+    ) == 1000.0
+
+
+def test_backend_rule_definition_rejects_empty_identifier() -> None:
+    from src.backend import BackendRuleDefinition
+
+    with pytest.raises(
+        ValueError,
+        match="backend rule identifier must be non-empty",
+    ):
+        BackendRuleDefinition(
+            rule_id="",
+        )
+
+
+def test_backend_specification_rejects_empty_backend_id() -> None:
+    from src.backend import (
+        BackendCapabilities,
+        BackendSpecification,
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="backend identifier must be non-empty",
+    ):
+        BackendSpecification(
+            backend_id="",
+            backend_version="1",
+            capabilities=BackendCapabilities(
+                constraint_families=frozenset()
+            ),
+        )
+
+
+def test_backend_specification_rejects_empty_version() -> None:
+    from src.backend import (
+        BackendCapabilities,
+        BackendSpecification,
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="backend version must be non-empty",
+    ):
+        BackendSpecification(
+            backend_id="rc",
+            backend_version="",
+            capabilities=BackendCapabilities(
+                constraint_families=frozenset()
+            ),
+        )
+
+
+def test_backend_specification_rejects_duplicate_rules() -> None:
+    from src.backend import (
+        BackendCapabilities,
+        BackendRuleDefinition,
+        BackendSpecification,
+    )
+
+    rule = BackendRuleDefinition(
+        rule_id="rc.rule",
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="backend rule identifiers must be unique",
+    ):
+        BackendSpecification(
+            backend_id="rc",
+            backend_version="1",
+            capabilities=BackendCapabilities(
+                constraint_families=frozenset()
+            ),
+            rules=(
+                rule,
+                rule,
+            ),
+        )
+
+
+def test_backend_specification_rejects_duplicate_parameters() -> None:
+    from src.backend import (
+        BackendCapabilities,
+        BackendSpecification,
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="backend parameter names must be unique",
+    ):
+        BackendSpecification(
+            backend_id="rc",
+            backend_version="1",
+            capabilities=BackendCapabilities(
+                constraint_families=frozenset()
+            ),
+            fixed_parameters=(
+                ("r", 1000.0),
+                ("r", 2000.0),
+            ),
+        )
+
+
+def test_backend_specification_rejects_empty_parameter_name() -> None:
+    from src.backend import (
+        BackendCapabilities,
+        BackendSpecification,
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="backend parameter names must be non-empty strings",
+    ):
+        BackendSpecification(
+            backend_id="rc",
+            backend_version="1",
+            capabilities=BackendCapabilities(
+                constraint_families=frozenset()
+            ),
+            fixed_parameters=(
+                ("", 1000.0),
+            ),
+        )
+
+
+def test_backend_specification_missing_parameter_raises_key_error() -> None:
+    from src.backend import (
+        BackendCapabilities,
+        BackendSpecification,
+    )
+
+    specification = BackendSpecification(
+        backend_id="rc",
+        backend_version="1",
+        capabilities=BackendCapabilities(
+            constraint_families=frozenset()
+        ),
+    )
+
+    with pytest.raises(
+        KeyError,
+        match="missing",
+    ):
+        specification.get_fixed_parameter(
+            "missing"
+        )
