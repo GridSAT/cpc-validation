@@ -1,36 +1,66 @@
-<svg xmlns="http://www.w3.org/2000/svg"
-     width="1400"
-     height="620"
-     viewBox="0 0 1400 620">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="1400"
+    height="760"
+    viewBox="0 0 1400 760"
+    role="img"
+    aria-labelledby="title desc">
+
+  <title id="title">
+    CPC Canonical Compilation, Execution, and Validation Architecture
+  </title>
+
+  <desc id="desc">
+    Backend-independent CPC pipeline from source representation through CCIR,
+    backend compilation, ExecutionArtifact, PreparedExecution,
+    ObservableExecution, fixed decoding, and independent semantic validation.
+  </desc>
 
   <defs>
+    <marker
+        id="arrow"
+        markerWidth="10"
+        markerHeight="10"
+        refX="9"
+        refY="3"
+        orient="auto"
+        markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#222"/>
+    </marker>
+
+    <marker
+        id="arrow-dashed"
+        markerWidth="10"
+        markerHeight="10"
+        refX="9"
+        refY="3"
+        orient="auto"
+        markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#555"/>
+    </marker>
+
     <style>
-      .box {
-        fill: #ffffff;
-        stroke: #111111;
-        stroke-width: 2;
-        rx: 10;
-        ry: 10;
+      .title {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 25px;
+        font-weight: 700;
+        fill: #111;
+        text-anchor: middle;
       }
 
-      .box-soft {
-        fill: #f7f7f7;
-        stroke: #111111;
-        stroke-width: 2;
-        rx: 10;
-        ry: 10;
-      }
-
-      .decision {
-        fill: #ffffff;
-        stroke: #111111;
-        stroke-width: 2;
+      .subtitle {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 15px;
+        fill: #444;
+        text-anchor: middle;
       }
 
       .label {
         font-family: Arial, Helvetica, sans-serif;
-        font-size: 18px;
-        fill: #111111;
+        font-size: 17px;
+        font-weight: 700;
+        fill: #111;
         text-anchor: middle;
         dominant-baseline: middle;
       }
@@ -38,227 +68,232 @@
       .label-small {
         font-family: Arial, Helvetica, sans-serif;
         font-size: 15px;
-        fill: #111111;
+        font-weight: 600;
+        fill: #111;
         text-anchor: middle;
         dominant-baseline: middle;
       }
 
-      .title {
+      .annotation {
         font-family: Arial, Helvetica, sans-serif;
-        font-size: 28px;
-        font-weight: bold;
-        fill: #111111;
+        font-size: 14px;
+        fill: #444;
         text-anchor: middle;
       }
 
-      .subtitle {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 16px;
-        fill: #444444;
-        text-anchor: middle;
+      .box {
+        fill: #fff;
+        stroke: #222;
+        stroke-width: 1.7;
+        rx: 7;
+        ry: 7;
+      }
+
+      .artifact {
+        fill: #f7f7f7;
+        stroke: #222;
+        stroke-width: 1.9;
+        rx: 7;
+        ry: 7;
+      }
+
+      .validation {
+        fill: #fafafa;
+        stroke: #555;
+        stroke-width: 1.7;
+        rx: 7;
+        ry: 7;
+      }
+
+      .result {
+        fill: #fff;
+        stroke: #111;
+        stroke-width: 2;
+        rx: 7;
+        ry: 7;
       }
 
       .arrow {
-        stroke: #111111;
-        stroke-width: 2;
+        stroke: #222;
+        stroke-width: 1.8;
         fill: none;
-        marker-end: url(#arrowhead);
+        marker-end: url(#arrow);
       }
 
       .arrow-dashed {
-        stroke: #111111;
-        stroke-width: 2;
-        stroke-dasharray: 8 6;
+        stroke: #555;
+        stroke-width: 1.6;
+        stroke-dasharray: 7 6;
         fill: none;
-        marker-end: url(#arrowhead);
+        marker-end: url(#arrow-dashed);
       }
 
-      .separator {
-        stroke: #777777;
+      .boundary {
+        stroke: #777;
         stroke-width: 1.5;
-        stroke-dasharray: 6 6;
+        stroke-dasharray: 8 6;
       }
     </style>
-
-    <marker id="arrowhead"
-            markerWidth="10"
-            markerHeight="7"
-            refX="9"
-            refY="3.5"
-            orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7"
-               fill="#111111"/>
-    </marker>
   </defs>
 
-  <text x="700" y="42" class="title">
-    CPC Canonical Compilation and Validation Architecture
+  <!-- ======================================================= -->
+  <!-- Title                                                    -->
+  <!-- ======================================================= -->
+
+  <text x="700" y="40" class="title">
+    CPC Canonical Compilation, Execution, and Validation Architecture
   </text>
 
-  <text x="700" y="70" class="subtitle">
-    RFC-0003 execution-backend contract with independent semantic validation
+  <text x="700" y="67" class="subtitle">
+    RFC-0003 backend compilation contract + RFC-0004 physical execution lifecycle
   </text>
 
-  <!-- ========================================================= -->
-  <!-- Canonical execution path                                  -->
-  <!-- ========================================================= -->
+  <!-- ======================================================= -->
+  <!-- Stage 1: canonical representation and compilation        -->
+  <!-- ======================================================= -->
 
   <text x="700" y="105" class="subtitle">
-    Canonical execution path
+    Canonical representation and backend compilation
   </text>
 
-  <rect class="box" x="35" y="135" width="145" height="70"/>
-  <text x="107.5" y="163" class="label-small">
-    Source
-  </text>
-  <text x="107.5" y="184" class="label-small">
-    Representation
-  </text>
+  <rect class="box" x="55" y="130" width="170" height="68"/>
+  <text x="140" y="155" class="label-small">Source</text>
+  <text x="140" y="177" class="label-small">Representation</text>
 
-  <line class="arrow" x1="180" y1="170" x2="220" y2="170"/>
+  <line class="arrow" x1="225" y1="164" x2="280" y2="164"/>
 
-  <rect class="box" x="220" y="135" width="145" height="70"/>
-  <text x="292.5" y="163" class="label-small">
-    Canonical
-  </text>
-  <text x="292.5" y="184" class="label-small">
-    Lowering
-  </text>
+  <rect class="box" x="280" y="130" width="180" height="68"/>
+  <text x="370" y="155" class="label-small">Canonical</text>
+  <text x="370" y="177" class="label-small">Lowering</text>
 
-  <line class="arrow" x1="365" y1="170" x2="405" y2="170"/>
+  <line class="arrow" x1="460" y1="164" x2="515" y2="164"/>
 
-  <rect class="box-soft" x="405" y="135" width="120" height="70"/>
-  <text x="465" y="170" class="label">
-    CCIR
-  </text>
+  <rect class="box" x="515" y="130" width="130" height="68"/>
+  <text x="580" y="164" class="label">CCIR</text>
 
-  <line class="arrow" x1="525" y1="170" x2="565" y2="170"/>
+  <line class="arrow" x1="645" y1="164" x2="700" y2="164"/>
 
-  <rect class="box" x="565" y="135" width="160" height="70"/>
-  <text x="645" y="170" class="label-small">
-    Compile_backend
+  <rect class="box" x="700" y="130" width="200" height="68"/>
+  <text x="800" y="164" class="label-small">Compile_backend</text>
+
+  <line class="arrow" x1="900" y1="164" x2="955" y2="164"/>
+
+  <rect class="artifact" x="955" y="120" width="390" height="88"/>
+  <text x="1150" y="148" class="label">ExecutionArtifact</text>
+  <text x="1150" y="176" class="label-small">
+    Topology · Parameters · Interface · Metadata · Provenance
   </text>
 
-  <line class="arrow" x1="725" y1="170" x2="765" y2="170"/>
+  <!-- ======================================================= -->
+  <!-- Stage 2: physical execution lifecycle                    -->
+  <!-- ======================================================= -->
 
-  <rect class="box-soft" x="765" y="135" width="165" height="70"/>
-  <text x="847.5" y="159" class="label-small">
-    Execution
-  </text>
-  <text x="847.5" y="182" class="label-small">
-    Artifact
-  </text>
+  <line class="arrow" x1="1150" y1="208" x2="1150" y2="250"/>
 
-  <line class="arrow" x1="930" y1="170" x2="970" y2="170"/>
-
-  <rect class="box" x="970" y="135" width="120" height="70"/>
-  <text x="1030" y="170" class="label-small">
-    Preparation
+  <text x="700" y="255" class="subtitle">
+    RFC-0004 physical execution lifecycle
   </text>
 
-  <line class="arrow" x1="1090" y1="170" x2="1130" y2="170"/>
+  <rect class="box" x="75" y="285" width="160" height="68"/>
+  <text x="155" y="319" class="label-small">Preparation</text>
 
-  <rect class="box" x="1130" y="135" width="120" height="70"/>
-  <text x="1190" y="170" class="label-small">
-    Execution
+  <line class="arrow" x1="235" y1="319" x2="285" y2="319"/>
+
+  <rect class="artifact" x="285" y="285" width="205" height="68"/>
+  <text x="387.5" y="319" class="label-small">PreparedExecution</text>
+
+  <line class="arrow" x1="490" y1="319" x2="540" y2="319"/>
+
+  <rect class="box" x="540" y="285" width="150" height="68"/>
+  <text x="615" y="319" class="label-small">Execution</text>
+
+  <line class="arrow" x1="690" y1="319" x2="740" y2="319"/>
+
+  <rect class="artifact" x="740" y="285" width="215" height="68"/>
+  <text x="847.5" y="319" class="label-small">ObservableExecution</text>
+
+  <line class="arrow" x1="955" y1="319" x2="1005" y2="319"/>
+
+  <rect class="box" x="1005" y="285" width="160" height="68"/>
+  <text x="1085" y="319" class="label-small">Fixed Decoder</text>
+
+  <line class="arrow" x1="1165" y1="319" x2="1215" y2="319"/>
+
+  <rect class="result" x="1215" y="285" width="150" height="68"/>
+  <text x="1290" y="309" class="label-small">Decoded</text>
+  <text x="1290" y="331" class="label-small">Result d_X</text>
+
+  <!-- ======================================================= -->
+  <!-- Backend boundary                                         -->
+  <!-- ======================================================= -->
+
+  <line class="boundary" x1="55" y1="400" x2="1345" y2="400"/>
+
+  <rect x="560" y="385" width="280" height="28" fill="#fff"/>
+  <text x="700" y="405" class="subtitle">
+    Backend boundary ends
   </text>
 
-  <line class="arrow" x1="1250" y1="170" x2="1290" y2="170"/>
+  <!-- ======================================================= -->
+  <!-- Independent semantic validation                          -->
+  <!-- ======================================================= -->
 
-  <rect class="box" x="1290" y="135" width="80" height="70"/>
-  <text x="1330" y="160" class="label-small">
-    Readout
-  </text>
-  <text x="1330" y="182" class="label-small">
-    + Decoder
+  <text x="700" y="450" class="subtitle">
+    Independent semantic validation
   </text>
 
-  <!-- decoded result d_X -->
-  <line class="arrow" x1="1330" y1="205" x2="1330" y2="270"/>
+  <rect class="validation" x="130" y="485" width="220" height="70"/>
+  <text x="240" y="509" class="label-small">Admitted CCIR</text>
+  <text x="240" y="532" class="label-small">Semantics</text>
 
-  <rect class="box-soft" x="1260" y="270" width="140" height="60"/>
-  <text x="1330" y="300" class="label">
-    d_X
+  <line class="arrow-dashed" x1="350" y1="520" x2="420" y2="520"/>
+
+  <rect class="validation" x="420" y="485" width="250" height="70"/>
+  <text x="545" y="509" class="label-small">Independent Reference</text>
+  <text x="545" y="532" class="label-small">Evaluation</text>
+
+  <line class="arrow-dashed" x1="670" y1="520" x2="735" y2="520"/>
+
+  <rect class="validation" x="735" y="485" width="150" height="70"/>
+  <text x="810" y="509" class="label-small">Reference</text>
+  <text x="810" y="532" class="label-small">Result e_X</text>
+
+  <line class="arrow" x1="885" y1="520" x2="970" y2="520"/>
+
+  <rect class="validation" x="970" y="485" width="175" height="70"/>
+  <text x="1057.5" y="508" class="label-small">Compare</text>
+  <text x="1057.5" y="532" class="label-small">d_X = e_X</text>
+
+  <line class="arrow" x1="1145" y1="520" x2="1210" y2="520"/>
+
+  <rect class="result" x="1210" y="485" width="155" height="70"/>
+  <text x="1287.5" y="509" class="label-small">PASS</text>
+  <text x="1287.5" y="532" class="label-small">/ FAIL</text>
+
+  <!-- decoded result enters comparison only after backend boundary -->
+  <path
+      class="arrow"
+      d="M1290,353 L1290,435 L1057,435 L1057,485"/>
+
+  <!-- ======================================================= -->
+  <!-- Architectural principles                                 -->
+  <!-- ======================================================= -->
+
+  <text x="700" y="625" class="annotation">
+    Execution depends only on PreparedExecution; semantic validation uses only admitted observations and the fixed decoder.
   </text>
 
-  <!-- ========================================================= -->
-  <!-- Separation                                                 -->
-  <!-- ========================================================= -->
-
-  <line class="separator" x1="35" y1="365" x2="1365" y2="365"/>
-
-  <text x="700" y="395" class="subtitle">
-    Independent semantic reference path
+  <text x="700" y="653" class="annotation">
+    Machine-checkable provenance remains available from ExecutionArtifact through ObservableExecution.
   </text>
 
-  <!-- ========================================================= -->
-  <!-- Independent evaluator                                      -->
-  <!-- ========================================================= -->
-
-  <rect class="box" x="250" y="425" width="200" height="70"/>
-  <text x="350" y="451" class="label-small">
-    Admitted Instance
-  </text>
-  <text x="350" y="474" class="label-small">
-    / CCIR Semantics
+  <text x="700" y="681" class="annotation">
+    Reference evaluation remains outside the backend dependency graph:
+    D(C_X) = { C_X, Theta_backend }.
   </text>
 
-  <line class="arrow-dashed" x1="450" y1="460" x2="520" y2="460"/>
-
-  <rect class="box" x="520" y="425" width="240" height="70"/>
-  <text x="640" y="451" class="label-small">
-    Independent Reference
-  </text>
-  <text x="640" y="474" class="label-small">
-    Evaluation
-  </text>
-
-  <line class="arrow-dashed" x1="760" y1="460" x2="830" y2="460"/>
-
-  <rect class="box-soft" x="830" y="425" width="140" height="70"/>
-  <text x="900" y="460" class="label">
-    e_X
-  </text>
-
-  <!-- ========================================================= -->
-  <!-- Comparison                                                  -->
-  <!-- ========================================================= -->
-
-  <line class="arrow" x1="1330" y1="330" x2="1330" y2="460"/>
-
-  <line class="arrow-dashed" x1="970" y1="460" x2="1110" y2="460"/>
-
-  <polygon class="decision"
-           points="1180,415 1250,460 1180,505 1110,460"/>
-
-  <text x="1180" y="450" class="label-small">
-    Compare
-  </text>
-  <text x="1180" y="472" class="label-small">
-    d_X = e_X
-  </text>
-
-  <line class="arrow" x1="1250" y1="460" x2="1300" y2="460"/>
-
-  <rect class="box-soft" x="1300" y="425" width="80" height="70"/>
-  <text x="1340" y="451" class="label-small">
-    PASS
-  </text>
-  <text x="1340" y="474" class="label-small">
-    / FAIL
-  </text>
-
-  <!-- ========================================================= -->
-  <!-- Principle annotation                                       -->
-  <!-- ========================================================= -->
-
-  <text x="700" y="555" class="subtitle">
-    Reference evaluation is outside the compiler dependency graph:
-    D(C_X) = { C_X, Theta_backend }
-  </text>
-
-  <text x="700" y="583" class="subtitle">
-    No semantic reference path enters Compile_backend.
+  <text x="700" y="709" class="annotation">
+    No independent semantic reference path enters Compile_backend, preparation, execution, or decoding.
   </text>
 
 </svg>
