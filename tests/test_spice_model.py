@@ -86,6 +86,29 @@ def test_ngspice_version_reports_execution_engine(
         lambda *args, **kwargs: Completed(),
     )
 
-    assert spice_model._ngspice_version() == (
-        "ngspice-42 : Circuit level simulation program"
+    assert spice_model._ngspice_version() == "ngspice-42"
+
+
+def test_ngspice_version_ignores_banner_delimiters(
+    monkeypatch,
+) -> None:
+    import src.spice_model as spice_model
+
+    class Completed:
+        stdout = """******
+** ngspice-42 : Circuit level simulation program
+** Compiled with KLU Direct Linear Solver
+******
+"""
+        stderr = ""
+
+    def fake_run(*args, **kwargs):
+        return Completed()
+
+    monkeypatch.setattr(
+        spice_model.subprocess,
+        "run",
+        fake_run,
     )
+
+    assert spice_model._ngspice_version() == "ngspice-42"
