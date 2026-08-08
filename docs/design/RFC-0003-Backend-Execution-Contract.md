@@ -45,26 +45,83 @@ RFC-0003 does not specify
 
 ---
 
-## 3. Sections
+## 3. Backend Contract
 
-1. Backend Contract
+Let `C_X` denote a valid CCIR program representing an admitted constraint
+instance `X`.
 
-2. Execution Artifact
+Every conforming backend SHALL implement a compilation map
 
-3. Compiler Dependency Principle
+<pre>
+Compile_backend : CCIR -> ExecutionArtifact
+</pre>
 
-4. Answer Independence
+The backend contract has exactly one canonical semantic input: `C_X`.
 
-5. Physical Compilation Discipline
+A backend SHALL NOT require source-language objects in addition to CCIR.
 
-6. Compiler Validation
+In particular, backend compilation SHALL NOT depend on:
 
-7. Semantic Validation
+- `ParityInstance`;
+- `CNFInstance`;
+- DIMACS input;
+- benchmark JSON; or
+- any other source-language representation once CCIR has been constructed.
 
-8. Backend Independence
+The result of backend compilation is an execution artifact `A_X`:
 
-9. Restricted Interface Principle
+<pre>
+C_X
+ |
+ v
+Compile_backend
+ |
+ v
+A_X
+</pre>
 
-10. RC Reference Backend
+A conforming backend MAY realize `A_X` using any admitted execution mechanism,
+including:
 
-11. Acceptance Criteria
+- static networks;
+- dynamical systems;
+- digital logic;
+- physical hardware; or
+- simulation artifacts.
+
+The backend contract constrains the information boundary and semantic role of
+compilation. It does not prescribe the internal realization mechanism of a
+backend.
+
+Concrete backend implementations are specializations of the general contract.
+
+For example:
+
+<pre>
+Compile_RC : CCIR -> RCArtifact
+</pre>
+
+A future backend MAY define another artifact type while preserving the same
+canonical CCIR input boundary.
+
+## 4. Remaining Sections
+
+1. Execution Artifact
+
+2. Compiler Dependency Principle
+
+3. Answer Independence
+
+4. Physical Compilation Discipline
+
+5. Compiler Validation
+
+6. Semantic Validation
+
+7. Backend Independence
+
+8. Restricted Interface Principle
+
+9. RC Reference Backend
+
+10. Acceptance Criteria
