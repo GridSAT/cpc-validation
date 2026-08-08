@@ -1016,3 +1016,375 @@ def test_validate_artifact_backend_rules_reports_unknown_rules_sorted() -> None:
             artifact,
             specification,
         )
+
+
+def test_validate_artifact_ccir_origins_accepts_constraint_origin() -> None:
+    from src.backend import validate_artifact_ccir_origins
+    from src.ccir import (
+        CCIRConstraint,
+        CCIRProgram,
+    )
+    from src.ccir_parity import CCIRParityPayload
+
+    program = CCIRProgram(
+        name="ccir-test",
+        variable_count=2,
+        boundary_variables=(0,),
+        constraints=(
+            CCIRConstraint(
+                family="parity",
+                payload=CCIRParityPayload(
+                    variables=(0, 1),
+                    parity=0,
+                ),
+            ),
+        ),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(
+            (
+                "constraint-element",
+                ArtifactProvenance(
+                    ccir_origins=(
+                        CCIROrigin(
+                            kind="constraint",
+                            identifier="0",
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    validate_artifact_ccir_origins(
+        artifact,
+        program,
+    )
+
+
+def test_validate_artifact_ccir_origins_accepts_variable_origin() -> None:
+    from src.backend import validate_artifact_ccir_origins
+
+    program = CCIRProgram(
+        name="ccir-test",
+        variable_count=2,
+        boundary_variables=(0,),
+        constraints=(),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(
+            (
+                "variable-element",
+                ArtifactProvenance(
+                    ccir_origins=(
+                        CCIROrigin(
+                            kind="variable",
+                            identifier="1",
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    validate_artifact_ccir_origins(
+        artifact,
+        program,
+    )
+
+
+def test_validate_artifact_ccir_origins_accepts_boundary_origin() -> None:
+    from src.backend import validate_artifact_ccir_origins
+
+    program = CCIRProgram(
+        name="ccir-test",
+        variable_count=2,
+        boundary_variables=(1,),
+        constraints=(),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(
+            (
+                "boundary-element",
+                ArtifactProvenance(
+                    ccir_origins=(
+                        CCIROrigin(
+                            kind="boundary_variable",
+                            identifier="1",
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    validate_artifact_ccir_origins(
+        artifact,
+        program,
+    )
+
+
+def test_validate_artifact_ccir_origins_accepts_program_origin() -> None:
+    from src.backend import validate_artifact_ccir_origins
+
+    program = CCIRProgram(
+        name="ccir-test",
+        variable_count=0,
+        boundary_variables=(),
+        constraints=(),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(
+            (
+                "program-element",
+                ArtifactProvenance(
+                    ccir_origins=(
+                        CCIROrigin(
+                            kind="program",
+                            identifier="ccir-test",
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    validate_artifact_ccir_origins(
+        artifact,
+        program,
+    )
+
+
+def test_validate_artifact_ccir_origins_rejects_bad_constraint_index() -> None:
+    from src.backend import validate_artifact_ccir_origins
+
+    program = CCIRProgram(
+        name="ccir-test",
+        variable_count=0,
+        boundary_variables=(),
+        constraints=(),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(
+            (
+                "bad",
+                ArtifactProvenance(
+                    ccir_origins=(
+                        CCIROrigin(
+                            kind="constraint",
+                            identifier="999",
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    with pytest.raises(
+        ValueError,
+        match=(
+            "artifact provenance references unresolved "
+            "CCIR origins: constraint:999"
+        ),
+    ):
+        validate_artifact_ccir_origins(
+            artifact,
+            program,
+        )
+
+
+def test_validate_artifact_ccir_origins_rejects_bad_variable() -> None:
+    from src.backend import validate_artifact_ccir_origins
+
+    program = CCIRProgram(
+        name="ccir-test",
+        variable_count=1,
+        boundary_variables=(),
+        constraints=(),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(
+            (
+                "bad",
+                ArtifactProvenance(
+                    ccir_origins=(
+                        CCIROrigin(
+                            kind="variable",
+                            identifier="2",
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    with pytest.raises(
+        ValueError,
+        match=(
+            "artifact provenance references unresolved "
+            "CCIR origins: variable:2"
+        ),
+    ):
+        validate_artifact_ccir_origins(
+            artifact,
+            program,
+        )
+
+
+def test_validate_artifact_ccir_origins_rejects_nonboundary_variable() -> None:
+    from src.backend import validate_artifact_ccir_origins
+
+    program = CCIRProgram(
+        name="ccir-test",
+        variable_count=2,
+        boundary_variables=(0,),
+        constraints=(),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(
+            (
+                "bad",
+                ArtifactProvenance(
+                    ccir_origins=(
+                        CCIROrigin(
+                            kind="boundary_variable",
+                            identifier="1",
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    with pytest.raises(
+        ValueError,
+        match=(
+            "artifact provenance references unresolved "
+            "CCIR origins: boundary_variable:1"
+        ),
+    ):
+        validate_artifact_ccir_origins(
+            artifact,
+            program,
+        )
+
+
+def test_validate_artifact_ccir_origins_rejects_wrong_program_name() -> None:
+    from src.backend import validate_artifact_ccir_origins
+
+    program = CCIRProgram(
+        name="ccir-test",
+        variable_count=0,
+        boundary_variables=(),
+        constraints=(),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(
+            (
+                "bad",
+                ArtifactProvenance(
+                    ccir_origins=(
+                        CCIROrigin(
+                            kind="program",
+                            identifier="other",
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    with pytest.raises(
+        ValueError,
+        match=(
+            "artifact provenance references unresolved "
+            "CCIR origins: program:other"
+        ),
+    ):
+        validate_artifact_ccir_origins(
+            artifact,
+            program,
+        )
+
+
+def test_validate_artifact_ccir_origins_rejects_unknown_kind() -> None:
+    from src.backend import validate_artifact_ccir_origins
+
+    program = CCIRProgram(
+        name="ccir-test",
+        variable_count=0,
+        boundary_variables=(),
+        constraints=(),
+    )
+
+    artifact = ExecutionArtifact(
+        topology=(),
+        parameters=(),
+        interface=(),
+        metadata=(),
+        provenance=(
+            (
+                "bad",
+                ArtifactProvenance(
+                    ccir_origins=(
+                        CCIROrigin(
+                            kind="mystery",
+                            identifier="0",
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    )
+
+    with pytest.raises(
+        ValueError,
+        match=(
+            "artifact provenance references unresolved "
+            "CCIR origins: mystery:0"
+        ),
+    ):
+        validate_artifact_ccir_origins(
+            artifact,
+            program,
+        )

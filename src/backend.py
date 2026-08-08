@@ -81,6 +81,78 @@ class ExecutionArtifact:
     ]
 
 
+def validate_artifact_ccir_origins(
+    artifact: ExecutionArtifact,
+    program: CCIRProgram,
+) -> None:
+    """
+    Verify that every provenance CCIR origin resolves in the supplied program.
+    """
+
+    unresolved: set[str] = set()
+
+    for _, provenance in artifact.provenance:
+        for origin in provenance.ccir_origins:
+            if origin.kind == "constraint":
+                try:
+                    index = int(origin.identifier)
+                except ValueError:
+                    unresolved.add(
+                        f"constraint:{origin.identifier}"
+                    )
+                    continue
+
+                if index < 0 or index >= len(program.constraints):
+                    unresolved.add(
+                        f"constraint:{origin.identifier}"
+                    )
+
+            elif origin.kind == "variable":
+                try:
+                    variable = int(origin.identifier)
+                except ValueError:
+                    unresolved.add(
+                        f"variable:{origin.identifier}"
+                    )
+                    continue
+
+                if variable < 0 or variable >= program.variable_count:
+                    unresolved.add(
+                        f"variable:{origin.identifier}"
+                    )
+
+            elif origin.kind == "boundary_variable":
+                try:
+                    variable = int(origin.identifier)
+                except ValueError:
+                    unresolved.add(
+                        f"boundary_variable:{origin.identifier}"
+                    )
+                    continue
+
+                if variable not in program.boundary_variables:
+                    unresolved.add(
+                        f"boundary_variable:{origin.identifier}"
+                    )
+
+            elif origin.kind == "program":
+                if origin.identifier != program.name:
+                    unresolved.add(
+                        f"program:{origin.identifier}"
+                    )
+
+            else:
+                unresolved.add(
+                    f"{origin.kind}:{origin.identifier}"
+                )
+
+    if unresolved:
+        raise ValueError(
+            "artifact provenance references unresolved CCIR origins: "
+            + ", ".join(sorted(unresolved))
+        )
+
+
 def validate_artifact_backend_rules(
     artifact: ExecutionArtifact,
     specification: BackendSpecification,
