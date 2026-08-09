@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://www.python.org/)
 [![ngspice](https://img.shields.io/badge/ngspice-42%2B-blue.svg)](https://ngspice.sourceforge.io/)
-[![Status](https://img.shields.io/badge/status-RFC--0003%20baseline-orange.svg)](#development-status)
+[![Status](https://img.shields.io/badge/status-RFC--0008%20baseline-brightgreen.svg)](#development-status)
 
 ---
 
@@ -50,12 +50,16 @@ These include
 - machine-checkable provenance;
 - answer-independence requirements;
 - execution-backend validation procedures;
-- semantic validation procedures; and
-- the RC Reference Backend.
+- semantic validation procedures;
+- the RC Reference Backend;
+- the deterministic Digital Backend; and
+- the FPGA Execution Backend.
 
-The current RC Reference Backend serves as the reference implementation of these
-contracts. Future implementations may target different computational
-substrates while preserving the same canonical interfaces.
+The RC Reference Backend serves as the reference realization of the physical
+execution lifecycle, while the Digital and FPGA backends provide structurally
+distinct realizations of the same canonical CPC contracts. Additional
+implementations may target different computational substrates while preserving
+the same canonical interfaces.
 
 ---
 
@@ -233,6 +237,7 @@ The CPC Reference Validation Framework currently provides:
 - RFC-0005 cross-backend equivalence and independent validation;
 - RFC-0006 cross-backend benchmark validation and reproducibility;
 - RFC-0007 backend qualification and conformance manifests;
+- RFC-0008 FPGA execution backend and tri-backend validation;
 - ExecutionArtifact contract;
 - first-class PreparedExecution state;
 - first-class ObservableExecution result;
@@ -245,10 +250,14 @@ The CPC Reference Validation Framework currently provides:
 - restricted-interface validation;
 - Answer Independence validation;
 - RC Reference Backend;
+- deterministic Digital Backend;
+- FPGA Execution Backend;
+- tri-backend semantic validation;
+- FPGA backend qualification;
 - comprehensive automated regression suite.
 
 These components establish the current reference implementation of the
-combined RFC-0001 through RFC-0007 CPC architecture.
+combined RFC-0001 through RFC-0008 CPC architecture.
 
 ---
 
@@ -1808,15 +1817,19 @@ while employing different computational substrates.
 
 ---
 
-### Future Backend Families
+### Backend Families
 
 The CPC architecture is designed to accommodate multiple backend
 implementations.
 
-Potential backend families include
+The currently implemented execution families are
 
-- FPGA realizations;
-- digital logic implementations;
+- the RC Reference Backend;
+- the deterministic Digital Backend; and
+- the FPGA Execution Backend.
+
+Additional backend families may include
+
 - graph-based execution engines;
 - coherent physical substrates;
 - optical systems;
@@ -1848,6 +1861,7 @@ the RFC series.
 | RFC-0005 | Cross-backend equivalence and independent validation |
 | RFC-0006 | Cross-backend benchmark validation and reproducibility |
 | RFC-0007 | Backend qualification and conformance manifests |
+| RFC-0008 | FPGA execution backend and tri-backend validation |
 
 The RC Reference Backend therefore represents the current reference
 implementation of the combined RFC architecture.
@@ -1914,12 +1928,13 @@ repository.
 ## Development Status
 
 The CPC Reference Validation Framework implements the combined RFC-0001
-through RFC-0007 architectural baseline with two current reference execution
-realizations: the RC Reference Backend and the deterministic Digital Backend.
+through RFC-0008 architectural baseline with three current execution
+realizations: the RC Reference Backend, the deterministic Digital Backend,
+and the FPGA Execution Backend.
 
-The audited RFC-0007 implementation state used for this README passes
-**626 automated tests**. The repository's current test run remains authoritative
-as the suite evolves.
+The audited RFC-0008 implementation state used for this README passes
+**707 automated tests**, including **16 dedicated RFC-0008 conformance tests**.
+The repository's current test run remains authoritative as the suite evolves.
 
 The RFC-0006 acceptance corpus currently contains 16 discovered benchmarks and
 64 exhaustively enumerated boundary cases. All 64 cases pass backend agreement,
@@ -1927,12 +1942,14 @@ RC semantic validation, and Digital semantic validation. This finite corpus
 result is validation evidence for the executed cases; it is not presented as a
 universal correctness theorem.
 
-RFC-0007 adds deterministic backend qualification manifests for the current
-RC and Digital reference backends. Qualification binds canonical backend
-identity, capabilities, fixed parameters and rules, execution-profile identity,
-declared conformance, admitted RFC-0006 corpus evidence, and a deterministic
-SHA-256 manifest hash. The manifest records qualification claims and evidence
-identity; it is not itself a substitute for executable conformance evidence.
+RFC-0007 adds deterministic backend qualification manifests for execution
+backends. RFC-0008 extends the qualified implementation set with the FPGA
+Execution Backend and supplies tri-backend corpus evidence across RC, Digital,
+and FPGA realizations. Qualification binds canonical backend identity,
+capabilities, fixed parameters and rules, execution-profile identity, declared
+conformance, admitted corpus evidence, and a deterministic SHA-256 manifest
+hash. The manifest records qualification claims and evidence identity; it is
+not itself a substitute for executable conformance evidence.
 
 ---
 
@@ -1988,11 +2005,52 @@ identity; it is not itself a substitute for executable conformance evidence.
 
 ✓ RC Reference Backend
 
+✓ Deterministic Digital Backend
+
+✓ FPGA Execution Backend
+
+✓ Tri-backend benchmark validation
+
+✓ FPGA backend qualification
+
+✓ RFC-0008 conformance tests
+
+✓ Persistent RFC-0008 validation evidence
+
 ✓ Automated regression suite
 
 ---
 
-### RFC-0003 / RFC-0004 / RFC-0005 / RFC-0006 / RFC-0007 Audit Coverage
+### RFC-0008 FPGA and Tri-Backend Validation Status
+
+RFC-0008 is **Accepted** and adds the first hardware-oriented FPGA execution
+backend together with tri-backend semantic validation across the RC, Digital,
+and FPGA realizations.
+
+The accepted RFC-0008 validation state is:
+
+- complete regression: **707 tests passed**;
+- dedicated RFC-0008 conformance suite: **16 tests passed**;
+- benchmark corpus: **16 benchmarks** and **64 boundary cases**;
+- RC semantic match: **64/64 PASS**;
+- Digital semantic match: **64/64 PASS**;
+- FPGA semantic match: **64/64 PASS**;
+- tri-backend agreement: **64/64 PASS**.
+
+The qualified FPGA realization is `fpga/1`. Execution uses
+`iverilog/vvp`, with the audited engine version
+`12.0 (stable) ()`. The execution identity is
+`fpga.icarus-verilog.v1`, and the preparation identity is
+`fpga.verilog.v1`.
+
+The accepted FPGA qualification manifest has hash
+`sha256:164d1b6579f72cc0b981d1f2731088aecc055860fd9612b1e394f17b17b0200a`.
+
+Persistent RFC-0008 evidence is retained under `evidence/rfc0008/`,
+including the tri-backend validation CSV, tri-backend summary,
+FPGA backend qualification manifest, and evidence README.
+
+### RFC-0003 / RFC-0004 / RFC-0005 / RFC-0006 / RFC-0007 / RFC-0008 Audit Coverage
 
 Dedicated tests cover:
 
@@ -2038,7 +2096,9 @@ Dedicated tests cover:
 - deterministic and content-sensitive SHA-256 manifest identity;
 - qualification isolation from semantic reference evaluation;
 - failed-evidence preservation and substrate-neutral qualification; and
-- RFC-0007 BQ-1 through BQ-15 conformance.
+- RFC-0007 BQ-1 through BQ-15 conformance;
+- RFC-0008 FPGA backend and tri-backend conformance;
+- persistent RFC-0008 validation evidence under `evidence/rfc0008/`.
 
 The RC Reference Backend constitutes the current reference implementation of
 the execution-backend architecture.
@@ -2074,6 +2134,12 @@ The current qualified reference realizations are:
       corpus:        16 benchmarks, 64 cases
       qualification: PASS
 
+    FPGA backend
+      identity:      fpga/1
+      engine:        iverilog/vvp 12.0 (stable) ()
+      corpus:        16 benchmarks, 64 cases
+      qualification: PASS
+
 Each manifest uses schema:
 
     cpc.backend-qualification.v1
@@ -2084,7 +2150,7 @@ qualification content.
 The manifest records backend identity, capabilities, fixed parameters, backend
 rules, execution-profile identity, conformance claims, and admitted corpus
 evidence. It does not create conformance by declaration and does not replace
-the executable RFC-0003 through RFC-0006 evidence on which qualification
+the executable RFC-0003 through RFC-0008 evidence on which qualification
 depends.
 
 A backend is admitted by the fixed CPC qualification protocol rather than by
@@ -2100,16 +2166,16 @@ validation framework.
 
 Planned work includes
 
-- FPGA execution backend;
 - graph execution backend;
 - C-parity execution backend;
 - additional physical execution substrates;
 - expanded and diversified benchmark collections;
+- broader cross-substrate qualification coverage;
 - cryptographically signed qualification manifests and attestation;
 
 These developments are intended to extend the set of supported execution
 substrates without modifying the architectural contracts established by
-RFC-0001 through RFC-0007.
+RFC-0001 through RFC-0008.
 
 ---
 
@@ -2131,7 +2197,9 @@ RFC-0001 through RFC-0007.
 | **Restricted Interface Principle** | Requirement that semantic validation use only the admitted readout interface and fixed decoder |
 | **Compiler validation** | Verification that compilation conforms to the execution-backend contract |
 | **Semantic validation** | Independent comparison of decoded execution behavior with reference semantics |
-| **RC Reference Backend** | Current reference execution backend implemented through the RC/ngspice pipeline |
+| **RC Reference Backend** | Reference physical execution backend implemented through the RC/ngspice pipeline |
+| **Digital Backend** | Deterministic software execution backend using the independent digital instruction path |
+| **FPGA Execution Backend** | Hardware-oriented digital logic execution backend using the RFC-0008 FPGA preparation and execution lifecycle |
 | **Legacy IR** | Earlier parity-oriented IR retained for compatibility and regression testing |
 
 ---
@@ -2168,6 +2236,7 @@ The normative architecture is contained in:
 - [`docs/design/RFC-0005-Cross-Backend-Equivalence-and-Validation.md`](docs/design/RFC-0005-Cross-Backend-Equivalence-and-Validation.md)
 - [`docs/design/RFC-0006-Cross-Backend-Benchmark-Validation-and-Reproducibility.md`](docs/design/RFC-0006-Cross-Backend-Benchmark-Validation-and-Reproducibility.md)
 - [`docs/design/RFC-0007-Backend-Qualification-and-Conformance-Manifests.md`](docs/design/RFC-0007-Backend-Qualification-and-Conformance-Manifests.md)
+- [`docs/design/RFC-0008-FPGA-Execution-Backend-and-Tri-Backend-Validation.md`](docs/design/RFC-0008-FPGA-Execution-Backend-and-Tri-Backend-Validation.md)
 
 | RFC | Purpose |
 |---|---|
@@ -2175,6 +2244,10 @@ The normative architecture is contained in:
 | RFC-0002 | Canonical Constraint Intermediate Representation (CCIR) |
 | RFC-0003 | Execution-backend compilation contract, ExecutionArtifact, provenance, Answer Independence, and validation |
 | RFC-0004 | Physical execution backend engineering and conformance |
+| RFC-0005 | Cross-backend equivalence and independent validation |
+| RFC-0006 | Cross-backend benchmark validation and reproducibility |
+| RFC-0007 | Backend qualification and conformance manifests |
+| RFC-0008 | FPGA execution backend and tri-backend validation |
 
 This README is explanatory. The RFC documents are authoritative where this
 README and a normative RFC differ.

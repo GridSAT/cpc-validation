@@ -1,0 +1,59 @@
+{
+  "backend": {
+    "id": "fpga",
+    "version": "1"
+  },
+  "backend_rules": [
+    "fpga.variable-signal",
+    "fpga.boundary-port",
+    "fpga.parity-network",
+    "fpga.constraint-match",
+    "fpga.existential-reduction",
+    "fpga.result-signal",
+    "fpga.readout"
+  ],
+  "capabilities": {
+    "artifact_features": [
+      "hdl-preparable",
+      "logic-network-topology",
+      "provenance"
+    ],
+    "constraint_families": [
+      "parity"
+    ],
+    "execution_features": [
+      "synthesizable-logic"
+    ],
+    "interface_features": [
+      "boundary-control",
+      "restricted-readout"
+    ]
+  },
+  "conformance": {
+    "answer_independence": true,
+    "provenance_support": true,
+    "rfc0003": true,
+    "rfc0004": true,
+    "rfc0005_eligible": true,
+    "rfc0006_qualified": true
+  },
+  "corpus": {
+    "benchmark_count": 16,
+    "boundary_case_count": 64,
+    "overall_pass": true,
+    "report_schema": "cpc.tri-backend-summary.v1"
+  },
+  "execution": {
+    "execution_engine": "iverilog/vvp",
+    "execution_engine_version": "12.0 (stable) ()",
+    "execution_id": "fpga.icarus-verilog.v1",
+    "preparation_id": "fpga.verilog.v1"
+  },
+  "fixed_parameters": {
+    "hdl_target": "verilog-2001",
+    "logic_domain": "bit",
+    "representation": "synthesizable-logic-network-v1"
+  },
+  "manifest_hash": "sha256:164d1b6579f72cc0b981d1f2731088aecc055860fd9612b1e394f17b17b0200a",
+  "schema": "cpc.backend-qualification.v1"
+}

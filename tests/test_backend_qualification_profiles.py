@@ -119,3 +119,94 @@ def test_reference_backend_manifests_have_distinct_identity() -> None:
         rc.manifest_hash
         != digital.manifest_hash
     )
+
+
+def test_fpga_profile_uses_reference_backend_identity() -> None:
+    from src.backend_qualification_profiles import (
+        FPGA_EXECUTION_ENGINE,
+        build_fpga_qualification_manifest,
+    )
+
+    summary = {
+        "schema": "cpc.tri-backend-summary.v1",
+        "benchmark_count": 16,
+        "boundary_case_count": 64,
+        "overall_pass": True,
+    }
+
+    manifest = build_fpga_qualification_manifest(
+        execution_engine_version="12.0 (stable) ()",
+        summary=summary,
+    )
+
+    assert manifest.specification.backend_id == "fpga"
+    assert manifest.specification.backend_version == "1"
+
+    assert (
+        manifest.execution.execution_engine
+        == FPGA_EXECUTION_ENGINE
+    )
+
+    assert (
+        manifest.execution.execution_engine_version
+        == "12.0 (stable) ()"
+    )
+
+    assert manifest.corpus is not None
+    assert manifest.corpus.report_schema == (
+        "cpc.tri-backend-summary.v1"
+    )
+
+
+def test_fpga_profile_records_fpga_lifecycle_identifiers() -> None:
+    from src.backend_qualification_profiles import (
+        build_fpga_qualification_manifest,
+    )
+    from src.backends.fpga_execute import (
+        FPGA_EXECUTION_ID,
+    )
+    from src.backends.fpga_prepare import (
+        FPGA_PREPARATION_ID,
+    )
+
+    manifest = build_fpga_qualification_manifest(
+        execution_engine_version="12.0",
+    )
+
+    assert (
+        manifest.execution.preparation_id
+        == FPGA_PREPARATION_ID
+    )
+
+    assert (
+        manifest.execution.execution_id
+        == FPGA_EXECUTION_ID
+    )
+
+
+def test_fpga_manifest_identity_is_distinct_from_reference_backends() -> None:
+    from src.backend_qualification_profiles import (
+        build_fpga_qualification_manifest,
+    )
+
+    fpga = build_fpga_qualification_manifest(
+        execution_engine_version="12.0",
+        summary={
+            "schema": "cpc.tri-backend-summary.v1",
+            "benchmark_count": 16,
+            "boundary_case_count": 64,
+            "overall_pass": True,
+        },
+    )
+
+    rc = build_rc_qualification_manifest(
+        execution_engine_version="ngspice-42",
+        summary=SUMMARY,
+    )
+
+    digital = build_digital_qualification_manifest(
+        summary=SUMMARY
+    )
+
+    assert fpga.manifest_hash != rc.manifest_hash
+    assert fpga.manifest_hash != digital.manifest_hash
