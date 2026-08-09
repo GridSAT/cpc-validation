@@ -1,6 +1,6 @@
 # RFC-0008: FPGA Execution Backend and Tri-Backend Validation
 
-**Status:** Draft  
+**Status:** Accepted  
 **Category:** CPC Execution and Validation Architecture  
 **Depends on:** RFC-0001, RFC-0002, RFC-0003, RFC-0004, RFC-0005, RFC-0006, RFC-0007
 
