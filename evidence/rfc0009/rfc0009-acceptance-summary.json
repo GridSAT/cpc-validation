@@ -1,0 +1,41 @@
+{
+  "acceptance_hash": "sha256:2170e5142974d16c9cdad75b188f4b3aa5b7e15b584e2ad1a095b1ce6ff77a04",
+  "complete_regression": {
+    "command": "python -m pytest -q",
+    "output": "........................................................................ [  8%]\n........................................................................ [ 17%]\n........................................................................ [ 26%]\n........................................................................ [ 35%]\n........................................................................ [ 44%]\n........................................................................ [ 53%]\n........................................................................ [ 62%]\n........................................................................ [ 71%]\n........................................................................ [ 80%]\n........................................................................ [ 89%]\n........................................................................ [ 98%]\n...............                                                          [100%]\n807 passed in 62.81s (0:01:02)",
+    "pass": true,
+    "returncode": 0
+  },
+  "conformance": {
+    "normative_requirement_count": 25,
+    "pe_requirement_count": 15,
+    "pf_requirement_count": 10,
+    "pytest": {
+      "command": "python -m pytest -q tests/test_rfc0009_conformance.py",
+      "output": ".........................                                                [100%]\n25 passed in 1.83s",
+      "pass": true,
+      "returncode": 0
+    },
+    "test_file_sha256": "sha256:f88e0f96defe916003aafa3bbc1e3fc633197c5aa4897e68018f7bb3ff9d7851"
+  },
+  "implementation_stack": {
+    "command": "python -m pytest -q tests/test_physical_execution_evidence.py tests/test_physical_execution_evidence_real_backends.py tests/test_physical_execution_conformance.py tests/test_physical_evidence_verification.py tests/test_physical_fpga_profile.py tests/test_physical_build_provenance.py tests/test_physical_device_programming.py tests/test_physical_execution_event.py tests/test_rfc0009_conformance.py",
+    "output": "........................................................................ [ 72%]\n............................                                             [100%]\n100 passed in 2.00s",
+    "pass": true,
+    "returncode": 0
+  },
+  "overall_pass": true,
+  "rfc": {
+    "document_sha256": "sha256:867a849068bde8b06f98809e4b1223000875967d6d00f23a721316b72ef9ec8e",
+    "id": "RFC-0009",
+    "status_at_generation": "Draft",
+    "title": "Physical Execution Evidence and Substrate Conformance"
+  },
+  "rfc0008_regression": {
+    "command": "python -m pytest -q tests/test_fpga_ccir.py tests/test_fpga_prepare.py tests/test_fpga_execute.py tests/test_rfc0008_conformance.py",
+    "output": "...................................................                      [100%]\n51 passed in 0.74s",
+    "pass": true,
+    "returncode": 0
+  },
+  "schema": "cpc.rfc0009-acceptance-summary.v1"
+}

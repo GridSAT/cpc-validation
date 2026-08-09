@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://www.python.org/)
 [![ngspice](https://img.shields.io/badge/ngspice-42%2B-blue.svg)](https://ngspice.sourceforge.io/)
-[![Status](https://img.shields.io/badge/status-RFC--0008%20baseline-brightgreen.svg)](#development-status)
+[![Status](https://img.shields.io/badge/status-RFC--0009%20baseline-brightgreen.svg)](#development-status)
 
 ---
 
@@ -238,6 +238,7 @@ The CPC Reference Validation Framework currently provides:
 - RFC-0006 cross-backend benchmark validation and reproducibility;
 - RFC-0007 backend qualification and conformance manifests;
 - RFC-0008 FPGA execution backend and tri-backend validation;
+- RFC-0009 physical execution evidence and substrate conformance;
 - ExecutionArtifact contract;
 - first-class PreparedExecution state;
 - first-class ObservableExecution result;
@@ -254,10 +255,11 @@ The CPC Reference Validation Framework currently provides:
 - FPGA Execution Backend;
 - tri-backend semantic validation;
 - FPGA backend qualification;
+- physical execution evidence and substrate conformance;
 - comprehensive automated regression suite.
 
 These components establish the current reference implementation of the
-combined RFC-0001 through RFC-0008 CPC architecture.
+combined RFC-0001 through RFC-0009 CPC architecture.
 
 ---
 
@@ -1862,6 +1864,7 @@ the RFC series.
 | RFC-0006 | Cross-backend benchmark validation and reproducibility |
 | RFC-0007 | Backend qualification and conformance manifests |
 | RFC-0008 | FPGA execution backend and tri-backend validation |
+| RFC-0009 | Physical execution evidence and substrate conformance |
 
 The RC Reference Backend therefore represents the current reference
 implementation of the combined RFC architecture.
@@ -1928,12 +1931,12 @@ repository.
 ## Development Status
 
 The CPC Reference Validation Framework implements the combined RFC-0001
-through RFC-0008 architectural baseline with three current execution
+through RFC-0009 architectural baseline with three current execution
 realizations: the RC Reference Backend, the deterministic Digital Backend,
 and the FPGA Execution Backend.
 
-The audited RFC-0008 implementation state used for this README passes
-**707 automated tests**, including **16 dedicated RFC-0008 conformance tests**.
+The audited RFC-0009 implementation state used for this README passes
+**807 automated tests**, including **25 dedicated RFC-0009 conformance tests**.
 The repository's current test run remains authoritative as the suite evolves.
 
 The RFC-0006 acceptance corpus currently contains 16 discovered benchmarks and
@@ -1950,6 +1953,18 @@ capabilities, fixed parameters and rules, execution-profile identity, declared
 conformance, admitted corpus evidence, and a deterministic SHA-256 manifest
 hash. The manifest records qualification claims and evidence identity; it is
 not itself a substitute for executable conformance evidence.
+
+RFC-0009 extends the architecture from backend qualification to explicit
+physical-execution evidence. It introduces deterministic bindings for prepared
+execution identity, external evidence, build provenance, device programming,
+physical execution events, and observable execution. Physical-evidence
+conformance remains distinct from semantic correctness: content identity,
+physical authenticity, and semantic correctness are separate claims.
+
+The RFC-0009 reference implementation and acceptance evidence validate these
+contracts, but they do **not** assert that a physical FPGA-board execution has
+already occurred. Such a claim requires evidence acquired from an actual
+substrate execution under the applicable physical profile.
 
 ---
 
@@ -2017,6 +2032,26 @@ not itself a substitute for executable conformance evidence.
 
 ✓ Persistent RFC-0008 validation evidence
 
+✓ PhysicalExecutionEvidence model and deterministic evidence identity
+
+✓ Independent external-evidence verification
+
+✓ Physical evidence profiles and substrate conformance
+
+✓ Physical FPGA realization profile
+
+✓ PhysicalBuildManifest and build provenance
+
+✓ DeviceProgrammingRecord and programming binding
+
+✓ PhysicalExecutionEvent and execution-event binding
+
+✓ RFC-0009 PE-1 through PE-15 conformance tests
+
+✓ RFC-0009 PF-1 through PF-10 FPGA physical-profile conformance tests
+
+✓ Persistent RFC-0009 acceptance evidence
+
 ✓ Automated regression suite
 
 ---
@@ -2050,7 +2085,32 @@ Persistent RFC-0008 evidence is retained under `evidence/rfc0008/`,
 including the tri-backend validation CSV, tri-backend summary,
 FPGA backend qualification manifest, and evidence README.
 
-### RFC-0003 / RFC-0004 / RFC-0005 / RFC-0006 / RFC-0007 / RFC-0008 Audit Coverage
+### RFC-0009 Physical Execution Evidence Status
+
+RFC-0009 is **Accepted** and defines the evidence boundary required to move
+from an executable backend realization toward an auditable physical-substrate
+execution claim.
+
+The accepted RFC-0009 validation state is:
+
+- complete regression: **807 tests passed**;
+- dedicated RFC-0009 normative conformance suite: **25 tests passed**;
+- PE requirements: **PE-1 through PE-15**;
+- PF requirements: **PF-1 through PF-10**;
+- RFC-0009 implementation stack: **100 tests passed**;
+- RFC-0008 FPGA regression: **51 tests passed**;
+- aggregate RFC-0009 acceptance result: **PASS**.
+
+Persistent RFC-0009 acceptance evidence is retained under
+`evidence/rfc0009/`. The acceptance record is bound to the exact RFC Draft and
+normative conformance suite used to establish acceptance.
+
+RFC-0009 does not equate evidence identity with physical authenticity or
+semantic correctness. In particular, the current acceptance evidence validates
+the physical-evidence architecture and reference implementation; it does
+**not** constitute a claim that an actual FPGA board has executed CPC.
+
+### RFC-0003 / RFC-0004 / RFC-0005 / RFC-0006 / RFC-0007 / RFC-0008 / RFC-0009 Audit Coverage
 
 Dedicated tests cover:
 
@@ -2098,7 +2158,10 @@ Dedicated tests cover:
 - failed-evidence preservation and substrate-neutral qualification; and
 - RFC-0007 BQ-1 through BQ-15 conformance;
 - RFC-0008 FPGA backend and tri-backend conformance;
-- persistent RFC-0008 validation evidence under `evidence/rfc0008/`.
+- persistent RFC-0008 validation evidence under `evidence/rfc0008/`;
+- RFC-0009 PE-1 through PE-15 physical-evidence conformance;
+- RFC-0009 PF-1 through PF-10 FPGA physical-profile conformance; and
+- persistent RFC-0009 acceptance evidence under `evidence/rfc0009/`.
 
 The RC Reference Backend constitutes the current reference implementation of
 the execution-backend architecture.
@@ -2166,6 +2229,8 @@ validation framework.
 
 Planned work includes
 
+- execution of the RFC-0008 FPGA backend on an actual FPGA device with
+  RFC-0009 physical evidence acquisition;
 - graph execution backend;
 - C-parity execution backend;
 - additional physical execution substrates;
@@ -2175,7 +2240,7 @@ Planned work includes
 
 These developments are intended to extend the set of supported execution
 substrates without modifying the architectural contracts established by
-RFC-0001 through RFC-0008.
+RFC-0001 through RFC-0009.
 
 ---
 
@@ -2200,6 +2265,11 @@ RFC-0001 through RFC-0008.
 | **RC Reference Backend** | Reference physical execution backend implemented through the RC/ngspice pipeline |
 | **Digital Backend** | Deterministic software execution backend using the independent digital instruction path |
 | **FPGA Execution Backend** | Hardware-oriented digital logic execution backend using the RFC-0008 FPGA preparation and execution lifecycle |
+| **PhysicalExecutionEvidence** | RFC-0009 deterministic record binding prepared and observable execution identity to explicit substrate, instrumentation, calibration, and external evidence records |
+| **PhysicalBuildManifest** | RFC-0009 deterministic record binding a prepared execution to physical target identity, build tools, build inputs, and bitstream identity |
+| **DeviceProgrammingRecord** | RFC-0009 deterministic record binding a physical build to a specific programming operation and target device identity |
+| **PhysicalExecutionEvent** | RFC-0009 deterministic record binding programming, stimulus, observation, prepared execution, and observable execution identities for a physical execution event |
+| **Physical evidence conformance** | Verification of RFC-0009 identity, completeness, integrity, and lifecycle bindings; distinct from physical authenticity and semantic correctness |
 | **Legacy IR** | Earlier parity-oriented IR retained for compatibility and regression testing |
 
 ---
@@ -2237,6 +2307,7 @@ The normative architecture is contained in:
 - [`docs/design/RFC-0006-Cross-Backend-Benchmark-Validation-and-Reproducibility.md`](docs/design/RFC-0006-Cross-Backend-Benchmark-Validation-and-Reproducibility.md)
 - [`docs/design/RFC-0007-Backend-Qualification-and-Conformance-Manifests.md`](docs/design/RFC-0007-Backend-Qualification-and-Conformance-Manifests.md)
 - [`docs/design/RFC-0008-FPGA-Execution-Backend-and-Tri-Backend-Validation.md`](docs/design/RFC-0008-FPGA-Execution-Backend-and-Tri-Backend-Validation.md)
+- [`docs/design/RFC-0009-Physical-Execution-Evidence-and-Substrate-Conformance.md`](docs/design/RFC-0009-Physical-Execution-Evidence-and-Substrate-Conformance.md)
 
 | RFC | Purpose |
 |---|---|
@@ -2248,6 +2319,7 @@ The normative architecture is contained in:
 | RFC-0006 | Cross-backend benchmark validation and reproducibility |
 | RFC-0007 | Backend qualification and conformance manifests |
 | RFC-0008 | FPGA execution backend and tri-backend validation |
+| RFC-0009 | Physical execution evidence and substrate conformance |
 
 This README is explanatory. The RFC documents are authoritative where this
 README and a normative RFC differ.
