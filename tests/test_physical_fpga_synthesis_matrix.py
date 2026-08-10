@@ -146,3 +146,14 @@ def test_p1_case_rejects_non_bit_boundary(
             x0,
             x3,
         )
+
+
+def test_p1_matrix_has_distinct_synthesized_json_identities() -> None:
+    matrix = synthesize_p1_matrix()
+
+    assert len(
+        {
+            case.synthesized_json_sha256
+            for case in matrix
+        }
+    ) == 4
