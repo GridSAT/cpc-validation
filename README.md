@@ -1935,9 +1935,11 @@ through RFC-0009 architectural baseline with three current execution
 realizations: the RC Reference Backend, the deterministic Digital Backend,
 and the FPGA Execution Backend.
 
-The audited RFC-0009 implementation state used for this README passes
-**807 automated tests**, including **25 dedicated RFC-0009 conformance tests**.
-The repository's current test run remains authoritative as the suite evolves.
+The accepted RFC-0009 baseline was established at **807 automated
+tests**, including **25 dedicated RFC-0009 conformance tests**.  That count is
+retained as historical acceptance evidence rather than rewritten as the suite
+evolves.  The current repository regression on the P1 physical-FPGA development
+branch passes **885 automated tests**.
 
 The RFC-0006 acceptance corpus currently contains 16 discovered benchmarks and
 64 exhaustively enumerated boundary cases. All 64 cases pass backend agreement,
@@ -1965,6 +1967,35 @@ The RFC-0009 reference implementation and acceptance evidence validate these
 contracts, but they do **not** assert that a physical FPGA-board execution has
 already occurred. Such a claim requires evidence acquired from an actual
 substrate execution under the applicable physical profile.
+
+The subsequent P1 physical-FPGA development line has now crossed the
+pre-programming boundary for a concrete Lattice target.  It provides a
+deterministic synthesis projection, physical output-retention wrapper, concrete
+Lattice iCE40UP5K-B-EVN / SG48 target identity, accepted physical
+`result_out` constraint, and deterministic open-toolchain bitstream build.
+The build records generated source, constraint, routed configuration, bitstream,
+tool identities, and RFC-0009 `PhysicalBuildManifest` provenance.
+
+The accepted P1 pre-programming chain is therefore:
+
+    CCIR
+      -> FPGA backend
+      -> PreparedExecution
+      -> deterministic synthesis projection
+      -> physical output-retention wrapper
+      -> Lattice iCE40UP5K-B-EVN / SG48 target
+      -> accepted result_out physical constraint
+      -> Yosys
+      -> nextpnr-ice40
+      -> IceStorm / icepack
+      -> deterministic bitstream
+      -> PhysicalBuildManifest
+
+This state is deliberately **pre-programming**.  It establishes deterministic
+build readiness and provenance, but it does **not** establish that the bitstream
+was transferred to a device, that the device executed it, that a physical
+observation was acquired, or that such an observation was semantically correct.
+**No physical FPGA execution is claimed at this stage.**
 
 ---
 
@@ -2041,6 +2072,18 @@ substrate execution under the applicable physical profile.
 ✓ Physical FPGA realization profile
 
 ✓ PhysicalBuildManifest and build provenance
+
+✓ Deterministic FPGA synthesis projection
+
+✓ Physical FPGA output-retention wrapper
+
+✓ Lattice iCE40UP5K-B-EVN / SG48 physical target
+
+✓ Accepted Lattice breakout `result_out` physical constraint
+
+✓ Deterministic Yosys / nextpnr-ice40 / IceStorm bitstream build
+
+✓ Deterministic pre-programming build reproduction
 
 ✓ DeviceProgrammingRecord and programming binding
 
@@ -2229,8 +2272,9 @@ validation framework.
 
 Planned work includes
 
-- execution of the RFC-0008 FPGA backend on an actual FPGA device with
-  RFC-0009 physical evidence acquisition;
+- programming and execution of the accepted deterministic P1 bitstream on the
+  Lattice iCE40 UltraPlus Breakout Board, followed by RFC-0009 physical
+  execution-evidence acquisition;
 - graph execution backend;
 - C-parity execution backend;
 - additional physical execution substrates;
