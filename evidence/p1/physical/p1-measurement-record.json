@@ -1,0 +1,33 @@
+{
+  "board": {
+    "identified_as": "Lattice iCE40 UltraPlus Breakout Board",
+    "powered_over_usb": true,
+    "power_indicator_illuminated": true,
+    "visible": true
+  },
+  "capture": {
+    "camera_make": "Apple",
+    "camera_model": "iPhone 15 Pro",
+    "height_pixels": 3024,
+    "original_filename": "p1-physical-observation.heic",
+    "recorded_at_camera_local": "2026-08-15T18:02:38",
+    "sha256": "sha256:6438d0956063a7a3318eab66a0d238fe8d4b0be6583e56c4a409848dabde09ed",
+    "source": "user-supplied physical photograph",
+    "width_pixels": 4032
+  },
+  "interpretation": {
+    "board_net": "LED_RED",
+    "electrical_polarity": "active-low",
+    "logical_result_bit": 1,
+    "package_pin": "41",
+    "source_document": "FPGA-UG-02001",
+    "source_document_figure": "Figure A.3 DUT Connection",
+    "source_document_version": "1.2"
+  },
+  "observation": {
+    "led_red_illuminated": false,
+    "rgb_led_visible": true
+  },
+  "schema": "cpc.p1-physical-measurement.v1",
+  "trust_boundary": "The record binds the supplied photograph and its visible state; it does not independently authenticate the photographer or capture environment."
+}

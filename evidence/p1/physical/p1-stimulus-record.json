@@ -1,0 +1,9 @@
+{
+  "boundary_values": {
+    "x0": 0,
+    "x3": 1
+  },
+  "delivery": "constants embedded in the retained PreparedExecution",
+  "interface": "synthesis-bound-constants",
+  "schema": "cpc.p1-physical-stimulus.v1"
+}
