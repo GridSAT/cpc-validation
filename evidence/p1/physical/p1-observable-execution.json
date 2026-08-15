@@ -1,0 +1,12 @@
+{
+  "backend": {
+    "id": "fpga",
+    "version": "1"
+  },
+  "measurement_record_sha256": "sha256:bfafbad305603fbdd2c8d11cfcae541923852ebce490ad1c2ef12d6b5a7684c0",
+  "observable_execution_hash": "sha256:c0c773b349bd0978b6035ac724d6692ab65e638fda7f57bac6ed8bbc41a13788",
+  "observations": {
+    "result_bit": 1
+  },
+  "schema": "cpc.p1-observable-execution.v1"
+}

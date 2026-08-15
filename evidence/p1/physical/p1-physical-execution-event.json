@@ -1,0 +1,28 @@
+{
+  "backend": {
+    "id": "fpga",
+    "version": "1"
+  },
+  "binding": {
+    "observable_execution_hash": "sha256:c0c773b349bd0978b6035ac724d6692ab65e638fda7f57bac6ed8bbc41a13788",
+    "prepared_execution_hash": "sha256:a184e8f3b8885fff70c96c6c339c133052886cd86cba8af63f1fc6a8edf3ee83",
+    "programming_record_hash": "sha256:80584659ad12a33afa51ae8ef52d432dad3851375e48c1f0703a14ce82fda251"
+  },
+  "device": {
+    "board_id": "lattice-icebreaker-up5k",
+    "device_id": "usb:0403:6010:d:001/008"
+  },
+  "event_hash": "sha256:6dce44b69a666fbafd8f573e016be08a3267cca2a040031f44b3a5dd8695de01",
+  "execution": {
+    "measurement_record_sha256": "sha256:bfafbad305603fbdd2c8d11cfcae541923852ebce490ad1c2ef12d6b5a7684c0",
+    "observation_interface": "LED_RED visual photograph",
+    "stimulus_interface": "synthesis-bound-constants",
+    "stimulus_record_sha256": "sha256:ad073a9c043e1adac44bb380e0c1e8bc3c99291a1b1838730c7e0e9812b14994"
+  },
+  "metadata": {
+    "capture_time": "2026-08-15T18:02:38",
+    "mode": "single-shot-static-output"
+  },
+  "physical_profile_id": "fpga.physical-device.v1",
+  "schema": "cpc.physical-execution-event.v1"
+}
