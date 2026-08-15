@@ -1,0 +1,29 @@
+{
+  "artifacts": {
+    "execution_event": "p1-physical-execution-event.json",
+    "measurement_record": "p1-measurement-record.json",
+    "observable_execution": "p1-observable-execution.json",
+    "physical_observation": "p1-physical-observation.heic",
+    "programming_record": "p1-device-programming-record.json",
+    "stimulus_record": "p1-stimulus-record.json"
+  },
+  "bindings": {
+    "execution_event_hash": "sha256:6dce44b69a666fbafd8f573e016be08a3267cca2a040031f44b3a5dd8695de01",
+    "measurement_record_sha256": "sha256:bfafbad305603fbdd2c8d11cfcae541923852ebce490ad1c2ef12d6b5a7684c0",
+    "observable_execution_hash": "sha256:c0c773b349bd0978b6035ac724d6692ab65e638fda7f57bac6ed8bbc41a13788",
+    "programming_record_hash": "sha256:80584659ad12a33afa51ae8ef52d432dad3851375e48c1f0703a14ce82fda251",
+    "stimulus_record_sha256": "sha256:ad073a9c043e1adac44bb380e0c1e8bc3c99291a1b1838730c7e0e9812b14994"
+  },
+  "schema": "cpc.p1-physical-execution-report.v1",
+  "semantic_validation": {
+    "boundary_values": {
+      "x0": 0,
+      "x3": 1
+    },
+    "decoded": 1,
+    "passed": true,
+    "reference": 1
+  },
+  "status": "physical-execution-observed-and-validated",
+  "trust_boundary": "The record binds the supplied photograph and its visible state; it does not independently authenticate the photographer or capture environment."
+}
