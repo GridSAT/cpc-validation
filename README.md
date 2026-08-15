@@ -1939,7 +1939,7 @@ The accepted RFC-0009 baseline was established at **807 automated
 tests**, including **25 dedicated RFC-0009 conformance tests**.  That count is
 retained as historical acceptance evidence rather than rewritten as the suite
 evolves.  The current repository regression on the P1 physical-FPGA development
-branch passes **885 automated tests**.
+branch passes **893 automated tests**.
 
 The RFC-0006 acceptance corpus currently contains 16 discovered benchmarks and
 64 exhaustively enumerated boundary cases. All 64 cases pass backend agreement,
@@ -1964,9 +1964,13 @@ conformance remains distinct from semantic correctness: content identity,
 physical authenticity, and semantic correctness are separate claims.
 
 The RFC-0009 reference implementation and acceptance evidence validate these
-contracts, but they do **not** assert that a physical FPGA-board execution has
-already occurred. Such a claim requires evidence acquired from an actual
-substrate execution under the applicable physical profile.
+contracts.  The P1 evidence directory now additionally records one explicitly
+approved volatile-SRAM programming operation on an attached iCEBreaker board.
+That programming record binds the retained bitstream, build manifest, USB
+device identity, programmer identity, and exact programming log.  It does not
+by itself assert physical execution or semantic correctness; those claims
+require admitted stimulus and physical-observation evidence under the
+applicable physical profile.
 
 The subsequent P1 physical-FPGA development line has now crossed the
 pre-programming boundary for a concrete Lattice target.  It provides a
@@ -1991,11 +1995,49 @@ The accepted P1 pre-programming chain is therefore:
       -> deterministic bitstream
       -> PhysicalBuildManifest
 
-This state is deliberately **pre-programming**.  It establishes deterministic
-build readiness and provenance, but it does **not** establish that the bitstream
-was transferred to a device, that the device executed it, that a physical
-observation was acquired, or that such an observation was semantically correct.
-**No physical FPGA execution is claimed at this stage.**
+The retained build crossed the programming boundary on 2026-08-15 through the
+guarded `program_cpc_icebreaker_sram` action.  The approved bitstream digest
+`sha256:7d69fad66e08b4528c58c710ddaeb945b7aea822add761a251c85ec8ee1968c5`
+was loaded into volatile SRAM through `iceprog` on the single admitted FTDI
+device `0403:6010`; the programmer returned success.  The exact action result
+is retained in `p1-programming-log.json` and bound by the RFC-0009
+`p1-device-programming-record.json`.
+
+The subsequent user-supplied physical photograph records the same board powered
+over USB, with its power indicator illuminated and the active-low `LED_RED`
+element not illuminated.  The original HEIC bytes, camera metadata, stimulus
+record, measurement record, admitted `ObservableExecution`, and RFC-0009
+`PhysicalExecutionEvent` are retained under `evidence/p1/physical/`.  The fixed
+decoder maps the observed active-low LED state to `result_bit = 1`; independent
+post-execution CCIR validation also returns `1` for `x0=0, x3=1`.
+
+P1 therefore has a complete recorded build, programming, observation,
+execution-event, and semantic-validation chain.  Its authenticity claim remains
+within RFC-0009's declared trust boundary: the evidence binds the supplied
+photograph and visible state but does not independently authenticate the
+photographer or capture environment.
+
+The fixed `build_p1_physical_artifacts.py` entry point bridges deterministic
+in-memory construction to an inspectable pre-programming evidence directory.
+It accepts no command-line parameters and atomically retains the accepted
+bitstream, physical Verilog, RFC-0009 build manifest, and deterministic build
+report under `evidence/p1/physical/`.  Its report status is explicitly
+`built-not-programmed`; generation of these files is not a programming,
+execution, observation, or semantic-correctness claim.
+
+The separate `record_p1_physical_programming.py` entry point validates the
+captured guarded-action result against the retained build, then atomically
+writes the RFC-0009 device-programming record and a status report.  It does not
+invoke a programmer and it refuses failed, truncated, wrong-target,
+wrong-device, or digest-mismatched results.
+
+The `record_p1_physical_execution.py` entry point verifies the original
+photograph digest, the admitted active-low LED interpretation, the prepared
+execution binding, and the programming-record identity.  It writes only the
+observable execution and RFC-0009 physical execution event.  The separate
+`validate_p1_physical_execution.py` entry point reconstructs their identities,
+runs the fixed decoder, and performs the independent CCIR semantic comparison
+before writing the validation report.
 
 ---
 
@@ -2272,9 +2314,6 @@ validation framework.
 
 Planned work includes
 
-- programming and execution of the accepted deterministic P1 bitstream on the
-  Lattice iCE40 UltraPlus Breakout Board, followed by RFC-0009 physical
-  execution-evidence acquisition;
 - graph execution backend;
 - C-parity execution backend;
 - additional physical execution substrates;

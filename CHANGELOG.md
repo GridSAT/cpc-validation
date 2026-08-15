@@ -9,6 +9,29 @@ The format follows **Keep a Changelog** and this project follows
 
 ## [Unreleased]
 
+### P1 Physical FPGA
+
+- added the fixed `build_p1_physical_artifacts.py` entry point;
+- atomically retain the accepted iCEBreaker bitstream, physical Verilog,
+  RFC-0009 build manifest, and deterministic build report under
+  `evidence/p1/physical/`;
+- added deterministic, digest-binding artifact-retention tests; and
+- preserve the explicit `built-not-programmed` evidence boundary;
+- recorded the explicitly approved 2026-08-15 iCEBreaker SRAM programming
+  operation and bound its exact guarded-action log to an RFC-0009
+  `DeviceProgrammingRecord`;
+- added `record_p1_physical_programming.py` with fail-closed validation of the
+  fixed target, bitstream digest, USB identity, successful return code, and
+  untruncated output; and
+- preserve the separate `programmed-awaiting-physical-observation` boundary:
+  programming evidence alone is not a physical-execution or semantic claim.
+- retained the original user-supplied HEIC observation with camera metadata and
+  a content digest, together with separate stimulus and measurement records;
+- bound the programming record, prepared execution, admitted observable,
+  stimulus, and measurement into an RFC-0009 `PhysicalExecutionEvent`; and
+- independently validated the decoded physical result (`1`) against the CCIR
+  continuation result (`1`) for the fixed P1 boundary assignment.
+
 ### CCIR
 
 - accepted RFC-0002 for generic constraint IR and the CNF front end;
@@ -137,4 +160,3 @@ coefficients. It is not a calibrated physical-device temperature model.
 - PCB implementation.
 - Coherent carrier experiments.
 - Publication-quality benchmark suite.
-
