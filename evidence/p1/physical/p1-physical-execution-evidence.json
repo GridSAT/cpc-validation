@@ -1,0 +1,132 @@
+{
+  "backend": {
+    "id": "fpga",
+    "version": "1"
+  },
+  "binding": {
+    "observable_execution_hash": "sha256:c0c773b349bd0978b6035ac724d6692ab65e638fda7f57bac6ed8bbc41a13788",
+    "prepared_execution_hash": "sha256:a184e8f3b8885fff70c96c6c339c133052886cd86cba8af63f1fc6a8edf3ee83"
+  },
+  "calibration": {
+    "timing_validation_id": "nextpnr-ice40-static-combinational-timing.v1"
+  },
+  "evidence_hash": "sha256:84341d29bebf136418c8345510e8355181032b9be876e3646d8a501a13fd4ada",
+  "execution": {
+    "execution_engine": "physical-fpga-device",
+    "execution_engine_version": "lattice-icebreaker-up5k",
+    "execution_id": "fpga.physical-device.v1",
+    "preparation_id": "fpga.verilog.v1"
+  },
+  "instrumentation": {
+    "observation_interface": "LED_RED visual photograph",
+    "programming_interface": "ftdi-mpsse-spi-sram",
+    "stimulus_interface": "synthesis-bound-constants"
+  },
+  "metadata": {
+    "build_manifest_hash": "sha256:3e70282bb8376775a777cc1d395bbee607885a75d45214a9783166c47640ab9b",
+    "execution_event_hash": "sha256:6dce44b69a666fbafd8f573e016be08a3267cca2a040031f44b3a5dd8695de01",
+    "physical_profile_id": "fpga.physical-device.v1",
+    "programming_record_hash": "sha256:80584659ad12a33afa51ae8ef52d432dad3851375e48c1f0703a14ce82fda251",
+    "trust_boundary": "The record binds the supplied photograph and its visible state; it does not independently authenticate the photographer or capture environment."
+  },
+  "records": [
+    {
+      "description": "Programmed iCE40 SRAM bitstream.",
+      "evidence_type": "bitstream",
+      "media_type": "application/octet-stream",
+      "record_id": "bitstream",
+      "sha256": "sha256:7d69fad66e08b4528c58c710ddaeb945b7aea822add761a251c85ec8ee1968c5"
+    },
+    {
+      "description": "RFC-0009 physical build manifest.",
+      "evidence_type": "build-manifest",
+      "media_type": "application/json",
+      "record_id": "build-manifest",
+      "sha256": "sha256:138fa129a606f565e025544f9ca8d99aa4816f5105f79548fc5f0610a9f8dead"
+    },
+    {
+      "description": "Deterministic physical build report.",
+      "evidence_type": "build-report",
+      "media_type": "application/json",
+      "record_id": "build-report",
+      "sha256": "sha256:2c3d7496acf7618a08b1007b241f63ac16aaf718140a951e8419dd3243791509"
+    },
+    {
+      "description": "RFC-0009 device programming binding.",
+      "evidence_type": "device-programming-record",
+      "media_type": "application/json",
+      "record_id": "device-programming-record",
+      "sha256": "sha256:f7dbb2746357ba83cdaf93a43eac8f03009da45a51950bb121051f635fd468fe"
+    },
+    {
+      "description": "RFC-0009 physical execution event.",
+      "evidence_type": "execution-event",
+      "media_type": "application/json",
+      "record_id": "execution-event",
+      "sha256": "sha256:d21b668e1a9d585e15547b71921b41d378aeb0ec80e8a7aa2a7fcf6d8536a829"
+    },
+    {
+      "description": "Restricted LED measurement record.",
+      "evidence_type": "measurement-log",
+      "media_type": "application/json",
+      "record_id": "measurement-log",
+      "sha256": "sha256:bfafbad305603fbdd2c8d11cfcae541923852ebce490ad1c2ef12d6b5a7684c0"
+    },
+    {
+      "description": "Admitted observable execution record.",
+      "evidence_type": "observable-execution",
+      "media_type": "application/json",
+      "record_id": "observable-execution",
+      "sha256": "sha256:c6d7745819a1c79c6bb933468054e6090cd5c1cff80b27afc5fb593f93e22da7"
+    },
+    {
+      "description": "Original user-supplied physical observation.",
+      "evidence_type": "physical-observation",
+      "media_type": "image/heic",
+      "record_id": "physical-observation",
+      "sha256": "sha256:6438d0956063a7a3318eab66a0d238fe8d4b0be6583e56c4a409848dabde09ed"
+    },
+    {
+      "description": "Physical FPGA top-level build input.",
+      "evidence_type": "build-input",
+      "media_type": "text/x-verilog",
+      "record_id": "physical-verilog",
+      "sha256": "sha256:2e0eb4039dafe4d3539e3e1c22695d44899f47535a4a8d1f0aed6f61a4c572eb"
+    },
+    {
+      "description": "Guarded device-programming action result.",
+      "evidence_type": "programming-log",
+      "media_type": "application/json",
+      "record_id": "programming-log",
+      "sha256": "sha256:786468e77f513e48fd45f92a8dffa5ab883a5907fd35a796cb144dd602e09517"
+    },
+    {
+      "description": "Programming-stage status report.",
+      "evidence_type": "programming-report",
+      "media_type": "application/json",
+      "record_id": "programming-report",
+      "sha256": "sha256:eb4bd6e7571ed5c8a77d7cca11c5d7a5c3e06d44675e5afe8ef7de121d0ead35"
+    },
+    {
+      "description": "Physical stimulus record.",
+      "evidence_type": "stimulus-log",
+      "media_type": "application/json",
+      "record_id": "stimulus-log",
+      "sha256": "sha256:ad073a9c043e1adac44bb380e0c1e8bc3c99291a1b1838730c7e0e9812b14994"
+    },
+    {
+      "description": "Static-combinational nextpnr timing validation.",
+      "evidence_type": "timing-report",
+      "media_type": "application/json",
+      "record_id": "timing-report",
+      "sha256": "sha256:dd140878dadd84b2562f178104805a1806647c18949fecc0017a13f1c6a12aba"
+    }
+  ],
+  "schema": "cpc.physical-execution-evidence.v1",
+  "substrate": {
+    "board_id": "lattice-icebreaker-up5k",
+    "device_family": "ice40up5k",
+    "device_id": "usb:0403:6010:d:001/008",
+    "device_part": "iCE40UP5K"
+  }
+}

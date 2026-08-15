@@ -1,0 +1,111 @@
+{
+  "checks": {
+    "backend_identity_match": true,
+    "calibration_complete": true,
+    "evidence_types_complete": true,
+    "execution_identity_match": true,
+    "external_record_integrity": true,
+    "instrumentation_complete": true,
+    "lifecycle_binding_match": true,
+    "record_integrity_valid": true,
+    "substrate_complete": true
+  },
+  "evidence_envelope": "p1-physical-execution-evidence.json",
+  "evidence_hash": "sha256:84341d29bebf136418c8345510e8355181032b9be876e3646d8a501a13fd4ada",
+  "overall_pass": true,
+  "profile_id": "fpga.physical-device.v1",
+  "records": {
+    "bitstream": {
+      "artifact": "p1-icebreaker.bin",
+      "evidence_type": "bitstream",
+      "sha256": "sha256:7d69fad66e08b4528c58c710ddaeb945b7aea822add761a251c85ec8ee1968c5"
+    },
+    "build-manifest": {
+      "artifact": "p1-physical-build-manifest.json",
+      "evidence_type": "build-manifest",
+      "sha256": "sha256:138fa129a606f565e025544f9ca8d99aa4816f5105f79548fc5f0610a9f8dead"
+    },
+    "build-report": {
+      "artifact": "p1-physical-build-report.json",
+      "evidence_type": "build-report",
+      "sha256": "sha256:2c3d7496acf7618a08b1007b241f63ac16aaf718140a951e8419dd3243791509"
+    },
+    "device-programming-record": {
+      "artifact": "p1-device-programming-record.json",
+      "evidence_type": "device-programming-record",
+      "sha256": "sha256:f7dbb2746357ba83cdaf93a43eac8f03009da45a51950bb121051f635fd468fe"
+    },
+    "execution-event": {
+      "artifact": "p1-physical-execution-event.json",
+      "evidence_type": "execution-event",
+      "sha256": "sha256:d21b668e1a9d585e15547b71921b41d378aeb0ec80e8a7aa2a7fcf6d8536a829"
+    },
+    "measurement-log": {
+      "artifact": "p1-measurement-record.json",
+      "evidence_type": "measurement-log",
+      "sha256": "sha256:bfafbad305603fbdd2c8d11cfcae541923852ebce490ad1c2ef12d6b5a7684c0"
+    },
+    "observable-execution": {
+      "artifact": "p1-observable-execution.json",
+      "evidence_type": "observable-execution",
+      "sha256": "sha256:c6d7745819a1c79c6bb933468054e6090cd5c1cff80b27afc5fb593f93e22da7"
+    },
+    "physical-observation": {
+      "artifact": "p1-physical-observation.heic",
+      "evidence_type": "physical-observation",
+      "sha256": "sha256:6438d0956063a7a3318eab66a0d238fe8d4b0be6583e56c4a409848dabde09ed"
+    },
+    "physical-verilog": {
+      "artifact": "p1-physical-top.v",
+      "evidence_type": "build-input",
+      "sha256": "sha256:2e0eb4039dafe4d3539e3e1c22695d44899f47535a4a8d1f0aed6f61a4c572eb"
+    },
+    "programming-log": {
+      "artifact": "p1-programming-log.json",
+      "evidence_type": "programming-log",
+      "sha256": "sha256:786468e77f513e48fd45f92a8dffa5ab883a5907fd35a796cb144dd602e09517"
+    },
+    "programming-report": {
+      "artifact": "p1-programming-report.json",
+      "evidence_type": "programming-report",
+      "sha256": "sha256:eb4bd6e7571ed5c8a77d7cca11c5d7a5c3e06d44675e5afe8ef7de121d0ead35"
+    },
+    "stimulus-log": {
+      "artifact": "p1-stimulus-record.json",
+      "evidence_type": "stimulus-log",
+      "sha256": "sha256:ad073a9c043e1adac44bb380e0c1e8bc3c99291a1b1838730c7e0e9812b14994"
+    },
+    "timing-report": {
+      "artifact": "p1-timing-report.json",
+      "evidence_type": "timing-report",
+      "sha256": "sha256:dd140878dadd84b2562f178104805a1806647c18949fecc0017a13f1c6a12aba"
+    }
+  },
+  "requirements": {
+    "calibration_fields": [
+      "timing_validation_id"
+    ],
+    "evidence_types": [
+      "bitstream",
+      "build-report",
+      "measurement-log",
+      "programming-log",
+      "timing-report"
+    ],
+    "instrumentation_fields": [
+      "observation_interface",
+      "programming_interface",
+      "stimulus_interface"
+    ],
+    "substrate_fields": [
+      "board_id",
+      "device_family",
+      "device_id",
+      "device_part"
+    ]
+  },
+  "schema": "cpc.p1-physical-evidence-conformance-report.v1",
+  "semantic_correctness_claimed": false,
+  "status": "rfc0009-physical-evidence-conformant",
+  "trust_boundary": "The record binds the supplied photograph and its visible state; it does not independently authenticate the photographer or capture environment."
+}
