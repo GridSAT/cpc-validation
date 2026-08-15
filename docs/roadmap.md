@@ -31,7 +31,7 @@ a parameter-sensitivity study rather than a calibrated physical-device model.
 
 ## Version 0.3 — Generic Parity Compiler and Benchmark Framework
 
-**Status:** In progress
+**Status:** Completed and released as `v0.3.0`
 
 ### Completed
 
@@ -68,22 +68,12 @@ a parameter-sensitivity study rather than a calibrated physical-device model.
 - largest internal-variable count: 8; and
 - largest candidate count: 256.
 
-### Remaining
-
-- compiler scaling runner;
-- per-benchmark aggregation;
-- candidate-growth figure;
-- behavioral-source growth figure;
-- netlist-size figure;
-- compilation-time figure;
-- ngspice simulation-time figure;
-- scaling methodology documentation;
-- consolidated scaling-validation stage; and
-- v0.3 release preparation.
+The released milestone also includes deterministic scaling aggregation,
+resource figures, methodology documentation, and consolidated validation.
 
 ## Version 0.4 — Compiler Scaling and Statistics
 
-**Status:** Planned
+**Status:** Completed and incorporated into `v0.5.0`
 
 - systematic family-by-family size studies;
 - repeated compilation measurements;
@@ -93,12 +83,12 @@ a parameter-sensitivity study rather than a calibrated physical-device model.
 - documented backend limits; and
 - archived scaling dataset.
 
-The scaling results will characterize the current exhaustive backend. They will
-not be presented as evidence of efficient general-purpose computation.
+The scaling results characterize the current exhaustive backend. They are not
+presented as evidence of efficient general-purpose computation.
 
 ## Version 0.5 — CNF and DIMACS Front End
 
-**Status:** Planned
+**Status:** Completed and released as `v0.5.0`
 
 - strict DIMACS parser;
 - CNF instance representation;
@@ -106,9 +96,23 @@ not be presented as evidence of efficient general-purpose computation.
 - CNF benchmark schema;
 - small canonical SAT families;
 - CNF backend compilation; and
-- complete reference-to-physical validation.
+- complete reference-to-physical validation;
+- RFC-0003 through RFC-0009 execution, qualification, and evidence contracts;
+- qualified RC, Digital, and FPGA backends; and
+- first concrete P1 physical FPGA execution evidence.
 
-## Version 0.6 — General Boolean Constraint IR
+## Next Milestone — RFC-0010 C-Parity Execution Substrate
+
+**Status:** Planned
+
+- define the C-parity substrate and execution boundary;
+- preserve canonical CCIR and backend independence;
+- specify preparation, execution, restricted observation, and decoding;
+- define qualification and cross-backend comparison requirements;
+- apply the RFC-0009 evidence lifecycle to any physical realization; and
+- preserve explicit performance and authenticity non-claims.
+
+## Later Work — General Boolean and Additional Substrates
 
 **Status:** Planned
 

@@ -9,101 +9,85 @@ The format follows **Keep a Changelog** and this project follows
 
 ## [Unreleased]
 
+No unreleased changes.
+
+## [0.5.0] - 2026-08-16
+
+### Architecture
+
+- accepted RFC-0002 through RFC-0009 on top of the RFC-0001 baseline;
+- established canonical CCIR parity and clause constraints with CNF lowering;
+- introduced the execution-backend compilation contract, explicit
+  `ExecutionArtifact`, `PreparedExecution`, and `ObservableExecution` states;
+- enforced answer independence, provenance, restricted observation, fixed
+  decoding, and independent semantic validation;
+- added cross-backend equivalence, benchmark reproducibility, deterministic
+  backend qualification, and persistent acceptance evidence;
+- qualified the RC, Digital, and FPGA backends; and
+- defined RFC-0009 physical-execution evidence, build provenance, device
+  programming, execution-event binding, and substrate-profile conformance.
+
 ### P1 Physical FPGA
 
-- added the fixed `build_p1_physical_artifacts.py` entry point;
-- atomically retain the accepted iCEBreaker bitstream, physical Verilog,
-  RFC-0009 build manifest, deterministic build report, and static-combinational
-  nextpnr timing report under
-  `evidence/p1/physical/`;
-- added deterministic, digest-binding artifact-retention tests; and
-- preserve the explicit `built-not-programmed` evidence boundary;
-- recorded the explicitly approved 2026-08-15 iCEBreaker SRAM programming
-  operation and bound its exact guarded-action log to an RFC-0009
-  `DeviceProgrammingRecord`;
-- added `record_p1_physical_programming.py` with fail-closed validation of the
-  fixed target, bitstream digest, USB identity, successful return code, and
-  untruncated output; and
-- preserve the separate `programmed-awaiting-physical-observation` boundary:
-  programming evidence alone is not a physical-execution or semantic claim.
-- retained the original user-supplied HEIC observation with camera metadata and
-  a content digest, together with separate stimulus and measurement records;
-- bound the programming record, prepared execution, admitted observable,
-  stimulus, and measurement into an RFC-0009 `PhysicalExecutionEvent`;
-- constructed and verified the concrete RFC-0009 `PhysicalExecutionEvidence`
-  envelope against every `fpga.physical-device.v1` requirement without using a
-  semantic oracle;
-- independently validated the decoded physical result (`1`) against the CCIR
-  continuation result (`1`) for the fixed P1 boundary assignment; and
-- added a deterministic evidence index covering every retained artifact,
-  digest, role, claim dimension, trust boundary, and non-programming
-  reproduction step; and
-- verified the completed P1 evidence line with **899 passing tests**.
-
-### CCIR
-
-- accepted RFC-0002 for generic constraint IR and the CNF front end;
-- added immutable CCIR program and constraint containers;
-- added the typed CCIR payload contract;
-- added the CCIR parity constraint family; and
-- added the CCIR clause constraint family.
-
-### Changed
-
-- RC backend now invokes the extracted RC emitter directly.
-- Removed the RC backend dependency on `compile_parity_instance()`.
-- Added a regression proving the backend does not call the public compiler entry point.
-- Removed the obsolete `src/spice_model_accidental_tests.py`.
-
-
-### Added
-
-- generic parity-constraint representation;
-- generic parity-to-ngspice compiler;
-- arbitrary-length XOR-expression generation;
-- compiler statistics and inspection runner;
-- simulator delegation to the generic compiler;
-- external JSON parity-benchmark schema;
-- benchmark loader and boundary parser;
-- independent generic continuation evaluator;
-- recursive benchmark discovery;
-- complete-boundary benchmark validation;
-- permanent chain and cycle benchmarks;
-- deterministic chain, cycle, star, and random benchmark generators;
-- generated random-system boundary participation;
-- full declared-variable coverage for random systems;
-- generated benchmark corpus validation;
-- benchmark compilation, netlist-size, and simulation-time accounting;
-- compiler documentation;
-- benchmark-format documentation; and
-- generator documentation.
+- retained the accepted iCEBreaker bitstream, physical Verilog, RFC-0009 build
+  manifest, deterministic build report, and normalized nextpnr timing report;
+- recorded the explicitly approved 2026-08-15 SRAM programming operation and
+  bound its guarded-action log to an RFC-0009 `DeviceProgrammingRecord`;
+- retained the original HEIC observation, camera metadata, fixed stimulus,
+  restricted LED measurement, admitted observable, and
+  `PhysicalExecutionEvent`;
+- constructed the concrete RFC-0009 `PhysicalExecutionEvidence` envelope and
+  verified every external digest and `fpga.physical-device.v1` requirement;
+- independently decoded result `1` and validated it against CCIR reference
+  result `1` for the fixed `x0=0, x3=1` boundary assignment; and
+- added a deterministic physical-evidence index with artifact roles, digests,
+  claim dimensions, trust boundary, and non-programming reproduction order.
 
 ### Validation
 
-- compiler scaling runner with deterministic benchmark generation;
-- per-benchmark scaling CSV aggregation;
-- candidate-count and behavioral-source growth figures;
-- generated-netlist-size figure;
-- compilation-time figure;
-- ngspice simulation-time figure;
-- verified 12-benchmark smoke study;
-- 48 of 48 scaling boundary simulations passed; and
-- reduced scaling regression integrated into consolidated validation.
-
-- generic compiler output agrees with the simulator compilation path;
-- permanent benchmark suite validates all admitted boundary assignments;
-- generated corpus validates 52 of 52 boundary simulations;
-- generated corpus spans candidate counts from 4 through 256; and
-- compiler, benchmark, generator, and legacy engineering regression tests pass.
+- complete regression: **899 tests passed**;
+- RFC-0008 tri-backend corpus: **16 benchmarks and 64 boundary cases passed**;
+- concrete P1 RFC-0009 evidence conformance: **PASS**;
+- P1 physical semantic validation: **PASS**; and
+- non-programming evidence regeneration reproduced the frozen directory
+  byte-for-byte.
 
 ### Scope
 
-The current parity backend enumerates every internal assignment and therefore
-generates `2^k` candidates for `k` internal variables.
+This release establishes a concrete, auditable physical FPGA execution under
+the declared RFC-0009 trust boundary. It makes no claim of authenticated
+capture, measured Fmax, efficient asymptotic scaling, complexity-class change,
+or superiority over conventional computation.
 
-The current work establishes a generic, reproducible, answer-independent
-compilation and validation framework. It does not claim efficient scaling or a
-passive physical implementation.
+## [0.5.0-frontend.1] - 2026-08-06
+
+### Added
+
+- canonical backend-independent CCIR containers and typed payloads;
+- parity and clause constraint families;
+- strict DIMACS parsing and CNF source representation;
+- parity-to-CCIR and CNF-to-CCIR lowering; and
+- independent assignment-semantic equivalence tests.
+
+### Validation
+
+- **359 automated tests passed**; and
+- existing parity SPICE validation remained passing.
+
+## [0.3.0] - 2026-08-05
+
+### Added
+
+- generic parity-to-ngspice compilation and independent continuation semantics;
+- deterministic benchmark generation, discovery, loading, and validation;
+- compiler, netlist-size, and simulator resource accounting; and
+- scaling reports and figures for the admitted benchmark families.
+
+### Scope
+
+The parity backend enumerates every internal assignment and therefore produces
+`2^k` candidates for `k` internal variables. The release did not claim
+efficient general-purpose scaling.
 
 ## [0.2.0] - 2026-08-05
 
@@ -159,12 +143,9 @@ coefficients. It is not a calibrated physical-device temperature model.
 
 ### Planned
 
-- Monte Carlo component variation.
-- Passive compiled RC networks.
-- Larger constraint systems.
-- Automatic circuit generation.
-- Statistical validation.
-- Hardware demonstrator.
-- PCB implementation.
-- Coherent carrier experiments.
-- Publication-quality benchmark suite.
+- RFC-0010 C-parity execution-substrate proposal;
+- additional physical execution substrates;
+- authenticated evidence and signed manifests;
+- broader benchmark and scaling studies;
+- independently replicated physical experiments; and
+- publication-quality research artifacts.

@@ -20,21 +20,20 @@ url: https://github.com/GridSAT/cpc-validation
 
 license: MIT
 
-version: "0.2.0"
+version: "0.5.0"
 
-date-released: 2026-08-05
+date-released: 2026-08-16
 
 abstract: >
   CPC Validation is the reference validation framework for
-  C-Parity Computing (CPC). The software independently computes
-  continuation functions, generates physical circuit models,
-  validates them using ngspice transient simulation, decodes
-  the resulting physical responses, and compares them against
-  mathematically computed reference continuations. The current
-  release establishes the reproducible software-to-SPICE
-  validation pipeline that serves as the engineering foundation
-  for future compiled passive networks, Monte Carlo robustness
-  analysis, hardware demonstrators, and coherent carrier systems.
+  C-Parity Computing (CPC). It defines a canonical constraint IR,
+  qualified RC, Digital, and FPGA execution backends, independent
+  cross-backend semantic validation, and an RFC-0009 physical-evidence
+  lifecycle. This release includes the first recorded P1 execution on
+  a Lattice iCE40 UltraPlus Breakout Board, with deterministic build and
+  timing artifacts, guarded device-programming evidence, restricted LED
+  observation, concrete evidence-profile conformance, and independent
+  post-execution CCIR validation.
 
 keywords:
   - C-Parity Computing
@@ -44,6 +43,9 @@ keywords:
   - Constraint Satisfaction
   - SAT
   - SPICE
+  - FPGA
+  - Physical Execution Evidence
+  - Reproducibility
   - ngspice
   - Circuit Simulation
   - Validation

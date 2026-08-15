@@ -1938,8 +1938,14 @@ and the FPGA Execution Backend.
 The accepted RFC-0009 baseline was established at **807 automated
 tests**, including **25 dedicated RFC-0009 conformance tests**.  That count is
 retained as historical acceptance evidence rather than rewritten as the suite
-evolves.  The current repository regression on the P1 physical-FPGA development
-branch passes **899 automated tests**.
+evolves.  The `main` regression at the completed P1 physical-FPGA baseline
+passes **899 automated tests**.
+
+Release `v0.5.0` freezes this combined RFC-0001 through RFC-0009 and P1
+physical-execution baseline.  The release is also marked by the research
+milestone tag `cpc-physical-fpga-p1-v1`; full scope, evidence identities,
+validation results, and non-claims are recorded in
+[`docs/releases/v0.5.0.md`](docs/releases/v0.5.0.md).
 
 The RFC-0006 acceptance corpus currently contains 16 discovered benchmarks and
 64 exhaustively enumerated boundary cases. All 64 cases pass backend agreement,
