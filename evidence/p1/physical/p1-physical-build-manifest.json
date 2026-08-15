@@ -1,0 +1,54 @@
+{
+  "backend": {
+    "id": "fpga",
+    "version": "1"
+  },
+  "binding": {
+    "prepared_execution_hash": "sha256:a184e8f3b8885fff70c96c6c339c133052886cd86cba8af63f1fc6a8edf3ee83"
+  },
+  "bitstream": {
+    "format": "ice40-asc-bin",
+    "sha256": "sha256:7d69fad66e08b4528c58c710ddaeb945b7aea822add761a251c85ec8ee1968c5"
+  },
+  "device": {
+    "family": "ice40up5k",
+    "part": "iCE40UP5K"
+  },
+  "inputs": [
+    {
+      "input_id": "physical-constraints",
+      "media_type": "text/plain",
+      "sha256": "sha256:36ad493d7d181ef7613add40cffbea57e875e68f0a48e7014141ee0d3c79eeb0"
+    },
+    {
+      "input_id": "physical-verilog",
+      "media_type": "text/x-verilog",
+      "sha256": "sha256:2e0eb4039dafe4d3539e3e1c22695d44899f47535a4a8d1f0aed6f61a4c572eb"
+    }
+  ],
+  "manifest_hash": "sha256:3e70282bb8376775a777cc1d395bbee607885a75d45214a9783166c47640ab9b",
+  "metadata": {
+    "build_id": "lattice-ice40up5k-open-toolchain-build.v1",
+    "constraint_id": "lattice-ice40up5k-b-evn-p1-red-led.v1",
+    "target_id": "lattice-ice40up5k-b-evn-sg48.v1"
+  },
+  "physical_profile_id": "fpga.physical-device.v1",
+  "schema": "cpc.physical-build-manifest.v1",
+  "tools": [
+    {
+      "stage": "bitstream-generation",
+      "tool": "icepack",
+      "version": "fpga-icestorm 0~20230218gitd20a5e9-1"
+    },
+    {
+      "stage": "place-route",
+      "tool": "nextpnr-ice40",
+      "version": "\"nextpnr-ice40\" -- Next Generation Place and Route (Version 0.6-3build5)"
+    },
+    {
+      "stage": "synthesis",
+      "tool": "yosys",
+      "version": "Yosys 0.33 (git sha1 2584903a060)"
+    }
+  ]
+}
