@@ -1,0 +1,39 @@
+{
+  "admitted_timing_conditions": {
+    "design_class": "static-combinational-output",
+    "nextpnr_port_budget_frequency_mhz": 12.0,
+    "observation_mode": "single-shot-static-output",
+    "stimulus_mode": "synthesis-bound-constants"
+  },
+  "analysis": {
+    "clock_domains": 0,
+    "fmax_available": false,
+    "interior_timing_paths_found": false,
+    "route_completed": true,
+    "tool_completed_normally": true
+  },
+  "binding": {
+    "bitstream_sha256": "sha256:7d69fad66e08b4528c58c710ddaeb945b7aea822add761a251c85ec8ee1968c5",
+    "routed_configuration_sha256": "sha256:cce431ab018f0711c07d5f2cb1b965e6bd323725df11666c0e5ac5f74d198ce6"
+  },
+  "build_id": "lattice-ice40up5k-open-toolchain-build.v1",
+  "diagnostics": [
+    "Annotating ports with timing budgets for target frequency 12.00 MHz",
+    "No Fmax available; no interior timing paths found in design.",
+    "Routing complete.",
+    "Program finished normally."
+  ],
+  "schema": "cpc.fpga-timing-report.v1",
+  "scope": "The P1 realization is a static combinational output with no clock domain or interior timing path. This report establishes successful routing under the declared static observation conditions; it makes no Fmax, latency, or complexity claim.",
+  "status": "pass-static-combinational-no-interior-paths",
+  "target": {
+    "device_family": "ice40up5k",
+    "device_part": "iCE40UP5K",
+    "package": "sg48"
+  },
+  "timing_validation_id": "nextpnr-ice40-static-combinational-timing.v1",
+  "tool": {
+    "name": "nextpnr-ice40",
+    "version": "\"nextpnr-ice40\" -- Next Generation Place and Route (Version 0.6-3build5)"
+  }
+}

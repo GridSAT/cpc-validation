@@ -17,6 +17,7 @@ OUTPUT_DIRECTORY = Path("evidence/p1/physical")
 BITSTREAM_NAME = "p1-icebreaker.bin"
 MANIFEST_NAME = "p1-physical-build-manifest.json"
 REPORT_NAME = "p1-physical-build-report.json"
+TIMING_REPORT_NAME = "p1-timing-report.json"
 VERILOG_NAME = "p1-physical-top.v"
 
 
@@ -54,6 +55,7 @@ def write_p1_physical_artifacts(
 
     bitstream = build.bitstream
     manifest = build.manifest.to_json().encode("utf-8")
+    timing_report = build.timing_report
     verilog = physical_source.source.encode("utf-8")
 
     report: dict[str, object] = {
@@ -64,6 +66,7 @@ def write_p1_physical_artifacts(
             "bitstream": BITSTREAM_NAME,
             "build_manifest": MANIFEST_NAME,
             "physical_verilog": VERILOG_NAME,
+            "timing_report": TIMING_REPORT_NAME,
         },
         "digests": {
             "bitstream": build.bitstream_sha256,
@@ -71,6 +74,7 @@ def write_p1_physical_artifacts(
             "physical_verilog": build.verilog_sha256,
             "physical_constraints": build.pcf_sha256,
             "routed_configuration": build.asc_sha256,
+            "timing_report": build.timing_report_sha256,
         },
         "build_manifest_hash": build.manifest.manifest_hash,
     }
@@ -80,6 +84,7 @@ def write_p1_physical_artifacts(
 
     _atomic_write(output_directory / BITSTREAM_NAME, bitstream)
     _atomic_write(output_directory / MANIFEST_NAME, manifest)
+    _atomic_write(output_directory / TIMING_REPORT_NAME, timing_report)
     _atomic_write(output_directory / VERILOG_NAME, verilog)
     _atomic_write(output_directory / REPORT_NAME, report_bytes)
     return report

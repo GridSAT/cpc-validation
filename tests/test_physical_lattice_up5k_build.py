@@ -18,6 +18,7 @@ from src.physical_fpga_synthesis import (
 )
 from src.physical_lattice_up5k_build import (
     LATTICE_UP5K_BUILD_ID,
+    LATTICE_UP5K_TIMING_VALIDATION_ID,
     build_lattice_up5k_bitstream,
 )
 
@@ -87,6 +88,7 @@ def test_build_records_artifact_digests() -> None:
         build.pcf_sha256,
         build.asc_sha256,
         build.bitstream_sha256,
+        build.timing_report_sha256,
     ):
         assert digest.startswith(
             "sha256:"
@@ -103,6 +105,19 @@ def test_manifest_binds_generated_bitstream() -> None:
     assert (
         build.manifest.bitstream_sha256
         == build.bitstream_sha256
+    )
+
+
+def test_build_retains_static_timing_validation() -> None:
+    build = _build()
+
+    assert build.timing_report
+    assert LATTICE_UP5K_TIMING_VALIDATION_ID.encode() in (
+        build.timing_report
+    )
+    assert b'"clock_domains": 0' in build.timing_report
+    assert b'"interior_timing_paths_found": false' in (
+        build.timing_report
     )
 
 
@@ -224,6 +239,14 @@ def test_build_is_deterministic() -> None:
 
     assert first.bitstream == (
         second.bitstream
+    )
+
+    assert first.timing_report_sha256 == (
+        second.timing_report_sha256
+    )
+
+    assert first.timing_report == (
+        second.timing_report
     )
 
     assert first.manifest.manifest_hash == (

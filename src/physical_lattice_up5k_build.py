@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import subprocess
 import tempfile
 from dataclasses import dataclass
@@ -30,6 +31,10 @@ from src.prepared_execution import PreparedExecution
 
 LATTICE_UP5K_BUILD_ID = (
     "lattice-ice40up5k-open-toolchain-build.v1"
+)
+
+LATTICE_UP5K_TIMING_VALIDATION_ID = (
+    "nextpnr-ice40-static-combinational-timing.v1"
 )
 
 
@@ -101,6 +106,79 @@ def _debian_package_version(
     return version
 
 
+def _build_timing_report(
+    *,
+    nextpnr_result: subprocess.CompletedProcess[str],
+    nextpnr_version: str,
+    routed_configuration_sha256: str,
+    bitstream_sha256: str,
+) -> bytes:
+    """Return deterministic timing evidence for the static P1 design."""
+
+    diagnostic = nextpnr_result.stderr
+    required_diagnostics = (
+        "Annotating ports with timing budgets for target frequency 12.00 MHz",
+        "No Fmax available; no interior timing paths found in design.",
+        "Routing complete.",
+        "Program finished normally.",
+    )
+
+    missing = tuple(
+        item
+        for item in required_diagnostics
+        if item not in diagnostic
+    )
+    if missing:
+        raise RuntimeError(
+            "nextpnr-ice40 timing diagnostics are incomplete: "
+            + ", ".join(missing)
+        )
+
+    target = LATTICE_UP5K_BREAKOUT_TARGET
+    report: dict[str, object] = {
+        "schema": "cpc.fpga-timing-report.v1",
+        "timing_validation_id": LATTICE_UP5K_TIMING_VALIDATION_ID,
+        "build_id": LATTICE_UP5K_BUILD_ID,
+        "tool": {
+            "name": target.place_route_tool,
+            "version": nextpnr_version,
+        },
+        "target": {
+            "device_family": target.device_family,
+            "device_part": target.device_part,
+            "package": target.nextpnr_package,
+        },
+        "binding": {
+            "bitstream_sha256": bitstream_sha256,
+            "routed_configuration_sha256": routed_configuration_sha256,
+        },
+        "admitted_timing_conditions": {
+            "design_class": "static-combinational-output",
+            "stimulus_mode": "synthesis-bound-constants",
+            "observation_mode": "single-shot-static-output",
+            "nextpnr_port_budget_frequency_mhz": 12.0,
+        },
+        "analysis": {
+            "clock_domains": 0,
+            "fmax_available": False,
+            "interior_timing_paths_found": False,
+            "route_completed": True,
+            "tool_completed_normally": True,
+        },
+        "status": "pass-static-combinational-no-interior-paths",
+        "diagnostics": list(required_diagnostics),
+        "scope": (
+            "The P1 realization is a static combinational output with no "
+            "clock domain or interior timing path. This report establishes "
+            "successful routing under the declared static observation "
+            "conditions; it makes no Fmax, latency, or complexity claim."
+        ),
+    }
+    return (
+        json.dumps(report, indent=2, sort_keys=True) + "\n"
+    ).encode("utf-8")
+
+
 @dataclass(frozen=True)
 class LatticeUP5KBuild:
     """
@@ -118,8 +196,10 @@ class LatticeUP5KBuild:
     pcf_sha256: str
     asc_sha256: str
     bitstream_sha256: str
+    timing_report_sha256: str
 
     bitstream: bytes
+    timing_report: bytes
     manifest: PhysicalBuildManifest
 
     def __post_init__(self) -> None:
@@ -133,6 +213,7 @@ class LatticeUP5KBuild:
             ("pcf_sha256", self.pcf_sha256),
             ("asc_sha256", self.asc_sha256),
             ("bitstream_sha256", self.bitstream_sha256),
+            ("timing_report_sha256", self.timing_report_sha256),
         ):
             if (
                 not isinstance(value, str)
@@ -153,11 +234,28 @@ class LatticeUP5KBuild:
                 "bitstream must be non-empty"
             )
 
+        if not isinstance(self.timing_report, bytes):
+            raise ValueError(
+                "timing_report must be bytes"
+            )
+
+        if not self.timing_report:
+            raise ValueError(
+                "timing_report must be non-empty"
+            )
+
         if self.bitstream_sha256 != _sha256_bytes(
             self.bitstream
         ):
             raise ValueError(
                 "bitstream_sha256 does not match bitstream"
+            )
+
+        if self.timing_report_sha256 != _sha256_bytes(
+            self.timing_report
+        ):
+            raise ValueError(
+                "timing_report_sha256 does not match timing report"
             )
 
         if (
@@ -275,7 +373,7 @@ def build_lattice_up5k_bitstream(
                 "yosys did not produce synthesized JSON"
             )
 
-        _run_checked(
+        nextpnr_result = _run_checked(
             [
                 "nextpnr-ice40",
                 "--up5k",
@@ -331,6 +429,17 @@ def build_lattice_up5k_bitstream(
 
     bitstream_sha256 = _sha256_bytes(
         bitstream
+    )
+
+    timing_report = _build_timing_report(
+        nextpnr_result=nextpnr_result,
+        nextpnr_version=nextpnr_version,
+        routed_configuration_sha256=asc_sha256,
+        bitstream_sha256=bitstream_sha256,
+    )
+
+    timing_report_sha256 = _sha256_bytes(
+        timing_report
     )
 
     tools = tuple(
@@ -399,6 +508,8 @@ def build_lattice_up5k_bitstream(
         pcf_sha256=pcf_sha256,
         asc_sha256=asc_sha256,
         bitstream_sha256=bitstream_sha256,
+        timing_report_sha256=timing_report_sha256,
         bitstream=bitstream,
+        timing_report=timing_report,
         manifest=manifest,
     )

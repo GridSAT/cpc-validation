@@ -2,7 +2,8 @@
   "artifacts": {
     "bitstream": "p1-icebreaker.bin",
     "build_manifest": "p1-physical-build-manifest.json",
-    "physical_verilog": "p1-physical-top.v"
+    "physical_verilog": "p1-physical-top.v",
+    "timing_report": "p1-timing-report.json"
   },
   "build_id": "lattice-ice40up5k-open-toolchain-build.v1",
   "build_manifest_hash": "sha256:3e70282bb8376775a777cc1d395bbee607885a75d45214a9783166c47640ab9b",
@@ -11,7 +12,8 @@
     "build_manifest": "sha256:138fa129a606f565e025544f9ca8d99aa4816f5105f79548fc5f0610a9f8dead",
     "physical_constraints": "sha256:36ad493d7d181ef7613add40cffbea57e875e68f0a48e7014141ee0d3c79eeb0",
     "physical_verilog": "sha256:2e0eb4039dafe4d3539e3e1c22695d44899f47535a4a8d1f0aed6f61a4c572eb",
-    "routed_configuration": "sha256:cce431ab018f0711c07d5f2cb1b965e6bd323725df11666c0e5ac5f74d198ce6"
+    "routed_configuration": "sha256:cce431ab018f0711c07d5f2cb1b965e6bd323725df11666c0e5ac5f74d198ce6",
+    "timing_report": "sha256:dd140878dadd84b2562f178104805a1806647c18949fecc0017a13f1c6a12aba"
   },
   "schema": "cpc.p1-physical-build-report.v1",
   "status": "built-not-programmed"
