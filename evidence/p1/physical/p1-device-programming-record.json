@@ -1,0 +1,30 @@
+{
+  "backend": {
+    "id": "fpga",
+    "version": "1"
+  },
+  "binding": {
+    "bitstream_sha256": "sha256:7d69fad66e08b4528c58c710ddaeb945b7aea822add761a251c85ec8ee1968c5",
+    "build_manifest_hash": "sha256:3e70282bb8376775a777cc1d395bbee607885a75d45214a9783166c47640ab9b"
+  },
+  "device": {
+    "board_id": "lattice-icebreaker-up5k",
+    "device_family": "ice40up5k",
+    "device_id": "usb:0403:6010:d:001/008",
+    "device_part": "iCE40UP5K"
+  },
+  "metadata": {
+    "mode": "volatile-sram",
+    "programmed_at": "2026-08-15T15:48:14.780890+00:00",
+    "usb_selector": "d:001/008"
+  },
+  "physical_profile_id": "fpga.physical-device.v1",
+  "programming": {
+    "interface": "ftdi-mpsse-spi-sram",
+    "programmer": "/usr/bin/iceprog",
+    "programmer_version": "fpga-icestorm 0~20230218gitd20a5e9-1",
+    "programming_log_sha256": "sha256:786468e77f513e48fd45f92a8dffa5ab883a5907fd35a796cb144dd602e09517"
+  },
+  "record_hash": "sha256:80584659ad12a33afa51ae8ef52d432dad3851375e48c1f0703a14ce82fda251",
+  "schema": "cpc.device-programming-record.v1"
+}
