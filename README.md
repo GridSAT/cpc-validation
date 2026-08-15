@@ -1939,7 +1939,7 @@ The accepted RFC-0009 baseline was established at **807 automated
 tests**, including **25 dedicated RFC-0009 conformance tests**.  That count is
 retained as historical acceptance evidence rather than rewritten as the suite
 evolves.  The current repository regression on the P1 physical-FPGA development
-branch passes **893 automated tests**.
+branch passes **899 automated tests**.
 
 The RFC-0006 acceptance corpus currently contains 16 discovered benchmarks and
 64 exhaustively enumerated boundary cases. All 64 cases pass backend agreement,
@@ -1978,7 +1978,8 @@ deterministic synthesis projection, physical output-retention wrapper, concrete
 Lattice iCE40UP5K-B-EVN / SG48 target identity, accepted physical
 `result_out` constraint, and deterministic open-toolchain bitstream build.
 The build records generated source, constraint, routed configuration, bitstream,
-tool identities, and RFC-0009 `PhysicalBuildManifest` provenance.
+tool identities, RFC-0009 `PhysicalBuildManifest` provenance, and a deterministic
+nextpnr timing report for the admitted static-combinational observation mode.
 
 The accepted P1 pre-programming chain is therefore:
 
@@ -1991,6 +1992,7 @@ The accepted P1 pre-programming chain is therefore:
       -> accepted result_out physical constraint
       -> Yosys
       -> nextpnr-ice40
+      -> static-combinational timing validation
       -> IceStorm / icepack
       -> deterministic bitstream
       -> PhysicalBuildManifest
@@ -2011,17 +2013,27 @@ record, measurement record, admitted `ObservableExecution`, and RFC-0009
 decoder maps the observed active-low LED state to `result_bit = 1`; independent
 post-execution CCIR validation also returns `1` for `x0=0, x3=1`.
 
-P1 therefore has a complete recorded build, programming, observation,
-execution-event, and semantic-validation chain.  Its authenticity claim remains
-within RFC-0009's declared trust boundary: the evidence binds the supplied
-photograph and visible state but does not independently authenticate the
-photographer or capture environment.
+The concrete P1 artifact set is evaluated against the RFC-0009
+`fpga.physical-device.v1` profile.  Its retained `PhysicalExecutionEvidence`
+envelope contains every required substrate, instrumentation, calibration, and
+evidence-type field; all external record digests verify; and the resulting
+physical-evidence conformance report passes.  This evidentiary-completeness
+result remains separate from the independent semantic-validation result.
+
+P1 therefore has a complete recorded build, timing-validation, programming,
+observation, execution-event, evidence-conformance, and semantic-validation
+chain.  Its authenticity claim remains within RFC-0009's declared trust
+boundary: the evidence binds the supplied photograph and visible state but does
+not independently authenticate the photographer or capture environment.
 
 The fixed `build_p1_physical_artifacts.py` entry point bridges deterministic
 in-memory construction to an inspectable pre-programming evidence directory.
 It accepts no command-line parameters and atomically retains the accepted
-bitstream, physical Verilog, RFC-0009 build manifest, and deterministic build
-report under `evidence/p1/physical/`.  Its report status is explicitly
+bitstream, physical Verilog, RFC-0009 build manifest, deterministic build
+report, and deterministic timing report under `evidence/p1/physical/`.  P1 has
+no clock domain or interior timing path; the timing report records successful
+routing for a single-shot static output and makes no Fmax, latency, scaling, or
+complexity claim.  The build report status is explicitly
 `built-not-programmed`; generation of these files is not a programming,
 execution, observation, or semantic-correctness claim.
 
@@ -2035,9 +2047,13 @@ The `record_p1_physical_execution.py` entry point verifies the original
 photograph digest, the admitted active-low LED interpretation, the prepared
 execution binding, and the programming-record identity.  It writes only the
 observable execution and RFC-0009 physical execution event.  The separate
-`validate_p1_physical_execution.py` entry point reconstructs their identities,
-runs the fixed decoder, and performs the independent CCIR semantic comparison
-before writing the validation report.
+`validate_p1_physical_evidence.py` entry point constructs the canonical
+`PhysicalExecutionEvidence`, verifies every committed external record, and
+evaluates the concrete artifact set against `fpga.physical-device.v1` without
+decoding a semantic result.  Only `validate_p1_physical_execution.py` runs the
+fixed decoder and performs the independent CCIR semantic comparison.  The
+deterministic `evidence/p1/physical/README.md` index freezes every artifact role
+and digest and records the reproduction order without invoking the programmer.
 
 ---
 

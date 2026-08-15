@@ -13,7 +13,8 @@ The format follows **Keep a Changelog** and this project follows
 
 - added the fixed `build_p1_physical_artifacts.py` entry point;
 - atomically retain the accepted iCEBreaker bitstream, physical Verilog,
-  RFC-0009 build manifest, and deterministic build report under
+  RFC-0009 build manifest, deterministic build report, and static-combinational
+  nextpnr timing report under
   `evidence/p1/physical/`;
 - added deterministic, digest-binding artifact-retention tests; and
 - preserve the explicit `built-not-programmed` evidence boundary;
@@ -28,9 +29,16 @@ The format follows **Keep a Changelog** and this project follows
 - retained the original user-supplied HEIC observation with camera metadata and
   a content digest, together with separate stimulus and measurement records;
 - bound the programming record, prepared execution, admitted observable,
-  stimulus, and measurement into an RFC-0009 `PhysicalExecutionEvent`; and
+  stimulus, and measurement into an RFC-0009 `PhysicalExecutionEvent`;
+- constructed and verified the concrete RFC-0009 `PhysicalExecutionEvidence`
+  envelope against every `fpga.physical-device.v1` requirement without using a
+  semantic oracle;
 - independently validated the decoded physical result (`1`) against the CCIR
-  continuation result (`1`) for the fixed P1 boundary assignment.
+  continuation result (`1`) for the fixed P1 boundary assignment; and
+- added a deterministic evidence index covering every retained artifact,
+  digest, role, claim dimension, trust boundary, and non-programming
+  reproduction step; and
+- verified the completed P1 evidence line with **899 passing tests**.
 
 ### CCIR
 
