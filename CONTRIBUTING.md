@@ -113,6 +113,34 @@ Whenever possible, include quantitative validation data.
 
 ---
 
+# Commit Discipline
+
+Each commit MUST represent one coherent, independently reviewable change.
+
+A commit MUST leave the repository in a valid state and MUST NOT introduce
+failing tests. Unrelated implementation, validation, documentation, metadata,
+and release changes SHOULD be committed separately whenever they can be
+validated independently.
+
+Before committing, contributors MUST run the validation required for the
+affected subsystem. Before a release, the complete validation suite MUST be
+run.
+
+A commit that changes normative architecture SHOULD contain only the normative
+change and any strictly necessary index or registration update. Implementation,
+conformance validation, regression tests, explanatory documentation, release
+metadata, and release notes SHOULD follow in separate commits when each forms
+an independently validatable unit.
+
+Generated evidence, unpublished research material, and quarantined artifacts
+MUST NOT enter a commit unless the commit explicitly freezes them as part of a
+declared public evidence or release scope.
+
+Commit messages SHOULD be concise and descriptive and SHOULD state the purpose
+of the change.
+
+---
+
 # Commit Messages
 
 Use concise and descriptive commit messages.
