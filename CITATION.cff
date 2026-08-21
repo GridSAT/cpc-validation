@@ -20,24 +20,28 @@ url: https://github.com/GridSAT/cpc-validation
 
 license: MIT
 
-version: "0.5.0"
+version: "0.6.0"
 
-date-released: 2026-08-16
+date-released: 2026-08-21
 
 abstract: >
   CPC Validation is the reference validation framework for
   Constraint Physical Computing (CPC). It defines a canonical constraint IR,
   qualified RC, Digital, and FPGA execution backends, independent
   cross-backend semantic validation, and an RFC-0009 physical-evidence
-  lifecycle. This release includes the first recorded P1 execution on
-  a Lattice iCE40 UltraPlus Breakout Board, with deterministic build and
-  timing artifacts, guarded device-programming evidence, restricted LED
-  observation, concrete evidence-profile conformance, and independent
-  post-execution CCIR validation.
+  lifecycle. Version 0.6.0 adds the accepted RFC-0010 architecture for
+  driven-dissipative open-system execution and referenced readout, together
+  with an execution-specification model, conformance validation, and a
+  simulated reference witness. The RFC-0009 P1 FPGA evidence remains the
+  repository's concrete physical-execution milestone; RFC-0010 does not by
+  itself establish a physical open-system realization.
 
 keywords:
   - Constraint Physical Computing
   - CPC
+  - Open-System Execution
+  - Driven-Dissipative Systems
+  - Referenced Readout
   - Physical Computing
   - Analog Computing
   - Constraint Satisfaction

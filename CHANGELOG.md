@@ -11,6 +11,42 @@ The format follows **Keep a Changelog** and this project follows
 
 No unreleased changes.
 
+## [0.6.0] - 2026-08-21
+
+### Architecture
+
+- accepted RFC-0010 for driven-dissipative open-system execution and
+  referenced readout;
+- separated stabilization dynamics from the instance-dependent problem
+  generator;
+- specified admissibility, terminal silence, fixed-point, convergence,
+  referenced-readout, calibration, and evidence obligations; and
+- integrated RFC-0010 into the combined RFC-0001 through RFC-0010
+  architectural baseline.
+
+### Implementation
+
+- added the RFC-0010 execution-specification model;
+- added independent RFC-0010 conformance validation;
+- added a simulated reference witness exercising the declared execution and
+  readout contracts; and
+- documented atomic commit discipline and corrected CPC project terminology.
+
+### Validation
+
+- complete repository regression: **1010 tests passed**;
+- RFC-0010 execution-specification tests: **PASS**;
+- RFC-0010 conformance tests: **PASS**; and
+- RFC-0010 reference-witness tests: **PASS**.
+
+### Scope
+
+This release establishes an accepted and executable software specification for
+RFC-0010 and a simulated reference witness. It does not establish physical
+superconducting, bosonic, driven-dissipative, or other open-system execution.
+The RFC-0009 P1 FPGA evidence remains the repository's concrete physical
+execution milestone.
+
 ## [0.5.0] - 2026-08-16
 
 ### Architecture
@@ -143,7 +179,6 @@ coefficients. It is not a calibrated physical-device temperature model.
 
 ### Planned
 
-- RFC-0010 C-parity execution-substrate proposal;
 - additional physical execution substrates;
 - authenticated evidence and signed manifests;
 - broader benchmark and scaling studies;
