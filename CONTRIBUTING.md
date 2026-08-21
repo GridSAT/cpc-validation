@@ -3,7 +3,7 @@
 Thank you for your interest in contributing to CPC Validation.
 
 The objective of this repository is to provide a scientifically rigorous,
-reproducible validation framework for C-Parity Computing (CPC). Every
+reproducible validation framework for Constraint Physical Computing (CPC). Every
 contribution should improve correctness, reproducibility, engineering
 quality, or documentation.
 

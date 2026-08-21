@@ -3,7 +3,7 @@
 ## Purpose
 
 CPC Validation provides a reproducible reference implementation for the
-validation of C-Parity Computing (CPC). Rather than demonstrating only a
+validation of Constraint Physical Computing (CPC). Rather than demonstrating only a
 numerical result, the repository validates the complete engineering chain
 from an independently computed mathematical continuation to the physical
 response of a simulated circuit.
