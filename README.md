@@ -6,7 +6,7 @@
 [![Python](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://www.python.org/)
 [![ngspice](https://img.shields.io/badge/ngspice-42%2B-blue.svg)](https://ngspice.sourceforge.io/)
 [![Status](https://img.shields.io/badge/status-RFC--0010%20baseline-brightgreen.svg)](#development-status)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22045318.svg)](https://doi.org/10.5281/zenodo.22045318)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22045319.svg)](https://doi.org/10.5281/zenodo.22045319)
 
 ---
 
