@@ -1,6 +1,6 @@
 # RFC-0010: Driven-Dissipative Open-System Execution and Referenced Readout
 
-**Status:** Draft  
+**Status:** Review  
 **Category:** CPC Execution and Validation Architecture  
 **Depends on:** RFC-0001, RFC-0002, RFC-0003, RFC-0004, RFC-0005, RFC-0006, RFC-0007, RFC-0008, RFC-0009
 
@@ -375,7 +375,10 @@ Missing leakage information MUST NOT be interpreted as zero leakage.
 
 # 8. Encoded semantic penalty
 
-When a backend uses a penalty representation, let
+When a backend uses a penalty representation together with an
+isometric encoding
+\(V:\mathcal H_{\mathrm{log}}\rightarrow\mathcal H_{\mathrm{phys}}\),
+let
 
 \[
 H_{X,\beta}
@@ -396,6 +399,10 @@ H^{\mathrm{enc}}_{X,\beta}
 =
 V H_{X,\beta} V^\dagger.
 \]
+
+A backend using a non-isometric but mathematically equivalent protected-manifold
+description MUST provide the corresponding encoded penalty and semantic-target
+construction explicitly rather than implicitly reusing the isometric formulas.
 
 Because the encoded operator may vanish outside the protected manifold, the
 semantic target MUST be defined inside the protected representation rather
@@ -720,7 +727,8 @@ e^{-itH_0}
 e^{itH_0}.
 \]
 
-Normalized Gibbs states are likewise invariant under the same scalar shift.
+Whenever the normalized Gibbs state is well defined, it is likewise
+invariant under the same scalar shift.
 
 Therefore, if a semantic distinction is encoded solely as an absolute scalar
 Hamiltonian shift, an observation model whose admitted normalized state data
@@ -763,6 +771,12 @@ A reference record SHOULD include:
 - instrumentation identity;
 - provenance; and
 - evidence digest where applicable.
+
+Reference calibration MUST be independent of the independently computed
+semantic answer for the execution being validated. Calibration data MUST NOT
+contain expected continuation values, expected decoded outputs, satisfying
+assignments, completion tables, or equivalent answer-dependent tuning
+information.
 
 For microwave-referenced execution, a reference MAY include
 
@@ -835,7 +849,10 @@ P^{R'}_{X,c}
 
 for every semantic class \(c\).
 
-The decoder MUST be fixed before independent semantic comparison.
+The decoder and its decision regions MUST be fixed from admitted
+backend, reference, and calibration data before independent semantic
+comparison. They MUST NOT be selected, tuned, or altered using the expected
+semantic answer for the execution being validated.
 
 The backend MUST expose:
 
@@ -1120,7 +1137,8 @@ RFC-0010 MAY advance from Draft to Review when:
    are correctly scoped;
 6. RFC-0009 integration is coherent; and
 7. no requirement permits answer information to enter through compilation,
-   preparation, calibration, measurement, or decoding.
+   preparation, calibration, measurement, decision-region selection, or
+   decoding.
 
 RFC-0010 MAY advance to Accepted only after review of the normative text and
 the repository governance process required for accepted RFCs.
