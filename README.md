@@ -2470,7 +2470,14 @@ README and a normative RFC differ.
 
 Citation metadata are provided in [`CITATION.cff`](CITATION.cff).
 
-Until a release DOI is available, cite the repository as:
+The archival DOI for the current release (`v0.6.0`) is
+[`10.5281/zenodo.22045319`](https://doi.org/10.5281/zenodo.22045319).
+
+For citations that should resolve to the latest archived CPC Validation
+version, use the all-versions DOI
+[`10.5281/zenodo.22045318`](https://doi.org/10.5281/zenodo.22045318).
+
+To cite this specific release, use:
 
 > Karim Daghbouche.
 > *CPC Reference Validation Framework:

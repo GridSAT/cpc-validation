@@ -18,6 +18,8 @@ repository-code: https://github.com/GridSAT/cpc-validation
 
 url: https://github.com/GridSAT/cpc-validation
 
+doi: 10.5281/zenodo.22045319
+
 license: MIT
 
 version: "0.6.0"
