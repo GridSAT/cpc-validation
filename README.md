@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://www.python.org/)
 [![ngspice](https://img.shields.io/badge/ngspice-42%2B-blue.svg)](https://ngspice.sourceforge.io/)
-[![Status](https://img.shields.io/badge/status-RFC--0009%20baseline-brightgreen.svg)](#development-status)
+[![Status](https://img.shields.io/badge/status-RFC--0010%20baseline-brightgreen.svg)](#development-status)
 
 ---
 
@@ -239,6 +239,7 @@ The CPC Reference Validation Framework currently provides:
 - RFC-0007 backend qualification and conformance manifests;
 - RFC-0008 FPGA execution backend and tri-backend validation;
 - RFC-0009 physical execution evidence and substrate conformance;
+- RFC-0010 driven-dissipative open-system execution and referenced-readout architecture;
 - ExecutionArtifact contract;
 - first-class PreparedExecution state;
 - first-class ObservableExecution result;
@@ -258,8 +259,15 @@ The CPC Reference Validation Framework currently provides:
 - physical execution evidence and substrate conformance;
 - comprehensive automated regression suite.
 
-These components establish the current reference implementation of the
-combined RFC-0001 through RFC-0009 CPC architecture.
+These components, together with the RFC-0010 execution-specification model,
+conformance validation, and reference witness, establish the current reference
+implementation of the combined RFC-0001 through RFC-0010 CPC architecture.
+
+RFC-0010 extends the architecture for driven-dissipative open-system execution
+and referenced readout.  Its current repository realization is a software
+specification, conformance layer, and reference witness.  It is not evidence
+that a superconducting, bosonic, or other driven-dissipative open-system
+substrate has been physically implemented or executed.
 
 ---
 
@@ -1865,6 +1873,7 @@ the RFC series.
 | RFC-0007 | Backend qualification and conformance manifests |
 | RFC-0008 | FPGA execution backend and tri-backend validation |
 | RFC-0009 | Physical execution evidence and substrate conformance |
+| RFC-0010 | Driven-dissipative open-system execution and referenced readout |
 
 The RC Reference Backend therefore represents the current reference
 implementation of the combined RFC architecture.
@@ -1931,9 +1940,11 @@ repository.
 ## Development Status
 
 The CPC Reference Validation Framework implements the combined RFC-0001
-through RFC-0009 architectural baseline with three current execution
-realizations: the RC Reference Backend, the deterministic Digital Backend,
-and the FPGA Execution Backend.
+through RFC-0010 architectural baseline.  Its three currently implemented
+general execution-backend realizations are the RC Reference Backend, the
+deterministic Digital Backend, and the FPGA Execution Backend.  RFC-0010 adds
+an open-system execution-specification model, conformance validation, and a
+reference witness; it does not add a claimed physical open-system backend.
 
 The accepted RFC-0009 baseline was established at **807 automated
 tests**, including **25 dedicated RFC-0009 conformance tests**.  That count is
@@ -2213,9 +2224,31 @@ Persistent RFC-0009 acceptance evidence is retained under
 normative conformance suite used to establish acceptance.
 
 RFC-0009 does not equate evidence identity with physical authenticity or
-semantic correctness. In particular, the current acceptance evidence validates
-the physical-evidence architecture and reference implementation; it does
-**not** constitute a claim that an actual FPGA board has executed CPC.
+semantic correctness. In particular, the RFC-0009 acceptance evidence validates
+the physical-evidence architecture and reference implementation; it does not by
+itself constitute a physical-device execution claim.  The later P1 evidence
+described above separately records an actual FPGA programming, observation,
+execution-event, evidence-conformance, and semantic-validation chain.
+
+### RFC-0010 Driven-Dissipative Open-System Execution Status
+
+RFC-0010 is **Accepted** and extends the CPC execution architecture to backends
+whose physical dynamics are modeled as driven-dissipative open quantum systems.
+It specifies protected-manifold identity, stabilization/problem-generator
+separation, answer-independent generator synthesis, terminal-sector and
+convergence evidence, external operational references, referenced measurement,
+fixed decoding, calibration, and exact-versus-approximate realization status.
+
+The repository currently implements the RFC-0010 execution-specification model,
+dedicated conformance validation, and a reference witness.  These artifacts
+validate the RFC-0010 software and evidence contracts.  They do **not** claim
+that a superconducting bosonic system, or any other driven-dissipative
+open-system hardware substrate, has physically executed CPC.
+
+Accordingly, the repository contains two distinct forms of evidence that must
+not be conflated: the RFC-0009/P1 line contains retained evidence of an actual
+physical FPGA execution, while the RFC-0010 line currently provides a
+simulated/reference realization of the open-system architecture.
 
 ### RFC-0003 / RFC-0004 / RFC-0005 / RFC-0006 / RFC-0007 / RFC-0008 / RFC-0009 Audit Coverage
 
@@ -2345,7 +2378,7 @@ Planned work includes
 
 These developments are intended to extend the set of supported execution
 substrates without modifying the architectural contracts established by
-RFC-0001 through RFC-0009.
+RFC-0001 through RFC-0010.
 
 ---
 
@@ -2413,6 +2446,7 @@ The normative architecture is contained in:
 - [`docs/design/RFC-0007-Backend-Qualification-and-Conformance-Manifests.md`](docs/design/RFC-0007-Backend-Qualification-and-Conformance-Manifests.md)
 - [`docs/design/RFC-0008-FPGA-Execution-Backend-and-Tri-Backend-Validation.md`](docs/design/RFC-0008-FPGA-Execution-Backend-and-Tri-Backend-Validation.md)
 - [`docs/design/RFC-0009-Physical-Execution-Evidence-and-Substrate-Conformance.md`](docs/design/RFC-0009-Physical-Execution-Evidence-and-Substrate-Conformance.md)
+- [`docs/design/RFC-0010-Driven-Dissipative-Open-System-Execution-and-Referenced-Readout.md`](docs/design/RFC-0010-Driven-Dissipative-Open-System-Execution-and-Referenced-Readout.md)
 
 | RFC | Purpose |
 |---|---|
@@ -2425,6 +2459,7 @@ The normative architecture is contained in:
 | RFC-0007 | Backend qualification and conformance manifests |
 | RFC-0008 | FPGA execution backend and tri-backend validation |
 | RFC-0009 | Physical execution evidence and substrate conformance |
+| RFC-0010 | Driven-dissipative open-system execution and referenced readout |
 
 This README is explanatory. The RFC documents are authoritative where this
 README and a normative RFC differ.
