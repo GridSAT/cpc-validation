@@ -1,0 +1,19 @@
+{
+  "arithmetic_policy": {
+    "max_candidates": 50000,
+    "max_certificate_divisions": 100000,
+    "max_factor_divisions": 100000,
+    "max_integer_bits": 256,
+    "max_intervals": 1024,
+    "max_lcm_calls": 100000,
+    "max_phase_bits": 4096,
+    "max_rational_visits": 100000,
+    "max_trials": 128
+  },
+  "classification": "prospective test portability fixture; not an acceptance record or execution authorization",
+  "provenance": {
+    "historical_test_sha256": "0d824c3f018ba3360fa7ac3d5abeb975c7658b6babb14f91b60678aacd87c6ad",
+    "source_path": "results/shor/p4-implementation/P4-FINAL-PRE-RECORD-v8/P4-ACCEPTANCE.json",
+    "source_sha256": "fb893c9922a7f9183b204556dacd012b138e58ee97a4de053ee7cf2f5d24c0d5"
+  }
+}
