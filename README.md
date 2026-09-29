@@ -91,6 +91,11 @@ Run the built-in RC/ngspice verification:
 python run_spice.py
 ```
 
+The complete repository suite also exercises external toolchains. Its native
+and controller tests require the applicable C compiler/libm, ngspice, Icarus
+Verilog/vvp and Yosys tools. Record the validation environment and distinguish
+a missing prerequisite from a scientific test result.
+
 For exact environment reproduction, use requirements-lock.txt.
 
 ---
@@ -1718,7 +1723,7 @@ Fixed Decoder
 Decoded Result
   │
   ▼
-Independent Physical Validation
+Independent Semantic Validation
   │
   ▼
 PASS / FAIL
@@ -1773,7 +1778,7 @@ procedures while preserving the same execution-backend compilation contract.
 
 ---
 
-### Physical Execution
+### Simulated RC Execution
 
 Execution is performed by ngspice using the prepared RC network.
 
@@ -1791,7 +1796,7 @@ No semantic interpretation occurs during simulation.
 Following execution, the backend exposes only the admitted observable
 interface.
 
-For the RC Reference Backend, this interface consists of measured electrical quantities
+For the RC Reference Backend, this interface consists of simulated electrical quantities
 defined by the backend specification.
 
 The backend does not expose hidden simulator state as part of semantic
@@ -1876,8 +1881,9 @@ the RFC series.
 | RFC-0009 | Physical execution evidence and substrate conformance |
 | RFC-0010 | Driven-dissipative open-system execution and referenced readout |
 
-The RC Reference Backend therefore represents the current reference
-implementation of the combined RFC architecture.
+The RC Reference Backend is the reference RC/SPICE realization within the CPC
+framework. It does not by itself instantiate every RFC-0010 open-system
+requirement or establish physical open-system execution.
 
 It should be viewed as the reference realization of the CPC Reference Validation
 Framework rather than as the defining implementation of Constraint Physical Computing
@@ -1950,8 +1956,8 @@ reference witness; it does not add a claimed physical open-system backend.
 The accepted RFC-0009 baseline was established at **807 automated
 tests**, including **25 dedicated RFC-0009 conformance tests**.  That count is
 retained as historical acceptance evidence rather than rewritten as the suite
-evolves.  The `main` regression at the completed P1 physical-FPGA baseline
-passes **899 automated tests**.
+evolves.  The completed v0.5.0/P1 physical-FPGA baseline recorded **899 automated tests**.
+This is a historical count, not the current branch's suite size.
 
 Release `v0.5.0` freezes this combined RFC-0001 through RFC-0009 and P1
 physical-execution baseline.  The release is also marked by the research
@@ -1980,6 +1986,10 @@ execution identity, external evidence, build provenance, device programming,
 physical execution events, and observable execution. Physical-evidence
 conformance remains distinct from semantic correctness: content identity,
 physical authenticity, and semantic correctness are separate claims.
+
+The following P1 implementation and physical-evidence statements describe the
+retained historical P1 baseline. They do not establish N0 hardware validation
+or grant current programming/acquisition authorization.
 
 The RFC-0009 reference implementation and acceptance evidence validate these
 contracts.  The P1 evidence directory now additionally records one explicitly
@@ -2231,6 +2241,45 @@ itself constitute a physical-device execution claim.  The later P1 evidence
 described above separately records an actual FPGA programming, observation,
 execution-event, evidence-conformance, and semantic-validation chain.
 
+### CPC-Shor and N0 Research Status
+
+The post-v0.6.0 release publishes bounded Shor/RFC-0010 software and models,
+including finite modular-response and open-system witnesses, P3 model/compiler
+and inference support, and P4 deterministic reconstruction and certification.
+
+The P4 library includes distinct EXACT and bounded-error contracts,
+retained-record replay, guarded acquisition adapters, deterministic diagnostic
+state construction, retained-artifact per-trial calibration scoring, and a
+bounded classical host C simulation kernel. These are software capabilities;
+their publication does not establish stochastic calibration acceptance,
+physical execution, or a complete autonomous historical P4 workflow.
+
+The N0 stack includes profile and raw-record contracts, finite models,
+synthetic rehearsal, readiness and claim gates, controller RTL, host-side
+protocol/synthesis software, and simulation tests. It remains a pre-physical
+software-freeze candidate. RTL and synthesis validation do not establish
+physical N0 hardware validation or authorize programming/acquisition.
+
+The current N0 boundary is:
+
+- PHYSICAL_N0_VALIDATED = NO
+- PHYSICAL_EXECUTION_AUTHORIZED = NO
+- FPGA_PROGRAMMING_AUTHORIZED = NO
+- PHYSICAL_ACQUISITION_PERFORMED = NO
+
+No integrated physical N0 apparatus, native scalable CPC-Shor, physical TTS,
+scalable quantum computing, or computational advantage is established.
+Host-native C simulation is classical host simulation, not quantum-native
+execution.
+
+Run `python run_shor.py` for the tiny finite demonstration. Historical research
+notes are retained separately; their commands, results and next-action text do
+not authorize historical execution.
+
+See the [current software scope](docs/shor/README.md),
+[N0 readiness](docs/shor/n0-status.md), and
+[native claim boundary](docs/shor/native-boundary.md).
+
 ### RFC-0010 Driven-Dissipative Open-System Execution Status
 
 RFC-0010 is **Accepted** and extends the CPC execution architecture to backends
@@ -2364,22 +2413,30 @@ its substrate or implementer.
 
 ## Roadmap
 
-Future development will extend the CPC architecture through additional
-execution-backend implementations while preserving the canonical frontend and
-validation framework.
+Future development continues to preserve the canonical frontend, execution
+contracts, evidence boundaries, and independent validation architecture
+established by RFC-0001 through RFC-0010.
 
-Planned work includes
+The immediate research priorities are:
 
-- graph execution backend;
-- C-parity execution backend;
-- additional physical execution substrates;
-- expanded and diversified benchmark collections;
-- broader cross-substrate qualification coverage;
-- cryptographically signed qualification manifests and attestation;
+- define and bind a specific physical N0 apparatus and physical profile;
+- extend the N0 deterministic FPGA control/acquisition stack without treating
+  the FPGA as the quantum or CPC dynamics;
+- retain preregistered raw-record, calibration, timing, and integrity boundaries
+  for any future physical acquisition;
+- establish the required integrated bosonic/CPC interaction before making a
+  physical N0 claim;
+- continue native CPC-Shor composition, locality, resource, and scaling
+  analysis without promoting finite-model evidence into a scalability claim;
+- expand physical execution substrates, benchmark collections, and
+  cross-substrate qualification coverage; and
+- extend cryptographic provenance, signed qualification, and attestation
+  mechanisms.
 
-These developments are intended to extend the set of supported execution
-substrates without modifying the architectural contracts established by
-RFC-0001 through RFC-0010.
+The existing RC, Digital, and FPGA realizations remain the repository's three
+qualified general execution-backend families. The CPC-Shor/N0 research line is
+not listed as a fourth qualified backend because its integrated physical
+RFC-0010 substrate has not been established.
 
 ---
 
@@ -2401,7 +2458,7 @@ RFC-0001 through RFC-0010.
 | **Restricted Interface Principle** | Requirement that semantic validation use only the admitted readout interface and fixed decoder |
 | **Compiler validation** | Verification that compilation conforms to the execution-backend contract |
 | **Semantic validation** | Independent comparison of decoded execution behavior with reference semantics |
-| **RC Reference Backend** | Reference physical execution backend implemented through the RC/ngspice pipeline |
+| **RC Reference Backend** | Reference RC/SPICE simulation backend implemented through the RC/ngspice pipeline |
 | **Digital Backend** | Deterministic software execution backend using the independent digital instruction path |
 | **FPGA Execution Backend** | Hardware-oriented digital logic execution backend using the RFC-0008 FPGA preparation and execution lifecycle |
 | **PhysicalExecutionEvidence** | RFC-0009 deterministic record binding prepared and observable execution identity to explicit substrate, instrumentation, calibration, and external evidence records |
@@ -2515,3 +2572,10 @@ implementation of the Constraint Physical Computing (CPC) architecture.
 Its purpose is to provide a backend-independent foundation for canonical
 constraint compilation, execution artifact generation, and validation across
 diverse computational substrates.
+
+## Documentation
+
+Start with the [documentation index](docs/README.md), then the
+[current architecture](docs/architecture.md),
+[validation methodology](docs/validation.md), or
+[CPC-Shor/N0 overview](docs/shor/README.md).

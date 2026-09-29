@@ -1,237 +1,187 @@
 # Validation Methodology
 
-## Purpose
-
-The objective of CPC Validation is not to demonstrate that a circuit
-produces a desired output. Rather, the objective is to verify that a
-physical implementation reproduces an independently computed mathematical
-continuation.
-
-Every validation therefore compares two completely independent objects:
-
-1. A mathematical reference continuation.
-2. A physical measurement obtained from circuit simulation or hardware.
-
-Agreement between these two objects constitutes a successful validation.
-
----
-
-# Validation Pipeline
-
-Every experiment follows the same sequence.
-
-Constraint instance
-
-↓
-
-Reference continuation computation
-
-↓
-
-Circuit generation
-
-↓
-
-Physical simulation (ngspice)
-
-↓
-
-Measured voltage
-
-↓
-
-Threshold decoding
-
-↓
-
-Decoded continuation
-
-↓
-
-Reference comparison
-
-↓
-
-PASS / FAIL
-
-The mathematical reference never depends on the simulator.
-
----
-
-# Independent Reference
-
-For the current benchmark
-
-x0 XOR x1 XOR x2 = 0
-
-x1 XOR x2 XOR x3 = 1
-
-elimination of the internal variables yields
-
-x0 XOR x3 = 1
-
-The reference implementation computes this continuation directly.
-
-The circuit simulator has no knowledge of this computation.
-
----
-
-# Validation Criterion
-
-For every boundary assignment
-
-(x0,x3)
-
-the decoded physical response must equal the independently computed
-reference continuation.
-
-Formally,
-
-decoded_response = reference_continuation
-
-for every tested assignment.
-
-Only then is the experiment considered successful.
-
----
-
-# Current Benchmark
-
-Boundary assignments
-
-x0=0  x3=0
-
-x0=0  x3=1
-
-x0=1  x3=0
-
-x0=1  x3=1
-
-Expected continuation
-
-0
-
-1
-
-1
-
-0
-
-The present repository verifies all four cases automatically.
-
----
-
-# Physical Simulation
-
-Current simulations use
-
-- ngspice
-- transient analysis
-- RC output stage
-- deterministic threshold decoder
-
-The physical model intentionally remains simple.
-
-Its purpose is validation of the engineering pipeline rather than
-optimization of hardware.
-
----
-
-# Decoder
-
-The physical simulator produces an analog voltage.
-
-A threshold decoder converts this voltage into a binary continuation.
-
-Current threshold
-
-2.5 V
-
-Voltages above the threshold decode to
-
-1
-
-Voltages below the threshold decode to
-
-0
-
-Future versions may implement more sophisticated decoding methods.
-
----
-
-# Regression Testing
-
-Every repository revision should satisfy
-
-- unit tests
-- continuation verification
-- SPICE simulation
-- decoder verification
-
-No code change should alter previously validated continuation results
-unless the benchmark itself changes.
-
----
-
-# Reproducibility
-
-A validation result should be reproducible from
-
-git clone
-
-↓
-
-dependency installation
-
-↓
-
-python run_spice.py
-
-↓
-
-identical continuation table
-
-Independent researchers should obtain the same validation results without
-modifying the repository.
-
----
-
-# Future Validation Stages
-
-The same methodology will be applied to progressively more realistic
-implementations.
-
-Stage 1
-
-Behavioral SPICE
-
-Stage 2
-
-Passive RC compilation
-
-Stage 3
-
-Monte Carlo component variation
-
-Stage 4
-
-Automatic network synthesis
-
-Stage 5
-
-PCB demonstrator
-
-Stage 6
-
-Laboratory measurements
-
-Stage 7
-
-Carrier-based implementations
-
-At every stage the mathematical reference remains unchanged.
-
-Only the physical realization evolves.
+CPC validation separates compilation, execution, observation, decoding,
+independent semantics and evidence. The methodology applies across the declared
+RC, Digital and FPGA backend domains and the separately scoped RFC-0010
+research models. A voltage threshold is an RC readout choice, not a universal
+validation rule. See the [architecture](architecture.md) and
+[accepted RFC index](design/README.md).
+
+## Compiler validation
+
+Check frontend lowering and canonical CCIR structure, backend capability
+admission, deterministic compilation and complete artifact provenance. Generated
+elements must resolve to admitted CCIR data or fixed backend rules. Reject
+unsupported domains and embedded semantic answers. Compilation and preparation
+must not consume independently computed continuation tables, expected orders,
+factors or truth phases.
+
+## Execution and observation validation
+
+Check the `ExecutionArtifact` to `PreparedExecution` boundary and execution
+against the prepared interface. `ObservableExecution` must contain only admitted
+observations and provenance. Decode with the fixed declared decoder; do not
+recover answers from forbidden internal state or tune decoding after seeing the
+reference. Substrate-specific failures, incomplete observations and invalid
+records must remain visible rather than becoming silent successful trials.
+
+RC tests include SPICE/transient and threshold behavior. Digital and FPGA tests
+use their admitted digital observations. Physical acquisition requires additional
+device, calibration, timing and raw-record evidence.
+
+## Independent semantic validation
+
+Compare decoded output with a separately implemented mathematical reference for
+the admitted instance and tested boundary assignments. For the original parity
+example, eliminating internal variables yields `x0 XOR x3 = 1`; that reference
+must not be supplied to the compiler or execution backend.
+
+Correctness statements must specify the tested domain, decoder, comparison and
+failure handling. Agreement between backends is a useful cross-check but is not
+an independent truth source. A structural conformance PASS is not automatically
+a semantic or scientific PASS.
+
+## Qualification and reproducibility
+
+RFC-0005 through RFC-0008 distinguish cross-backend equivalence, benchmark
+coverage, reproducibility and backend qualification. Report the supported
+constraint families, interfaces, corpus, complete-boundary coverage, resource
+limits and qualification evidence. The three qualified general families are
+RC, Digital and FPGA. CPC-Shor/N0 is not a fourth qualified general backend.
+
+## Physical evidence validation: RFC-0009
+
+Verify the physical lifecycle bindings: prepared artifact, build and constraint
+inputs, tools, bitstream, device/programming record, execution event, measurement,
+restricted observation and independent semantic result. Evidence conformance,
+byte integrity and physical observation each have their own scope.
+
+The retained [P1 records](../evidence/p1/physical/README.md) support a physical
+FPGA programming event and restricted static LED observation under their stated
+trust boundary. They do not establish quantum/CPC dynamics or scientific
+measurement-chain performance. Programming, acquisition and calibration are
+separate actions and are not implied by a software test result.
+
+## Open-system validation: RFC-0010
+
+Validate the declared open-system specification, stabilization/problem-dynamics
+separation, protected manifold, convergence and leakage obligations, admitted
+observation and requirement-specific evidence. Distinguish declarations,
+finite-model numerical checks and independently supported physical claims.
+A finite-time residual does not prove uniqueness or general mixing. Referenced
+readout robustness requires an explicit reference/calibration uncertainty
+contract; it must not be inferred from magnitude agreement alone.
+
+RFC-0010 acceptance and software conformance do not establish physical
+superconducting/bosonic/open-system CPC execution. Current evidence remains
+within the declared finite software/model scope.
+
+### P3/P4 software evidence
+
+Validate deterministic software boundaries separately from stochastic
+scientific acceptance and physical validation. The published P4 library covers
+arithmetic/reconstruction, exact and bounded-error contracts, retained-record
+replay, guarded acquisition interfaces, diagnostic-state construction,
+per-trial artifact scoring and bounded classical host simulation.
+
+EXACT certification and bounded-error certification have distinct guarantees.
+For BE, correctness of every reconstructed denominator implies that their LCM
+divides the order; the modular return check then establishes equality on that
+correct-reconstruction event. Outside it, wrong accepted order remains a
+bounded semantic-error event. The stated risk bounds
+P(accept AND wrong order), not automatically P(wrong order | accept).
+BE does not require factorization of the candidate order.
+
+Diagnostic truth/sector labels must remain separate from operational
+inference. Per-trial scoring is not aggregate calibration acceptance.
+Zero local errors per phase class is an acceptance criterion, not an observed
+result established by software tests. Retained-record replay does not reopen
+a consumed execution identity.
+
+The C kernels perform classical host simulation. Neither those tests nor N0
+RTL/protocol/synthesis checks establish physical realization, physical TTS,
+native quantum implementation, hardware scaling or computational advantage.
+
+## Finite Shor validation
+
+The [Shor research line](shor/README.md) tests finite modular arithmetic,
+phase-sensitive response-class coherence, open-system models, observation,
+decoding and independent order/factor validation. Positive references and
+negative controls have distinct scopes. Report tested instances, model caps,
+preparation assumptions, failures, abstentions and resource costs.
+
+Preserve historical execution status separately from later recovery evidence.
+In particular, E5-v1 remains consumed, non-retryable and
+`INCOMPLETE_OR_INVALID_GRID`; accepted E5-R1 is a deterministic post hoc recovery
+of frozen S8192 records. The future-lineage reducer fix corrects JSON-semantic
+comparison only. Recovery does not retroactively establish an E5 grid PASS.
+None of these finite results establishes native scalable Shor, scalable quantum
+computing or computational advantage.
+
+## N0 pre-physical and physical methodology
+
+[N0](shor/n0-status.md) targets physical CPC measurement for a known/prepared
+physical eigenphase. The software stack checks schemas, calibration/device
+adapter boundaries, immutable raw records, claim separation, finite models,
+synthetic measurement/rehearsal, statistical decisions and preregistration gates.
+Synthetic data and controller simulations must remain labeled as such.
+
+Before physical trials, define the integrated apparatus, device-to-model mapping,
+signal/reference chain, calibration uncertainty, exact estimator inputs,
+phase classes, sample sizes, numerical acceptance/power/error criteria, resource
+caps and abort rules. Seal those decisions before records are acquired. Retain
+failed attempts; do not silently retry, replace, postselect or relax thresholds.
+Known-phase diagnostics remain separate from operational inference and evidence.
+
+The controller accepts deterministic control/acquisition inputs, not
+`theta_truth`, order, factors or equivalent answers. Physical raw records must
+come from the qualified physical chain. FPGA programming and physical N0
+acquisition remain unauthorized. Current software readiness does not establish
+physical validation; the next step is physical apparatus/profile definition.
+
+## Regression and archival discipline
+
+Use the repository environment for current regression:
+
+```bash
+.venv/bin/python -m pytest
+```
+
+Run targeted subsystem tests before the full suite. Simulation-related changes
+also require the SPICE continuation check:
+
+```bash
+.venv/bin/python run_spice.py
+```
+
+Capture the exact commands, exit status, test counts, relevant tool/source hashes
+and scope. Classify a nonzero result before any rerun. Never change scientific
+tolerances just to obtain PASS. Historical release counts (including 899 at
+v0.5.0/P1 and 1010 at v0.6.0) remain historical; current counts must come from a
+fresh run. Tests do not authorize new stochastic experiments or physical trials.
+
+Frozen source paths, failed evidence, recovery identities and archives must remain
+traceable. Documentation links and the actual GitHub Pages deployment source are
+part of the pre-push/release gate. No release or push should proceed while that
+gate is unresolved.
+
+Publication validation must also use an isolated snapshot of the exact
+committed parent plus only the proposed publication paths. Preserve every
+tracked parent file, including retained P1 evidence. Do not overlay a populated
+results directory, untracked historical binaries or unrelated working files.
+Clear PYTHONPATH and PYTHONHOME, disable user-site imports, and verify that
+repository modules resolve inside the snapshot.
+
+Record Python/dependency and relevant C, SPICE, RTL-simulation and synthesis
+tool versions. Run the full suite in that isolated environment; classify any
+failure before retrying. A documentation-only change does not itself require
+historical acquisition, acceptance replay or a separate SPICE continuation run.
+
+## Historical RC engineering evidence
+
+The following sections retain the verified RC sweep reports unchanged. Their
+voltages, component values, timings and decoder criteria apply to those specific
+historical RC experiments, not to every CPC backend or N0 apparatus.
 
 ---
 

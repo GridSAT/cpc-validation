@@ -9,7 +9,52 @@ The format follows **Keep a Changelog** and this project follows
 
 ## [Unreleased]
 
-No unreleased changes.
+### Bounded Shor and dyadic software
+
+- Added the finite RFC-0010 Shor prototype, modular-response and modular-node
+  models, open-system witnesses, decoding and independent validation.
+- Added the bounded P3 Python foundation, inference/analysis, host-native
+  filtering, and guarded execution/provenance infrastructure.
+- Added P4 deterministic reconstruction and distinct EXACT/bounded-error
+  certification and risk contracts.
+- Added retained-record replay, guarded acquisition adapters, deterministic
+  diagnostic-state construction and retained-artifact per-trial calibration
+  scoring.
+- Added the bounded P4 classical host C simulation kernel and portable tests.
+
+### N0 pre-physical software
+
+- Added profile/raw-record contracts, models, calibration/device boundaries,
+  synthetic rehearsal, statistics, faults, reduction, claim gates and
+  preregistration/readiness infrastructure.
+- Added N0 controller RTL, host-side protocol/synthesis software and simulation
+  tests.
+- Retained the pre-physical software-freeze-candidate boundary. Physical N0
+  validation, physical execution, FPGA programming and physical acquisition
+  remain unestablished or unauthorized as specified by the readiness gates.
+
+### Documentation and historical research
+
+- Added current software-scope, N0-readiness and native-boundary documentation.
+- Published historical prototype, single-node, two-node and cleanup/locality
+  notes with explicit archival framing and preserved scientific bodies.
+- Historical research-note publication does not publish the uncommitted
+  two-node/cleanup executable workflows or their archived results.
+
+### Exclusions and claim boundary
+
+This release does not publish the complete historical autonomous P4 workflow,
+the deferred calibrated-population/evidence/reducer/supervisor modules, or the
+historical P4 launchers. Per-trial scoring is not a calibration PASS.
+Zero local errors per phase class remains an acceptance criterion, not an
+observed result established by this release.
+
+E5-v1 remains consumed, non-retryable and INCOMPLETE_OR_INVALID_GRID. E5-R1
+remains a post hoc recovery analysis and does not establish an E5 grid PASS.
+
+Host-native C is classical host simulation. Software, RTL and toolchain
+validation establish neither physical N0 validation nor native quantum
+implementation, physical TTS, scalable QC or computational advantage.
 
 ## [0.6.0] - 2026-08-21
 

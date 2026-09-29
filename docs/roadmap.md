@@ -57,7 +57,7 @@ a parameter-sensitivity study rather than a calibrated physical-device model.
 - benchmark resource accounting; and
 - extensive compiler and benchmark regression tests.
 
-### Current verified generated corpus
+### Historical verified generated corpus
 
 - generated benchmark families: 4;
 - generated benchmarks: 13;
@@ -101,53 +101,128 @@ presented as evidence of efficient general-purpose computation.
 - qualified RC, Digital, and FPGA backends; and
 - first concrete P1 physical FPGA execution evidence.
 
-## Next Milestone — RFC-0010 C-Parity Execution Substrate
+## RFC-0010 — Driven-Dissipative Open-System Execution
+
+**Status:** Completed and released as `v0.6.0`
+
+RFC-0010 is accepted as the software/evidence architecture for
+driven-dissipative open-system execution and referenced readout.
+
+The released RFC-0010 baseline establishes an executable software specification,
+conformance validation, and a simulated reference witness. It does not establish
+a physical superconducting, bosonic, or other driven-dissipative CPC execution
+substrate.
+
+## Current Research Milestone — CPC-Shor / N0
+
+**Status:** In progress; pre-physical software boundary reached
+
+Completed within the current finite/software research scope:
+
+- finite RFC-0010 Shor/order-finding prototype;
+- typed modular-response and modular-node models;
+- finite open-system and coherence-sensitive witness studies;
+- historical single-node, two-node and cleanup/locality research documentation,
+  separate from the executable software published in this release;
+- independent order/factor validation;
+
+- bounded P3 models/compiler, inference/analysis and host filtering;
+- P4 deterministic EXACT/bounded-error contracts and retained-record replay;
+- guarded P4 acquisition adapters, diagnostic-state construction and per-trial
+  artifact scoring; and
+- bounded P4 classical host C simulation.
+- N0 physical-profile and raw-record contracts;
+- calibration and device-adapter boundaries;
+- finite bosonic and effective logical-measurement models;
+- synthetic-device and statistical rehearsal;
+- fault-injection and claim-firewall coverage;
+- statistical-decision and repeated held-out synthetic rehearsal;
+- physical-preregistration freeze and readiness gates; and
+- deterministic N0 controller protocol, RTL, and synthesis checks.
+
+Current physical boundary:
+
+- integrated physical N0 apparatus: not established;
+- physical N0 validation: not performed;
+- physical N0 acquisition: not performed;
+- physical N0 execution authorization: not granted;
+- N0 FPGA programming authorization: not granted; and
+- native scalable CPC-Shor: not established.
+
+The immediate next milestone is to define and bind a specific physical N0
+apparatus/profile while preserving the preregistered acquisition and claim
+boundaries.
+
+The complete historical autonomous P4 workflow and deferred population
+registry/reducer/supervisor modules are outside this publication. Their
+possible future publication would require its own dependency and provenance
+audit; it would not authorize historical execution or establish calibration
+acceptance.
+
+## N0 Physical Integration
+
+**Status:** Planned / apparatus-definition stage
+
+Required before a physical N0 claim:
+
+- identify a specific integrated apparatus implementing the required bosonic
+  logical state and CPC measurement interaction;
+- bind physical preparation, control, calibration, timing, acquisition, and raw
+  record interfaces;
+- establish independently auditable measurement/timebase access;
+- freeze numerical preregistration parameters before acquisition;
+- qualify deterministic controller/acquisition behavior independently of the
+  quantum/CPC dynamics;
+- retain negative controls and multiplicity-corrected statistical decision
+  rules; and
+- perform physical acquisition only after explicit authorization.
+
+A successful N0 experiment would validate the specified physical measurement
+primitive. It would not by itself establish full Shor, scalable quantum
+computing, or computational advantage.
+
+## Native CPC-Shor Research
+
+**Status:** Research
+
+Further work must address:
+
+- multi-node/native composition;
+- physical locality of the required interactions;
+- coherent cleanup and environment distinguishability;
+- scalable synthesis of modular arithmetic dynamics;
+- Liouvillian/mixing behavior;
+- physical resource accounting;
+- control, calibration, energy, precision, and readout costs;
+- fault/error models; and
+- scaling evidence sufficient to support any future native-efficiency claim.
+
+Finite simulator behavior is not used as a substitute for these physical and
+resource obligations.
+
+## Additional CPC Substrates and Front Ends
 
 **Status:** Planned
 
-- define the C-parity substrate and execution boundary;
-- preserve canonical CCIR and backend independence;
-- specify preparation, execution, restricted observation, and decoding;
-- define qualification and cross-backend comparison requirements;
-- apply the RFC-0009 evidence lifecycle to any physical realization; and
-- preserve explicit performance and authenticity non-claims.
+- additional typed constraint families;
+- AND, OR, NOT, XOR, and mixed constraint systems;
+- graph-oriented execution substrates;
+- additional physical execution substrates;
+- modular compilation;
+- broader backend qualification;
+- expanded benchmark collections; and
+- expanded backend-independent validation coverage.
 
-## Later Work — General Boolean and Additional Substrates
-
-**Status:** Planned
-
-- typed logical intermediate representation;
-- AND constraints;
-- OR constraints;
-- NOT constraints;
-- XOR constraints;
-- mixed systems;
-- modular compilation; and
-- backend-independent validation.
-
-## Version 0.7 — Response-Class and Physical-Backend Validation
-
-**Status:** Planned
-
-- multiple preparation states;
-- transient-history variation;
-- reset studies;
-- response-equivalence statistics;
-- passive-network experiments;
-- transistor-level models;
-- failure classification; and
-- hardware-oriented interfaces.
-
-## Version 1.0 — CPC Validation Research Release
+## Future CPC Validation Research Release
 
 **Status:** Planned
 
 - complete reproducibility package;
-- archived compiler datasets;
-- archived simulation datasets;
-- stable benchmark schema;
-- stable compiler interface;
-- CPC white-paper integration;
+- archived compiler, simulation, and physical-validation datasets;
+- stable benchmark and execution interfaces;
+- broader cross-substrate evidence;
+- cryptographic signing and attestation;
+- CPC research-program integration;
 - release DOI;
 - documented experimental results; and
 - external reproduction instructions.
