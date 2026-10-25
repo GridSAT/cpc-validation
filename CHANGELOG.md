@@ -9,6 +9,20 @@ The format follows **Keep a Changelog** and this project follows
 
 ## [Unreleased]
 
+### Bounded classical UP5K/Pico physical milestone
+
+- Froze the completed Area-v3/Pico classical probability/PRNG milestone:
+  seeded physical oracle records 2, 68 and 194, with independently verified
+  six response frames, 132 words, six request/response CRC pairs and 18 snapshots.
+- Added a privacy-reviewed numerical evidence subset, exact fixture/source pins,
+  a read-only verifier and tampering tests; original sealed reports preserved.
+- Retained unseeded record 217's 0022/0002 divergence and five unmatched physical
+  error-path records. No complete-corpus physical conformance claim.
+- Made atomic, fully validated commits mandatory, including documentation.
+- Documented outstanding WP-B1 conformance and an unsent Alice & Bob co-design
+  brief. Physical N0, native Shor, scalable quantum computation and advantage
+  remain unproven; P1 and other historical evidence retain their scope.
+
 ### Bounded Shor and dyadic software
 
 - Added the finite RFC-0010 Shor prototype, modular-response and modular-node
