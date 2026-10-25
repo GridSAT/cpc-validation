@@ -113,6 +113,28 @@ conformance validation, and a simulated reference witness. It does not establish
 a physical superconducting, bosonic, or other driven-dissipative CPC execution
 substrate.
 
+## Bounded UP5K/Pico Classical Hardware Milestone
+
+**Status:** Completed and frozen at its declared three-record scope (2026-10-25)
+
+The [Area-v3/Pico physical evidence](shor/classical-up5k-physical-milestone.md)
+independently matches seeded oracle records 2, 68 and 194, covering take=1,
+take=0 and nonzero numerical/PRNG output. The frozen milestone includes exact
+six-frame CRC/word verification and a read-only public evidence audit.
+
+Record 217's unseeded status divergence and five physically unmatched
+error-path records remain open. This bounded closure does not claim complete
+physical corpus conformance, quantum measurement, Shor or advantage.
+Any physical extension requires separate authorization.
+
+Two parallel workstreams continue:
+
+- [WP-B1](shor/wp-b1-conformance-checklist.md): implement and independently
+  qualify the complete bosonic/vendor-abstraction software chain; not yet PASS.
+- [Alice & Bob co-design preparation](shor/alice-bob-collaboration-brief.md):
+  unsent draft for WP-B2/WP-B3 compatibility and known-phase N0; vendor
+  capabilities, apparatus/profile and raw-data contracts require confirmation.
+
 ## Current Research Milestone — CPC-Shor / N0
 
 **Status:** In progress; pre-physical software boundary reached
