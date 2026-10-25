@@ -1,0 +1,4 @@
+# Immutable public evidence retains exact bytes on every checkout.
+evidence/shor/up5k-physical-v6/** -text
+# Captured CRLF streams are byte artifacts rather than editable prose.
+evidence/shor/up5k-physical-v6/transcripts/*.txt -diff
