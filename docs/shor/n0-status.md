@@ -13,6 +13,14 @@ It does not by itself establish:
 - computational advantage;
 - a complete semantic L_prob realization.
 
+## Separate classical UP5K/Pico evidence
+
+The completed [bounded Area-v3/Pico milestone](classical-up5k-physical-milestone.md)
+physically matches seeded probability/PRNG oracle records 2, 68 and 194.
+That digital service is a parallel classical engineering lineage. It does not
+implement the N0 bosonic interaction or qualify a physical measurement chain.
+All N0 readiness and authorization flags in this document remain unchanged.
+
 ## Effective model
 
 The finite N0 model uses the stabilized bosonic dynamics

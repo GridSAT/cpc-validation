@@ -77,6 +77,14 @@ Historical P1 physical evidence is a separate, narrower evidence lineage.
 The controller is not the quantum state or CPC interaction. Host-native P3/P4
 C kernels are classical host simulation, not quantum-native execution.
 
+## Completed classical demonstrator boundary
+
+The [UP5K/Pico three-record milestone](classical-up5k-physical-milestone.md)
+establishes bounded classical probability/PRNG transport on physical hardware.
+It is separate from both P1 and the N0 controller. Its numerical responses must
+not be relabeled as physical Fourier samples, quantum order finding or factors.
+The retained software witness's simulated Fourier bins are also not FPGA data.
+
 ## N0 versus full Shor
 
 A successful N0 experiment would validate a specific physical CPC measurement

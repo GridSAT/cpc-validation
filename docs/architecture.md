@@ -68,6 +68,15 @@ remain bounded by the recorded observation and provenance trust boundary.
 That evidence is not a superconducting/bosonic CPC experiment and does not
 qualify a scientific ADC/DAC acquisition chain.
 
+## Parallel bounded classical UP5K/Pico milestone
+
+The [Area-v3/Pico milestone](shor/classical-up5k-physical-milestone.md) records
+three independently audited physical seeded probability/PRNG oracle matches.
+It is a completed bounded classical component, separate from P1's static
+observation, general backend qualification and the N0 bosonic apparatus.
+Its SEED/PROB output is not a quantum Fourier observation. Known error-path
+exceptions and host-log/electrical trust boundaries remain explicit.
+
 ## Open-system architecture: RFC-0010
 
 RFC-0010 is accepted and implemented as a driven-dissipative open-system

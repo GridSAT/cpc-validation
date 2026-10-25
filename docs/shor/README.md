@@ -31,6 +31,19 @@ collapsed into a single claim.
 | Physical N0 acquisition | Not performed |
 | Native scalable CPC-Shor | Not established |
 
+## Parallel classical hardware milestone
+
+The [UP5K/Pico Area-v3 milestone](classical-up5k-physical-milestone.md) is complete
+within a bounded **classical probability/PRNG** scope: seeded physical oracle
+records 2, 68 and 194, independently audited exact response frames.
+It is distinct from the finite Shor simulator and from N0 quantum measurement.
+It does not change the N0-specific authorization flags below.
+
+Known unseeded record 217 (0022 versus oracle 0002) and five unmatched physical
+error-path records remain open. Full-corpus physical conformance, physical N0,
+native quantum order finding and advantage are not established.
+The linked milestone records provenance, limitations and read-only verification.
+
 ## What the finite Shor work establishes
 
 The finite software/model line includes typed modular-response representations,
