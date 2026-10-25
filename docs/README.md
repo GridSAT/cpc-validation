@@ -2,6 +2,14 @@
 
 [Repository overview](../README.md)
 
+## Current release
+
+- [v0.7.0: CPC-SHOR research and bounded classical FPGA/Pico milestone](releases/v0.7.0.md).
+- [Citation metadata](../CITATION.cff): v0.7.0, 2026-10-26; version-family DOI, with the new version-specific DOI pending verification.
+
+The release includes finite/software and pre-physical work, not physical
+quantum execution or advantage. Historical releases retain their original scope.
+
 ## Architecture and validation
 
 - [Current architecture](architecture.md): CCIR, execution contracts, three general backend families and evidence boundaries.
