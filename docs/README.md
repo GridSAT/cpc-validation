@@ -27,6 +27,16 @@ simulation and N0 controller software/RTL. See the Shor overview for exact
 exclusions. Publication does not establish stochastic acceptance or authorize
 physical execution.
 
+## Parallel classical milestone and collaboration preparation
+
+- [Completed bounded UP5K/Pico milestone](shor/classical-up5k-physical-milestone.md).
+- [Public physical-evidence subset and read-only verification](../evidence/shor/up5k-physical-v6/README.md).
+- [Outstanding WP-B1 software conformance checklist](shor/wp-b1-conformance-checklist.md).
+- [Alice & Bob technical collaboration brief — unsent draft](shor/alice-bob-collaboration-brief.md).
+
+These classical hardware records do not change the N0-specific flags above
+or establish native Shor, scalable quantum computation or quantum advantage.
+
 ## Historical releases and physical evidence
 
 - [v0.6.0: accepted RFC-0010 software/evidence architecture](releases/v0.6.0.md).

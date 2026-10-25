@@ -2241,7 +2241,21 @@ itself constitute a physical-device execution claim.  The later P1 evidence
 described above separately records an actual FPGA programming, observation,
 execution-event, evidence-conformance, and semantic-validation chain.
 
-### CPC-Shor and N0 Research Status
+### Bounded Classical UP5K/Pico Milestone
+
+The completed [Area-v3/Pico physical milestone](docs/shor/classical-up5k-physical-milestone.md)
+matches immutable seeded probability/PRNG oracle records **2, 68 and 194**.
+The [public evidence subset](evidence/shor/up5k-physical-v6/README.md) and read-only
+verifier reproduce the bounded audit. Known unseeded/error-path exceptions
+remain open; this is not full-corpus conformance or quantum operation.
+
+[WP-B1 bosonic software conformance](docs/shor/wp-b1-conformance-checklist.md)
+remains outstanding, in parallel with an unsent
+[Alice & Bob technical collaboration draft](docs/shor/alice-bob-collaboration-brief.md).
+Physical N0, native Shor order finding, scalable quantum computation and
+advantage remain unproven. No new hardware operation is authorized.
+
+## CPC-Shor and N0 Research Status
 
 The post-v0.6.0 release publishes bounded Shor/RFC-0010 software and models,
 including finite modular-response and open-system witnesses, P3 model/compiler
@@ -2295,10 +2309,10 @@ validate the RFC-0010 software and evidence contracts.  They do **not** claim
 that a superconducting bosonic system, or any other driven-dissipative
 open-system hardware substrate, has physically executed CPC.
 
-Accordingly, the repository contains two distinct forms of evidence that must
-not be conflated: the RFC-0009/P1 line contains retained evidence of an actual
-physical FPGA execution, while the RFC-0010 line currently provides a
-simulated/reference realization of the open-system architecture.
+The evidence lineages must remain distinct: RFC-0009/P1 retains a restricted
+physical FPGA observation; the bounded Area-v3/Pico line adds three classical
+probability/PRNG physical oracle matches; RFC-0010 currently provides a
+simulated/reference open-system realization. None establishes physical N0.
 
 ### RFC-0003 / RFC-0004 / RFC-0005 / RFC-0006 / RFC-0007 / RFC-0008 / RFC-0009 Audit Coverage
 
