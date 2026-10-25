@@ -1,0 +1,67 @@
+CPTRANS kind=REQUEST count=10 words=A501,1100,0005,0003,0000,699D,0BCC,F71A,E62F,0856
+CPTRANS kind=TXTRACE count=10 samples=1,1,1,1,1,1,1,1,1,1
+CPTRANS kind=TURNAROUND tx_guard=2 stall=0 rx_guard=2 pico_oe=0
+RXAUDIT_V1 count=6 overflow=0
+RXAUDIT_SNAP slot=0 count=4 response_fnv=DD007CF0 shadow_fnv=DD007CF0 mismatch=0
+RXAUDIT_SNAP slot=1 count=6 response_fnv=ECA52AD0 shadow_fnv=ECA52AD0 mismatch=0
+RXAUDIT_SNAP slot=2 count=6 response_fnv=ECA52AD0 shadow_fnv=ECA52AD0 mismatch=0
+RXAUDIT_WORD index=0 phase=1 raw=00005A01 shadow=5A01
+RXAUDIT_WORD index=1 phase=1 raw=00001800 shadow=1800
+RXAUDIT_WORD index=2 phase=1 raw=00000001 shadow=0001
+RXAUDIT_WORD index=3 phase=1 raw=00000003 shadow=0003
+RXAUDIT_WORD index=4 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=5 phase=2 raw=0000A838 shadow=A838
+CPTRANS kind=RESPONSE count=6 words=5A01,1800,0001,0003,0000,A838
+RXAUDIT_POSTPRINT response_fnv=ECA52AD0 shadow_fnv=ECA52AD0 mismatch=0
+CPTRANS kind=RESULT sequence=3 protocol=0 meta=1800 error_pin=0
+OK SEED sequence=3
+CPTRANS kind=REQUEST count=28 words=A501,1200,0017,0004,0000,0000,0000,0000,0000,0000,0000,0001,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,000C,0F67
+CPTRANS kind=TXTRACE count=28 samples=1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+CPTRANS kind=TURNAROUND tx_guard=2 stall=3 rx_guard=2 pico_oe=0
+RXAUDIT_V1 count=38 overflow=0
+RXAUDIT_SNAP slot=0 count=4 response_fnv=62D4AE48 shadow_fnv=62D4AE48 mismatch=0
+RXAUDIT_SNAP slot=1 count=38 response_fnv=362B2018 shadow_fnv=362B2018 mismatch=0
+RXAUDIT_SNAP slot=2 count=38 response_fnv=362B2018 shadow_fnv=362B2018 mismatch=0
+RXAUDIT_WORD index=0 phase=1 raw=00005A01 shadow=5A01
+RXAUDIT_WORD index=1 phase=1 raw=00001900 shadow=1900
+RXAUDIT_WORD index=2 phase=1 raw=00000021 shadow=0021
+RXAUDIT_WORD index=3 phase=1 raw=00000004 shadow=0004
+RXAUDIT_WORD index=4 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=5 phase=2 raw=00008098 shadow=8098
+RXAUDIT_WORD index=6 phase=2 raw=0000920C shadow=920C
+RXAUDIT_WORD index=7 phase=2 raw=0000FFFF shadow=FFFF
+RXAUDIT_WORD index=8 phase=2 raw=00007FFF shadow=7FFF
+RXAUDIT_WORD index=9 phase=2 raw=0000E5B2 shadow=E5B2
+RXAUDIT_WORD index=10 phase=2 raw=00008B16 shadow=8B16
+RXAUDIT_WORD index=11 phase=2 raw=000070D3 shadow=70D3
+RXAUDIT_WORD index=12 phase=2 raw=00008467 shadow=8467
+RXAUDIT_WORD index=13 phase=2 raw=00000001 shadow=0001
+RXAUDIT_WORD index=14 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=15 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=16 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=17 phase=2 raw=000034E1 shadow=34E1
+RXAUDIT_WORD index=18 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=19 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=20 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=21 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=22 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=23 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=24 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=25 phase=2 raw=00000001 shadow=0001
+RXAUDIT_WORD index=26 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=27 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=28 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=29 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=30 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=31 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=32 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=33 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=34 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=35 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=36 phase=2 raw=00000000 shadow=0000
+RXAUDIT_WORD index=37 phase=2 raw=0000DBD0 shadow=DBD0
+CPTRANS kind=RESPONSE count=38 words=5A01,1900,0021,0004,0000,8098,920C,FFFF,7FFF,E5B2,8B16,70D3,8467,0001,0000,0000,0000,34E1,0000,0000,0000,0000,0000,0000,0000,0001,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,0000,DBD0
+RXAUDIT_POSTPRINT response_fnv=362B2018 shadow_fnv=362B2018 mismatch=0
+CPTRANS kind=RESULT sequence=4 protocol=0 meta=1900 error_pin=0
+OK PROB sequence=4
+OK STATUS fw=CPC-PICO-RX-DEFERRED-ACK-v6 build=CPC-PICO-RX-DEFERRED-ACK-v6-FWQUAL-v1 reset=1 valid=0 write=1 data_dir=input session_consumed=1 active=0 transaction=0 done=2 limit=2 release_idle_consumed=0 release_idle_success=0 reset_released=0 release_code=DENIED ready=1 error=0

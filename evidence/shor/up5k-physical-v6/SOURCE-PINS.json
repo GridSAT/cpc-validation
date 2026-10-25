@@ -1,0 +1,30 @@
+{
+  "firmware_uf2_sha256": "edb273e1b85b27ee2a51a911fc618052e39007e716b2a4d5b0faf79a62a6ba45",
+  "fpga_bitstream_file_sha256": "a9b5b1208915082cfe499b5f45ed570a6e2c886053d6f7bdfeb2e63774c04ab0",
+  "matrix_sha256": "619cf5f93dc939452266198a7519fb2b1b9eecd246ed070d33979eaa728f779c",
+  "oracle_sha256": "e501eb80a0e2b13fdd59da9bfe8c3db5fcfbf225aa20776ba25a66e5c68eb889",
+  "reports": {
+    "194": {
+      "fixture": "fixtures/record-194.json",
+      "fixture_sha256": "2484ff566f9460137a5f03f8a20f6687c57e0fad7d4ee243d9d2570c61e90db8",
+      "oracle_prob_record": 194,
+      "report": "reports/record-194.tar.gz",
+      "report_sha256": "06ee05035e8abedebb5dfa62477325dec4c2a4ede1943130c10069d2111f1b3a"
+    },
+    "2": {
+      "fixture": "fixtures/record-2.json",
+      "fixture_sha256": "cfe27cfcdcbe71cca15b7f29ee66d8a0cffe5b2cb67fe5e06795a5cf50ff4d2d",
+      "oracle_prob_record": 2,
+      "report": "reports/record-2.tar.gz",
+      "report_sha256": "97880192261548c17ab40edd7b277f478e50616184985e9f72feba5dc5c3d09d"
+    },
+    "68": {
+      "fixture": "fixtures/record-68.json",
+      "fixture_sha256": "3f2d748f54fba33a9a8a893dfb1e99aca073200af704d4d3ac6d51aa480dc8e2",
+      "oracle_prob_record": 68,
+      "report": "reports/record-68.tar.gz",
+      "report_sha256": "d3573a227443e182d195a2ca660c9eccf91d52d60d53de349332612b8bfa7e99"
+    }
+  },
+  "schema": "cpc-shor-v6-physical-triple-reference-v1"
+}

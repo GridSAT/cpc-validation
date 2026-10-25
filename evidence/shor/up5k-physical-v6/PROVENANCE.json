@@ -1,0 +1,24 @@
+{
+  "schema": "cpc-up5k-public-excerpts-v1",
+  "sealed_closure_zip_sha256": "5d4336e9fd4798ca39c66849f083c50cd80457bec96fe22e413daebf1bd68e5a",
+  "selection": "Exact original ASCII lines with prefixes CPTRANS, RXAUDIT_, OK SEED, OK PROB, OK STATUS; original order and line endings retained. BEGIN/END identifiers, USB descriptors, host/operator metadata and other archive members omitted.",
+  "privacy_review": "Numerical command/response/audit lines and software STATUS only; no USB serials, host paths, operator/contact details or credentials. Project-owned evidence published under repository MIT license; sealed archives withheld.",
+  "original_verifier_sha256": "3d0ba21b53cc93b6e25a5416fa1a9460f10d3aff6e0ff0909366261b006c0d0b",
+  "records": {
+    "2": {
+      "transcript": "transcripts/record-2.txt",
+      "original_raw_rx_sha256": "caee1cf1e6088976ecb7c42f6211fffff58efbcb8ec1088b6aa099be147b9a80",
+      "selected_lines": 67
+    },
+    "68": {
+      "transcript": "transcripts/record-68.txt",
+      "original_raw_rx_sha256": "3e88f9153c95b6504d953ebfd1d053fb73a4ccdfe22a21a50ed3d37e58dc69f9",
+      "selected_lines": 67
+    },
+    "194": {
+      "transcript": "transcripts/record-194.txt",
+      "original_raw_rx_sha256": "bd7edd78cacb9f95f6f43b057ea386f8b00978700798fc14114a11ac60cb426d",
+      "selected_lines": 67
+    }
+  }
+}
