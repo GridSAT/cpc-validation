@@ -5,8 +5,13 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://www.python.org/)
 [![ngspice](https://img.shields.io/badge/ngspice-42%2B-blue.svg)](https://ngspice.sourceforge.io/)
-[![Status](https://img.shields.io/badge/status-RFC--0010%20baseline-brightgreen.svg)](#development-status)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22045319.svg)](https://doi.org/10.5281/zenodo.22045319)
+[![Status](https://img.shields.io/badge/status-v0.7.0%20research-brightgreen.svg)](#development-status)
+[![DOI: version family](https://zenodo.org/badge/DOI/10.5281/zenodo.22045318.svg)](https://doi.org/10.5281/zenodo.22045318)
+
+**Current release: v0.7.0 (2026-10-26).** See the
+[release notes](docs/releases/v0.7.0.md) for CPC-SHOR finite models, N0
+pre-physical work, bounded P3/P4 software and the classical UP5K/Pico milestone.
+Physical quantum execution and advantage remain unproven.
 
 ---
 
@@ -2273,7 +2278,7 @@ advantage remain unproven. No new hardware operation is authorized.
 
 ## CPC-Shor and N0 Research Status
 
-The post-v0.6.0 release publishes bounded Shor/RFC-0010 software and models,
+Release v0.7.0 publishes bounded Shor/RFC-0010 software and models,
 including finite modular-response and open-system witnesses, P3 model/compiler
 and inference support, and P4 deterministic reconstruction and certification.
 
@@ -2558,14 +2563,19 @@ README and a normative RFC differ.
 
 Citation metadata are provided in [`CITATION.cff`](CITATION.cff).
 
-The archival DOI for the current release (`v0.6.0`) is
+The version-specific archival DOI for historical release `v0.6.0` is
 [`10.5281/zenodo.22045319`](https://doi.org/10.5281/zenodo.22045319).
 
 For citations that should resolve to the latest archived CPC Validation
 version, use the all-versions DOI
 [`10.5281/zenodo.22045318`](https://doi.org/10.5281/zenodo.22045318).
 
-To cite this specific release, use:
+For v0.7.0, use the version and release date in CITATION.cff together with
+its exact Git tag. Its version-specific Zenodo DOI is pending verification of
+automatic archiving; do not reuse the v0.6.0 DOI or create a duplicate deposit.
+The concept DOI above identifies the version family, not this specific version.
+
+To cite the software, use:
 
 > Karim Daghbouche.
 > *CPC Reference Validation Framework:
