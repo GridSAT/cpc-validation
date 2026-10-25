@@ -85,17 +85,19 @@ Please follow these guidelines:
 
 # Testing
 
-Every contribution must successfully execute
+Every contribution, including documentation-only changes, must execute the
+complete consolidated reproducibility profile before commit:
 
-    python -m pytest
+    .venv/bin/python validate.py --full
 
-Simulation-related changes should additionally execute
+This includes the complete pytest suite, independent reference table, nominal
+SPICE check, transient smoke test, engineering sweeps, benchmark validation
+and compiler-scaling regression. All twelve steps must pass. Preserve its
+logs, summary and the exact tested tree at every commit boundary.
 
-    python run_spice.py
-
-and reproduce the expected continuation table.
-
-No Pull Request should introduce failing tests.
+For development, targeted checks, pytest and run_spice.py may assist diagnosis;
+they do not replace the complete profile. Do not commit when it is failing,
+incomplete or unexecuted.
 
 ---
 
@@ -115,29 +117,17 @@ Whenever possible, include quantitative validation data.
 
 # Commit Discipline
 
-Each commit MUST represent one coherent, independently reviewable change.
+**Atomic rule: one logically coherent, independently validatable change per commit, with the complete validation suite green at every commit boundary. Commits are concise and descriptive; no bundling unrelated work merely to reduce commit count.**
 
-A commit MUST leave the repository in a valid state and MUST NOT introduce
-failing tests. Unrelated implementation, validation, documentation, metadata,
-and release changes SHOULD be committed separately whenever they can be
-validated independently.
+Every commit MUST represent one coherent, independently reviewable and independently validatable change. Before creating **each commit**, the contributor MUST run the complete repository validation suite against the exact prospective committed content and achieve an entirely green result. This includes documentation-only, metadata-only and release-related changes. After commit creation, verify that the commit contains exactly the tested content and leaves a valid, complete-suite-green repository state. Targeted or subsystem tests are useful preliminary checks but never replace the complete suite.
 
-Before committing, contributors MUST run the validation required for the
-affected subsystem. Before a release, the complete validation suite MUST be
-run.
+If the clean baseline or prospective commit fails the complete suite, no commit may be created. Record the precise failure and resolve it without suppressing, weakening, skipping or altering scientific acceptance tests to manufacture a PASS. Toolchain prerequisites and test environment changes must be recorded. If an obligatory suite cannot be executed, the commit boundary is **not qualified**.
 
-A commit that changes normative architecture SHOULD contain only the normative
-change and any strictly necessary index or registration update. Implementation,
-conformance validation, regression tests, explanatory documentation, release
-metadata, and release notes SHOULD follow in separate commits when each forms
-an independently validatable unit.
+Unrelated implementation, validation, documentation, metadata, and release changes MUST remain separate commits unless technically inseparable for an independently validatable repository state. Changes to normative architecture SHOULD contain only the normative change and strictly necessary registration or index changes. Tests and implementation may share a commit only when needed for one coherent independently validating behavior change.
 
-Generated evidence, unpublished research material, and quarantined artifacts
-MUST NOT enter a commit unless the commit explicitly freezes them as part of a
-declared public evidence or release scope.
+Generated evidence, unpublished research material, and quarantined artifacts MUST NOT enter a commit unless the commit explicitly freezes them as part of a declared and reviewed public evidence or release scope. Check sensitive content before publishing raw physical device logs. Do not amend frozen originals or change oracle expectations.
 
-Commit messages SHOULD be concise and descriptive and SHOULD state the purpose
-of the change.
+Commit messages MUST be concise, descriptive and reflect the single logical purpose. Maintain per-commit validation records with exact commands, exit codes, versions, and source/commit identifiers. Before any push or release also perform the documented isolated publication snapshot and GitHub Pages/source checks; preserve every tracked parent file.
 
 ---
 
