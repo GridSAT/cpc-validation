@@ -62,6 +62,22 @@ trust boundary. They do not establish quantum/CPC dynamics or scientific
 measurement-chain performance. Programming, acquisition and calibration are
 separate actions and are not implied by a software test result.
 
+## Bounded classical UP5K/Pico audit
+
+The [three-record milestone](shor/classical-up5k-physical-milestone.md) has a
+separate [public evidence subset](../evidence/shor/up5k-physical-v6/README.md).
+From the repository root, run the read-only standard-library verifier:
+
+    python3 -B verify_up5k_physical_evidence.py
+
+It checks exact frozen fixtures, wire CRCs, sequences and firmware audit
+telemetry. Original sealed reports remain byte-identical and private; the
+public manifest and provenance identify exact selected lines and original hashes.
+Consistency with host-recorded evidence does not independently authenticate
+the physical event, electrical OE state or complete installed FPGA fabric.
+Retain record 217's unseeded status divergence and the five unmatched physical
+records. Do not infer complete corpus conformance or N0 quantum measurement.
+
 ## Open-system validation: RFC-0010
 
 Validate the declared open-system specification, stabilization/problem-dynamics
@@ -141,14 +157,24 @@ physical validation; the next step is physical apparatus/profile definition.
 
 ## Regression and archival discipline
 
+Every commit must first pass all twelve steps of the consolidated full
+reproducibility profile, including the complete pytest suite, reference,
+SPICE/transient checks, engineering sweeps, benchmarks and scaling regression:
+
+    .venv/bin/python validate.py --full
+
+Preserve the summary and detailed report alongside the tested tree. The
+individual commands below are useful checks, not a substitute for that gate.
+
 Use the repository environment for current regression:
 
 ```bash
 .venv/bin/python -m pytest
 ```
 
-Run targeted subsystem tests before the full suite. Simulation-related changes
-also require the SPICE continuation check:
+Targeted subsystem tests may assist development but never replace the complete
+commit-boundary suite. Every commit, including documentation-only changes, must
+pass the full pytest suite and the SPICE continuation check:
 
 ```bash
 .venv/bin/python run_spice.py
@@ -174,8 +200,9 @@ repository modules resolve inside the snapshot.
 
 Record Python/dependency and relevant C, SPICE, RTL-simulation and synthesis
 tool versions. Run the full suite in that isolated environment; classify any
-failure before retrying. A documentation-only change does not itself require
-historical acquisition, acceptance replay or a separate SPICE continuation run.
+failure before retrying. A documentation-only change still requires the complete commit-boundary suite
+above; it does not require historical acquisition or acceptance replay. Follow
+the exact atomic rule in [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ## Historical RC engineering evidence
 
