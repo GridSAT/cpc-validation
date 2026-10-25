@@ -10,7 +10,11 @@
 - [Compiler](compiler.md), [benchmarks](benchmarks.md) and [benchmark generator](generator.md).
 - [Scaling scope](scaling.md) and [roadmap](roadmap.md).
 
-## CPC-Shor and N0
+## CPC-SHOR core research and N0
+
+CPC-SHOR is a core CPC research and validation program. Its qualified software
+and bounded classical hardware evidence are integrated with the CPC framework;
+the quantum and scaling gates below remain open.
 
 - [Research overview](shor/README.md).
 - [Current N0 status](shor/n0-status.md).

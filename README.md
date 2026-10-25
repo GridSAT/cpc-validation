@@ -64,6 +64,22 @@ the same canonical interfaces.
 
 ---
 
+## CPC-SHOR: core CPC research and validation
+
+CPC-SHOR is a **core CPC research and validation program** in this repository.
+Its [research overview](docs/shor/README.md) separates finite Shor/P3/P4
+software, N0 preparation and the completed bounded classical
+[UP5K/Pico milestone](docs/shor/classical-up5k-physical-milestone.md):
+physical oracle records **2, 68 and 194**.
+
+[WP-B1 software conformance](docs/shor/wp-b1-conformance-checklist.md) remains
+open, and the [Alice & Bob collaboration brief](docs/shor/alice-bob-collaboration-brief.md)
+remains an unsent draft. Physical N0 quantum execution, native Shor order
+finding, scalable quantum computation and quantum advantage remain unproven.
+Core-program status does not change those evidence or authorization boundaries.
+
+---
+
 ## Quick Start
 
 Clone the repository and create an isolated Python environment:

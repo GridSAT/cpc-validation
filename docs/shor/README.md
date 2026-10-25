@@ -2,7 +2,9 @@
 
 [Documentation index](../README.md) · [Architecture](../architecture.md) · [Validation](../validation.md)
 
-This section records the current CPC-Shor research line associated with RFC-0010.
+CPC-SHOR is a **core CPC research and validation program** associated with
+RFC-0010. This section is its public entrypoint for qualified software, the
+bounded classical hardware milestone and the outstanding quantum research gates.
 
 The repository now contains several distinct layers of evidence. They must not be
 collapsed into a single claim.
