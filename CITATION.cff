@@ -18,25 +18,30 @@ repository-code: https://github.com/GridSAT/cpc-validation
 
 url: https://github.com/GridSAT/cpc-validation
 
-doi: 10.5281/zenodo.22045319
+# The v0.7.0 version-specific DOI is pending automatic Zenodo archiving.
+# This identifier refers to the software version family, not a v0.7.0 deposit.
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.22045318
+    description: Zenodo concept DOI for all CPC Validation versions
 
 license: MIT
 
-version: "0.6.0"
+version: "0.7.0"
 
-date-released: 2026-08-21
+date-released: "2026-10-26"
 
 abstract: >
-  CPC Validation is the reference validation framework for
-  Constraint Physical Computing (CPC). It defines a canonical constraint IR,
-  qualified RC, Digital, and FPGA execution backends, independent
-  cross-backend semantic validation, and an RFC-0009 physical-evidence
-  lifecycle. Version 0.6.0 adds the accepted RFC-0010 architecture for
-  driven-dissipative open-system execution and referenced readout, together
-  with an execution-specification model, conformance validation, and a
-  simulated reference witness. The RFC-0009 P1 FPGA evidence remains the
-  repository's concrete physical-execution milestone; RFC-0010 does not by
-  itself establish a physical open-system realization.
+  CPC Validation is the reference validation framework for Constraint Physical
+  Computing (CPC), with canonical constraint IR, RC, Digital and FPGA backends,
+  independent semantic validation and physical-evidence contracts. Version
+  0.7.0 includes RFC-0010 open-system software, CPC-SHOR finite simulations,
+  bounded P3/P4 software, N0 pre-physical tooling, and the bounded classical
+  UP5K/Pico probability/PRNG milestone for seeded physical oracle records 2,
+  68 and 194. Historical RFC-0009 P1 evidence remains a separate lineage.
+  Known physical error-path discrepancies remain unresolved. Physical N0
+  quantum execution, physical Shor factorization, scalable quantum computing,
+  quantum advantage and ASI containment are not demonstrated.
 
 keywords:
   - Constraint Physical Computing
@@ -58,3 +63,7 @@ keywords:
   - Monte Carlo
   - Semiconductor Physics
   - Research Software
+  - CPC-SHOR
+  - Finite Shor Models
+  - Classical Probability and PRNG
+  - Pre-Physical N0 Validation
