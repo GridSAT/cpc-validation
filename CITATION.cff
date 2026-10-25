@@ -18,8 +18,9 @@ repository-code: https://github.com/GridSAT/cpc-validation
 
 url: https://github.com/GridSAT/cpc-validation
 
-# The v0.7.0 version-specific DOI is pending automatic Zenodo archiving.
-# This identifier refers to the software version family, not a v0.7.0 deposit.
+doi: 10.5281/zenodo.23652408
+
+# This identifier refers to the software version family, not a specific deposit.
 identifiers:
   - type: doi
     value: 10.5281/zenodo.22045318
