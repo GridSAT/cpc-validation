@@ -2,3 +2,12 @@
 evidence/shor/up5k-physical-v6/** -text
 # Captured CRLF streams are byte artifacts rather than editable prose.
 evidence/shor/up5k-physical-v6/transcripts/*.txt -diff
+
+# Preserve reviewed hard breaks in these SHA-pinned frozen documents only.
+docs/DYADIC-PHASE-MS-DP-P-E1A-BOUND.md whitespace=-blank-at-eol
+docs/DYADIC-PHASE-MS-DP-P-E2.md whitespace=-blank-at-eol
+docs/DYADIC-PHASE-MS-DP-P-E3-CALIBRATION-AMENDMENT-V2.md whitespace=-blank-at-eol
+docs/DYADIC-PHASE-MS-DP-P-E3-DESIGN.md whitespace=-blank-at-eol
+docs/DYADIC-PHASE-MS-DP-P-E3-IA.md whitespace=-blank-at-eol
+docs/DYADIC-PHASE-MS-DP-P-E3-IB.md whitespace=-blank-at-eol
+docs/DYADIC-PHASE-MS-DP-P-FROZEN-SPEC.md whitespace=-blank-at-eol
