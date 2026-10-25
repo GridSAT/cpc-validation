@@ -9,6 +9,20 @@ The format follows **Keep a Changelog** and this project follows
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-10-26
+
+[Release scope and reproduction](docs/releases/v0.7.0.md).
+
+### Release metadata and preservation
+
+- Established CPC-SHOR as a core CPC research and validation program in main.
+- Updated citation version/date and removed reuse of the v0.6.0 version DOI;
+  the concept DOI identifies the family while the v0.7.0 DOI awaits verification.
+- Preserved all validated publication commits and frozen scientific evidence.
+- Added seven exact-path whitespace declarations and SHA/count/tampering tests
+  for 34 intentional hard breaks in seven byte-identical historical documents.
+- Retained the RFC-0010 software architecture and separate RFC-0009 P1 lineage.
+
 ### Bounded classical UP5K/Pico physical milestone
 
 - Froze the completed Area-v3/Pico classical probability/PRNG milestone:
@@ -16,8 +30,8 @@ The format follows **Keep a Changelog** and this project follows
   six response frames, 132 words, six request/response CRC pairs and 18 snapshots.
 - Added a privacy-reviewed numerical evidence subset, exact fixture/source pins,
   a read-only verifier and tampering tests; original sealed reports preserved.
-- Retained unseeded record 217's 0022/0002 divergence and five unmatched physical
-  error-path records. No complete-corpus physical conformance claim.
+- Retained unseeded record 217's 0022/0002 divergence and the unmatched physical
+  error-path records 200, 206, 215 and 219. No complete-corpus physical conformance claim.
 - Made atomic, fully validated commits mandatory, including documentation.
 - Documented outstanding WP-B1 conformance and an unsent Alice & Bob co-design
   brief. Physical N0, native Shor, scalable quantum computation and advantage
