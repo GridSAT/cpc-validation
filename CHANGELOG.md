@@ -16,8 +16,10 @@ The format follows **Keep a Changelog** and this project follows
 ### Release metadata and preservation
 
 - Established CPC-SHOR as a core CPC research and validation program in main.
-- Updated citation version/date and removed reuse of the v0.6.0 version DOI;
-  the concept DOI identifies the family while the v0.7.0 DOI awaits verification.
+- Updated citation version/date without reusing the v0.6.0 version DOI;
+  the concept DOI identifies the family. Following automatic archiving,
+  v0.7.0 received version DOI 10.5281/zenodo.23652408, subsequently
+  incorporated into the default-branch citation metadata without moving the tag.
 - Preserved all validated publication commits and frozen scientific evidence.
 - Added seven exact-path whitespace declarations and SHA/count/tampering tests
   for 34 intentional hard breaks in seven byte-identical historical documents.

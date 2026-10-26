@@ -2561,27 +2561,26 @@ README and a normative RFC differ.
 
 ## Citation
 
-Citation metadata are provided in [`CITATION.cff`](CITATION.cff).
+Citation metadata for the current release are provided in [`CITATION.cff`](CITATION.cff).
 
-The version-specific archival DOI for historical release `v0.6.0` is
-[`10.5281/zenodo.22045319`](https://doi.org/10.5281/zenodo.22045319).
+**Current version (v0.7.0):** [`10.5281/zenodo.23652408`](https://doi.org/10.5281/zenodo.23652408),
+archived on Zenodo from the immutable [`v0.7.0`](https://github.com/GridSAT/cpc-validation/releases/tag/v0.7.0)
+Git tag.
 
-For citations that should resolve to the latest archived CPC Validation
-version, use the all-versions DOI
-[`10.5281/zenodo.22045318`](https://doi.org/10.5281/zenodo.22045318).
+For references to the software version family or the latest archived release,
+use the concept DOI [`10.5281/zenodo.22045318`](https://doi.org/10.5281/zenodo.22045318).
 
-For v0.7.0, use the version and release date in CITATION.cff together with
-its exact Git tag. Its version-specific Zenodo DOI is pending verification of
-automatic archiving; do not reuse the v0.6.0 DOI or create a duplicate deposit.
-The concept DOI above identifies the version family, not this specific version.
+**Historical version (v0.6.0):** [`10.5281/zenodo.22045319`](https://doi.org/10.5281/zenodo.22045319).
+This DOI applies to v0.6.0 only, not v0.7.0.
 
-To cite the software, use:
+To cite the released v0.7.0 software, use:
 
-> Karim Daghbouche.
-> *CPC Reference Validation Framework:
-> Reference Implementation of the Constraint Physical Computing Architecture*.
-> GridSAT Stiftung, 2026.
-> GitHub repository.
+> Daghbouche, K., & GridSAT Stiftung. (2026).
+> *CPC Validation (Version v0.7.0)* [Computer software]. Zenodo.
+> https://doi.org/10.5281/zenodo.23652408
+
+The annotated v0.7.0 tag and Zenodo archive remain unchanged; the default
+branch's citation metadata was corrected after automatic archiving.
 
 ---
 

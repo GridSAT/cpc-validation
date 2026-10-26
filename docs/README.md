@@ -5,7 +5,7 @@
 ## Current release
 
 - [v0.7.0: CPC-SHOR research and bounded classical FPGA/Pico milestone](releases/v0.7.0.md).
-- [Citation metadata](../CITATION.cff): v0.7.0, 2026-10-26; version-family DOI, with the new version-specific DOI pending verification.
+- [Citation metadata](../CITATION.cff): v0.7.0, 2026-10-26; [version DOI 10.5281/zenodo.23652408](https://doi.org/10.5281/zenodo.23652408) and [concept DOI 10.5281/zenodo.22045318](https://doi.org/10.5281/zenodo.22045318).
 
 The release includes finite/software and pre-physical work, not physical
 quantum execution or advantage. Historical releases retain their original scope.
