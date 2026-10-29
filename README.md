@@ -1454,8 +1454,6 @@ arXiv and Zenodo.
 Daghbouche, K. (2026). *CPC Validation (Version 0.2.0)* [Computer software]. GitHub development snapshot [eedbd9fc79cfd0afd9d4a8f1cc8b1871e139e340](https://github.com/GridSAT/cpc-validation/tree/eedbd9fc79cfd0afd9d4a8f1cc8b1871e139e340). No version-specific Zenodo DOI is asserted.
 
 Scientific/software author: **Karim Daghbouche**, [ORCID](https://orcid.org/0000-0002-4351-2861).
-GridSAT Stiftung is contributor/sponsor and institutional affiliation, **not a co-author**.
-Valid copyright ownership and third-party references are unchanged.
 
 See [CITATION.cff](CITATION.cff), [.zenodo.json](.zenodo.json) and the
 [version-specific historical correction notices](docs/citation-corrections.md).
