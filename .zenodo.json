@@ -1,0 +1,44 @@
+{
+  "title": "CPC Validation",
+  "upload_type": "software",
+  "description": "CPC Validation is the reference validation framework for Constraint Physical Computing (CPC), with canonical constraint IR, RC, Digital and FPGA backends, independent semantic validation and physical-evidence contracts. Version 0.7.0 includes RFC-0010 open-system software, CPC-SHOR finite simulations, bounded P3/P4 software, N0 pre-physical tooling, and the bounded classical UP5K/Pico probability/PRNG milestone for seeded physical oracle records 2, 68 and 194. Historical RFC-0009 P1 evidence remains a separate lineage. Known physical error-path discrepancies remain unresolved. Physical N0 quantum execution, physical Shor factorization, scalable quantum computing, quantum advantage and ASI containment are not demonstrated.\n",
+  "license": "mit",
+  "keywords": [
+    "Constraint Physical Computing",
+    "CPC",
+    "Open-System Execution",
+    "Driven-Dissipative Systems",
+    "Referenced Readout",
+    "Physical Computing",
+    "Analog Computing",
+    "Constraint Satisfaction",
+    "SAT",
+    "SPICE",
+    "FPGA",
+    "Physical Execution Evidence",
+    "Reproducibility",
+    "ngspice",
+    "Circuit Simulation",
+    "Validation",
+    "Monte Carlo",
+    "Semiconductor Physics",
+    "Research Software",
+    "CPC-SHOR",
+    "Finite Shor Models",
+    "Classical Probability and PRNG",
+    "Pre-Physical N0 Validation"
+  ],
+  "creators": [
+    {
+      "name": "Daghbouche, Karim",
+      "orcid": "0000-0002-4351-2861",
+      "affiliation": "GridSAT Stiftung"
+    }
+  ],
+  "contributors": [
+    {
+      "name": "GridSAT Stiftung",
+      "type": "Sponsor"
+    }
+  ]
+}

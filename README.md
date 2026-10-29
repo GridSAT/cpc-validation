@@ -2561,28 +2561,16 @@ README and a normative RFC differ.
 
 ## Citation
 
-Citation metadata for the current release are provided in [`CITATION.cff`](CITATION.cff).
+Daghbouche, K. (2026). *CPC Validation (Version 0.7.0)* [Computer software]. Zenodo. [10.5281/zenodo.23652408](https://doi.org/10.5281/zenodo.23652408).
 
-**Current version (v0.7.0):** [`10.5281/zenodo.23652408`](https://doi.org/10.5281/zenodo.23652408),
-archived on Zenodo from the immutable [`v0.7.0`](https://github.com/GridSAT/cpc-validation/releases/tag/v0.7.0)
-Git tag.
+Scientific/software author: **Karim Daghbouche**, [ORCID](https://orcid.org/0000-0002-4351-2861).
+GridSAT Stiftung is contributor/sponsor and institutional affiliation, **not a co-author**.
+Valid copyright ownership and third-party references are unchanged.
 
-For references to the software version family or the latest archived release,
-use the concept DOI [`10.5281/zenodo.22045318`](https://doi.org/10.5281/zenodo.22045318).
-
-**Historical version (v0.6.0):** [`10.5281/zenodo.22045319`](https://doi.org/10.5281/zenodo.22045319).
-This DOI applies to v0.6.0 only, not v0.7.0.
-
-To cite the released v0.7.0 software, use:
-
-> Daghbouche, K., & GridSAT Stiftung. (2026).
-> *CPC Validation (Version v0.7.0)* [Computer software]. Zenodo.
-> https://doi.org/10.5281/zenodo.23652408
-
-The annotated v0.7.0 tag and Zenodo archive remain unchanged; the default
-branch's citation metadata was corrected after automatic archiving.
-
----
+See [CITATION.cff](CITATION.cff), [.zenodo.json](.zenodo.json) and the
+[version-specific historical correction notices](docs/citation-corrections.md).
+Historical tags/archives retain their original embedded metadata; current
+corrections do not alter them.
 
 ## Organization
 

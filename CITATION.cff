@@ -11,8 +11,7 @@ authors:
   - family-names: Daghbouche
     given-names: Karim
     affiliation: GridSAT Stiftung
-
-  - name: GridSAT Stiftung
+    orcid: https://orcid.org/0000-0002-4351-2861
 
 repository-code: https://github.com/GridSAT/cpc-validation
 
