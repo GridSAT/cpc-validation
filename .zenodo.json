@@ -1,0 +1,34 @@
+{
+  "title": "CPC Validation",
+  "upload_type": "software",
+  "description": "CPC Validation is the reference validation framework for C-Parity Computing (CPC). The software independently computes continuation functions, generates physical circuit models, validates them using ngspice transient simulation, decodes the resulting physical responses, and compares them against mathematically computed reference continuations. The current release establishes the reproducible software-to-SPICE validation pipeline that serves as the engineering foundation for future compiled passive networks, Monte Carlo robustness analysis, hardware demonstrators, and coherent carrier systems.\n",
+  "license": "mit",
+  "keywords": [
+    "C-Parity Computing",
+    "CPC",
+    "Physical Computing",
+    "Analog Computing",
+    "Constraint Satisfaction",
+    "SAT",
+    "SPICE",
+    "ngspice",
+    "Circuit Simulation",
+    "Validation",
+    "Monte Carlo",
+    "Semiconductor Physics",
+    "Research Software"
+  ],
+  "creators": [
+    {
+      "name": "Daghbouche, Karim",
+      "orcid": "0000-0002-4351-2861",
+      "affiliation": "GridSAT Stiftung"
+    }
+  ],
+  "contributors": [
+    {
+      "name": "GridSAT Stiftung",
+      "type": "Sponsor"
+    }
+  ]
+}
