@@ -19,7 +19,10 @@ individual Git commit authors and third-party bibliographic authors are preserve
   author and each corresponding GitHub tag/version. No version-specific Zenodo
   DOI for these versions was verified in this audit; none is invented or
   replaced by the v0.7.0 DOI. The public family query identifies v0.6.0/v0.7.0;
-  broader public Zenodo searches returned HTTP 400 and are not claimed complete.
+  the initial oversized search failed with HTTP 400. The subsequent supported,
+  paginated searches screened 33 author-query results and found no additional
+  CPC Validation software deposits. Other individuals' publications were not
+  reassigned to Karim.
   Existing GitHub releases retain their original release dates and claims.
 
 Development branches retain their own declared software version/date/DOI. An
@@ -60,12 +63,40 @@ scientific result reinterpreted, or independent individual authorship erased.
 The v0.7.0 Zenodo ZIP remains SHA-256
 5d0abb2b3ef3ca9f63c496d94dd3d4af8654d3a3b2a818b4cab1f56fe1d5dd85.
 Its frozen CFF also retains the pre-archive DOI-pending comment. Corrected current
-metadata does not claim that archive was changed. The v0.6.0 and v0.7.0 public
-Zenodo records already show Karim alone and GridSAT as Sponsor; v0.6.0 is missing
-Karim's ORCID. An authenticated metadata-only edit is still required for that
-field. No authenticated Zenodo API credential was available, and inspection of
-the existing native browser session timed out. No deposit or archive operation
-is performed by this repository correction.
+metadata does not claim that archive was changed. Both public software records
+show Karim alone, his ORCID 0000-0002-4351-2861, and GridSAT as Sponsor.
+On 2026-10-29, authenticated editing added the missing ORCID to the existing
+v0.6.0 creator entry. The public API diff contains only that added ORCID;
+record ID 22045319, version, DOI, file identity and source ZIP SHA-256
+3041f19707ca5418cd1fcb1e3ad4ecd51d880df14b9a5120b7d2cbfce7d17ee6
+remain unchanged. No new deposit or version was created. Earlier branch notices
+and PR audit snapshots describing the initially missing ORCID record the state
+before this edit; this notice supersedes that access-related finding.
+
+The separately linked working paper, Zenodo record 22737623, already identifies
+Karim with ORCID and GridSAT as Sponsor. Its separate concept DOI and authorship
+were preserved, as were legitimate individual coauthors of unrelated papers.
+
+## Branch qualification outcome
+
+Nine of the eleven original remote branches received qualified metadata
+corrections through PRs #3–#11. All seven distinct published correction commits
+passed their complete native 12-stage suite before commitment and again in fresh
+isolated checkouts. The source tests were not weakened.
+
+The proposed corrections on rfc-0003-backend-contract and
+rfc-0004-physical-backend remain uncommitted: both complete suites stop at
+Compiler scaling regression with ValueError: CCIR parity variables must be sorted.
+Their unit suites pass 482 tests, but this does not qualify the failing full
+profile. Their scientific source is unchanged. Those two mutable branches still
+contain the organizational-author defect; global reconciliation is therefore
+PARTIAL, not complete. Their exact proposed patches and failure logs are retained
+in the private audit checkpoint. Repair of their scientific implementation is
+outside this metadata-only operation.
+
+Local historical verification checkouts and milestone/backup refs preserve their
+original source bytes and Git authors. They are archival sources, not corrected
+publication metadata. Experimental work and untracked evidence are not overwritten.
 
 ## Future publication safeguards
 
