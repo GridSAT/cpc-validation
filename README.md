@@ -2540,24 +2540,16 @@ README and a normative RFC differ.
 
 ## Citation
 
-Citation metadata are provided in [`CITATION.cff`](CITATION.cff).
+Daghbouche, K. (2026). *CPC Validation (Version 0.6.0)* [Computer software]. Zenodo. [10.5281/zenodo.22045319](https://doi.org/10.5281/zenodo.22045319).
 
-The archival DOI for the current release (`v0.6.0`) is
-[`10.5281/zenodo.22045319`](https://doi.org/10.5281/zenodo.22045319).
+Scientific/software author: **Karim Daghbouche**, [ORCID](https://orcid.org/0000-0002-4351-2861).
+GridSAT Stiftung is contributor/sponsor and institutional affiliation, **not a co-author**.
+Valid copyright ownership and third-party references are unchanged.
 
-For citations that should resolve to the latest archived CPC Validation
-version, use the all-versions DOI
-[`10.5281/zenodo.22045318`](https://doi.org/10.5281/zenodo.22045318).
-
-To cite this specific release, use:
-
-> Karim Daghbouche.
-> *CPC Reference Validation Framework:
-> Reference Implementation of the Constraint Physical Computing Architecture*.
-> GridSAT Stiftung, 2026.
-> GitHub repository.
-
----
+See [CITATION.cff](CITATION.cff), [.zenodo.json](.zenodo.json) and the
+[version-specific historical correction notices](docs/citation-corrections.md).
+Historical tags/archives retain their original embedded metadata; current
+corrections do not alter them.
 
 ## Organization
 

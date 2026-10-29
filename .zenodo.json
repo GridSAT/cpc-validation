@@ -1,0 +1,40 @@
+{
+  "title": "CPC Validation",
+  "upload_type": "software",
+  "description": "CPC Validation is the reference validation framework for Constraint Physical Computing (CPC). It defines a canonical constraint IR, qualified RC, Digital, and FPGA execution backends, independent cross-backend semantic validation, and an RFC-0009 physical-evidence lifecycle. Version 0.6.0 adds the accepted RFC-0010 architecture for driven-dissipative open-system execution and referenced readout, together with an execution-specification model, conformance validation, and a simulated reference witness. The RFC-0009 P1 FPGA evidence remains the repository's concrete physical-execution milestone; RFC-0010 does not by itself establish a physical open-system realization.\n",
+  "license": "mit",
+  "keywords": [
+    "Constraint Physical Computing",
+    "CPC",
+    "Open-System Execution",
+    "Driven-Dissipative Systems",
+    "Referenced Readout",
+    "Physical Computing",
+    "Analog Computing",
+    "Constraint Satisfaction",
+    "SAT",
+    "SPICE",
+    "FPGA",
+    "Physical Execution Evidence",
+    "Reproducibility",
+    "ngspice",
+    "Circuit Simulation",
+    "Validation",
+    "Monte Carlo",
+    "Semiconductor Physics",
+    "Research Software"
+  ],
+  "creators": [
+    {
+      "name": "Daghbouche, Karim",
+      "orcid": "0000-0002-4351-2861",
+      "affiliation": "GridSAT Stiftung"
+    }
+  ],
+  "contributors": [
+    {
+      "name": "GridSAT Stiftung",
+      "type": "Sponsor"
+    }
+  ]
+}
