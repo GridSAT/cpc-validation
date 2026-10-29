@@ -1,5 +1,10 @@
 # Bounded UP5K/Pico evidence publication note
 
+**Bibliographic correction (2026-10-29):** Scientific/software author Karim Daghbouche
+([ORCID](https://orcid.org/0000-0002-4351-2861)); GridSAT Stiftung is contributor/sponsor,
+not co-author. See the [version-specific correction and immutable archival exceptions](../citation-corrections.md).
+
+
 **Release collateral only — no version tag or GitHub release created.**
 Prepared 2026-10-25 for review against the research branch.
 
